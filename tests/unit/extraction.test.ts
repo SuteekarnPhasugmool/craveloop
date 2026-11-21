@@ -48,6 +48,7 @@ const complete = (value: unknown = draft) => ({
   output_parsed: value,
 });
 beforeEach(() => {
+  vi.stubEnv("CRAVELOOP_OPENAI_API_KEY", "");
   vi.stubEnv("OPENAI_API_KEY", "test-only-not-a-real-key");
   vi.stubEnv("OPENAI_MODEL", "test-configured-model");
   parse.mockReset();
@@ -102,6 +103,60 @@ it("keeps ambiguous budgets and allergy removal separate from soft choices", asy
   expect(result.questions.length).toBeGreaterThan(0);
 });
 describe("multimodal draft adapter (mocked provider; no live inference claim)", () => {
+  it("uses the CraveLoop key for both adapters when a shell key is also present", async () => {
+    vi.stubEnv("CRAVELOOP_OPENAI_API_KEY", "local-test-key");
+    parse.mockResolvedValueOnce(complete());
+    await extractPreferences({ text: "no pork" });
+    parse.mockResolvedValueOnce(
+      complete({ intent: "chat", patch: [], questions: [] }),
+    );
+    await routePreference("hello", emptyPreference, false);
+    expect(options.mock.calls.map(([config]) => config.apiKey)).toEqual([
+      "local-test-key",
+      "local-test-key",
+    ]);
+  });
+  it("reports exhausted credits without retrying or returning provider details", async () => {
+    parse.mockRejectedValue(
+      new OpenAI.APIError(
+        429,
+        {
+          code: "credit_balance_exhausted",
+          type: "insufficient_quota",
+          message: "private upstream details",
+        },
+        undefined,
+        new Headers(),
+      ),
+    );
+    for (const run of [
+      () => extractPreferences({ text: "no pork" }),
+      () => routePreference("no pork", emptyPreference, false),
+    ]) {
+      await expect(run()).rejects.toMatchObject({
+        code: "AI_QUOTA_EXHAUSTED",
+        status: 503,
+        message: expect.not.stringContaining("private upstream details"),
+      });
+    }
+    expect(parse).toHaveBeenCalledTimes(2);
+  });
+  it("still retries temporary rate limiting", async () => {
+    parse
+      .mockRejectedValueOnce(
+        new OpenAI.APIError(
+          429,
+          { code: "rate_limit_exceeded" },
+          undefined,
+          new Headers(),
+        ),
+      )
+      .mockResolvedValueOnce(complete());
+    await expect(extractPreferences({ text: "no pork" })).resolves.toEqual(
+      draft,
+    );
+    expect(parse).toHaveBeenCalledTimes(2);
+  });
   it("missing credentials reports unavailable and makes zero provider calls", async () => {
     vi.stubEnv("OPENAI_API_KEY", "");
     expect(aiStatus().available).toBe(false);

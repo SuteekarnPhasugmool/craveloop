@@ -8,6 +8,21 @@ CraveLoop is an independent mobile delivery prototype exploring a **ShopeeFood i
 
 ## Primary flow
 
+The delivery home also supports Thai searches across 22 public ShopeeFood category labels. The `shopeefood-demo-v1` discovery fixture pairs each label with one fictional shop and two priced dishes. Only the category labels and listing IDs were taken from the public page. Group Order ranks the separate `seed-v2` catalog. [ShopeeFood Thailand categories](https://shopee.co.th/m/ShopeeFoodCategories)
+
+To add or refresh just the discovery sample in an existing database, run `npm run db:migrate` followed by `npm run seed -- --shopeefood-only`. For a fresh database, the normal `npm run seed` loads both catalogs. Category provenance is stored in `shopeefood_categories`, and `shopeefood_menu_categories` links each dish to its category. For example, this SQLite query lists the mock bubble tea menu in baht.
+
+```sql
+SELECT c.name_th, r.name AS restaurant, m.name AS dish,
+       json_extract(m.channel_prices_satang, '$.delivery') / 100.0 AS baht
+FROM shopeefood_categories c
+JOIN shopeefood_menu_categories mc ON mc.listing_id = c.listing_id
+JOIN menus m ON m.id = mc.menu_id
+JOIN restaurants r ON r.id = m.restaurant_id
+WHERE c.listing_id = '30970'
+ORDER BY m.id;
+```
+
 In a private Group Order form, **อยากกินเส้น** records a broad noodle preference. Once the other selected participants have joined and confirmed, the server compares available noodle styles against the whole group's constraints. It asks a skippable question when the answer changes the recommended restaurants, their order or the member's assigned dish. Choosing an answer creates a draft for that member to confirm. The private room card also shows the recipe and product-label evidence behind a hidden ingredient rejection. [Three-person demo](docs/DEMO_GROUP_ORDER.md)
 
 The home screen follows the supplied mobile-app reference: orange delivery/search header, a two-row shortcut rail, horizontal catalog/menu cards, concept banners and fixed bottom navigation. Search supports catalog names and Thai tag labels; category filters, menu details, the single demo-zone sheet and group-link recovery are functional. Prices are source fixture **food prices before fee allocation**, with no invented discount, review or sales claims. Group Order is the first shortcut; CraveLoop also has a direct entry below the shortcuts.
@@ -41,7 +56,7 @@ Open `http://localhost:3000`. For other devices set `NEXT_PUBLIC_APP_URL` to a r
 
 SQLite is a durable file at `.local/craveloop.sqlite`, with WAL and transactional writes. It survives reload/restart on one installation with persistent disk. It is not suitable for Vercel's ephemeral filesystem or shared multi-instance persistence. Run migrations again on existing installations: migration 004 adds the cart-handoff projection alongside the existing initial/chat/meal migrations.
 
-If `OPENAI_API_KEY` or `OPENAI_MODEL` is absent, AI extraction is unavailable and manual fields remain usable. Saved images are not interpreted in manual mode. Configuration presence is not proof of valid credentials/model access.
+Set a server-side `OPENAI_MODEL` and API key to enable AI drafts. CraveLoop uses `CRAVELOOP_OPENAI_API_KEY` when set, then falls back to `OPENAI_API_KEY`. Use the project-specific setting when your shell already supplies a key for a different project. Run `npm run ai:smoke` to verify live extraction with the bundled sample.
 
 ## Test and evaluate
 

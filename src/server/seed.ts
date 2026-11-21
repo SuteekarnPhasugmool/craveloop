@@ -1,7 +1,11 @@
 import { catalog } from "@/adapters/catalog";
+import {
+  shopeeFoodListings,
+  shopeeFoodSource,
+} from "@/adapters/shopeefood-catalog";
 import { pool, sqlite } from "./database";
 import { env } from "./env";
-export async function seedCatalog() {
+export async function seedCatalog(scope: "all" | "shopeefood" = "all") {
   const isPg = env().driver === "postgres";
   const c = isPg ? await pool().connect() : null;
   const d = isPg ? null : sqlite();
@@ -21,7 +25,8 @@ export async function seedCatalog() {
   try {
     if (c) await c.query("BEGIN");
     else d!.exec("BEGIN IMMEDIATE");
-    for (const r of catalog) {
+    const shops = shopeeFoodListings.map((listing) => listing.restaurant);
+    for (const r of scope === "all" ? [...catalog, ...shops] : shops) {
       await exec(
         "INSERT INTO restaurants(id,name,area_id,channels,available,distance_m,fee_quote,catalog_version,data_origin) VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET name=excluded.name,channels=excluded.channels,available=excluded.available,distance_m=excluded.distance_m,fee_quote=excluded.fee_quote,catalog_version=excluded.catalog_version",
         [
@@ -55,6 +60,27 @@ export async function seedCatalog() {
             m.priceIncludesFees,
           ],
         );
+    }
+    for (const [index, listing] of shopeeFoodListings.entries()) {
+      await exec(
+        `INSERT INTO shopeefood_categories(listing_id,name_th,section_th,display_order,source_url)
+         VALUES(?,?,?,?,?) ON CONFLICT(listing_id) DO UPDATE SET name_th=excluded.name_th,
+         section_th=excluded.section_th,display_order=excluded.display_order,source_url=excluded.source_url`,
+        [
+          listing.listingId,
+          listing.nameTh,
+          listing.sectionTh,
+          index + 1,
+          shopeeFoodSource,
+        ],
+      );
+      for (const menu of listing.restaurant.menus) {
+        await exec(
+          `INSERT INTO shopeefood_menu_categories(menu_id,listing_id) VALUES(?,?)
+           ON CONFLICT(menu_id) DO UPDATE SET listing_id=excluded.listing_id`,
+          [menu.id, listing.listingId],
+        );
+      }
     }
     if (c) await c.query("COMMIT");
     else d!.exec("COMMIT");

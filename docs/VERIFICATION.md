@@ -1,5 +1,9 @@
 # Verification — actual local results
 
+## Live extraction check — 21 November 2026
+
+With the CraveLoop project key and `OPENAI_MODEL=gpt-6.2-sol`, `npm run ai:smoke` passed on the Thai text and bundled illustration in 4.95 seconds. A separate synthetic text input passed through the session input and extraction HTTP handlers using an in-memory SQLite room. Both returned a draft requiring confirmation with a ฿150 budget and pork excluded. These checks cover preference extraction. The private text router still has mocked-provider coverage.
+
 ## Group Order ingredient graph and guided preferences — 21 November 2026
 
 The starting workspace passed typecheck, 98 unit tests and 61 SQLite integration tests. It already contained the ingredient graph, hard-filter traversal, noodle catalog tags and some snapshot checks. This workspace has no project .git directory, so its source branch and commit could not be verified against the reference commit.
