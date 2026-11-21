@@ -1,6 +1,11 @@
 import { getChat, postChat } from "./chat-service";
 import { routePrivateTurn } from "./preference-router";
-import { postMeal, postHandoff, postCheckout } from "./group-order-service";
+import {
+  selectDish,
+  postMeal,
+  postHandoff,
+  postCheckout,
+} from "./group-order-service";
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { randomUUID } from "node:crypto";
@@ -105,6 +110,11 @@ export async function handle(req: NextRequest, path: string[] = []) {
       assert(
         !origin ||
           origin === req.nextUrl.origin ||
+          (process.env.NODE_ENV === "development" &&
+            origin === `http://${req.headers.get("host")}` &&
+            process.env.DEV_LAN_HOSTS?.split(",").includes(
+              new URL(origin).hostname,
+            )) ||
           origin === new URL(env().NEXT_PUBLIC_APP_URL).origin,
         403,
         "ORIGIN_DENIED",
@@ -146,6 +156,8 @@ export async function handle(req: NextRequest, path: string[] = []) {
       data = await routePrivateTurn(id, await json(req), ctx);
     } else if (route === "meal" && req.method === "POST") {
       data = await postMeal(id, await json(req), ctx);
+    } else if (route === "dish" && req.method === "PUT") {
+      data = await selectDish(id, await json(req), ctx);
     } else if (route === "handoff" && req.method === "POST") {
       data = await postHandoff(id, await json(req), ctx);
     } else if (route === "checkout" && req.method === "POST") {

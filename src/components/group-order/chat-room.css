@@ -1,0 +1,333 @@
+/* The conversation shares the delivery home's viewport and orange navigation. */
+.go-app.dh-app.chat-screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  min-height: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+  background: #f8f5ef;
+}
+@media (min-width: 650px) {
+  .go-app.dh-app.chat-screen {
+    height: calc(100dvh - 18px);
+  }
+}
+.chat-bar {
+  flex: none;
+  min-height: 68px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 14px 10px 8px;
+  background: linear-gradient(118deg, #f56936, #e7512e);
+  color: #fff;
+}
+.chat-bar a,
+.chat-bar button {
+  color: inherit;
+  background: transparent;
+  border: none;
+}
+.chat-bar a {
+  width: 32px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+}
+.chat-bar svg,
+.room-invite svg {
+  width: 22px;
+  height: 22px;
+}
+.chat-bar img {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffffffa8;
+}
+.chat-title {
+  flex: 1;
+  min-width: 0;
+}
+.chat-title h1 {
+  font-size: 17px;
+  letter-spacing: -0.3px;
+  line-height: 1.45;
+  color: white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chat-title button,
+.chat-title small {
+  padding: 0;
+  font-size: 12px;
+  color: white;
+}
+.chat-bar .chat-invite-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ad381f55;
+  border-radius: 20px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.chat-invite-button svg {
+  width: 18px;
+  height: 18px;
+}
+.chat-screen main.conversation {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+}
+.conversation-scroll,
+.chat-order {
+  overflow: auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+.conversation-scroll {
+  flex: 1;
+  padding: 0 16px 18px;
+}
+.conversation-start {
+  text-align: center;
+  margin: 34px 0 28px;
+}
+.conversation-start img {
+  border-radius: 24px;
+  object-fit: cover;
+  box-shadow: 0 4px 14px #57352120;
+}
+.conversation-start h2 {
+  font-size: 21px;
+  margin: 10px 0 2px;
+  color: #3a302b;
+}
+.conversation-start p,
+.chat-results details {
+  font-size: 13px;
+  color: #72685e;
+}
+.conversation-log {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.conversation-log article {
+  max-width: 85%;
+  min-width: 0;
+}
+.conversation-log article > b {
+  display: block;
+  color: #72675e;
+  font-size: 12px;
+  margin: 0 8px 3px;
+}
+.conversation-log article small {
+  font-weight: 400;
+  margin-left: 4px;
+}
+.conversation-log article p {
+  padding: 10px 13px;
+  border-radius: 4px 16px 16px 16px;
+  background: white;
+  color: #332c27;
+  font-size: 14px;
+  line-height: 1.65;
+  box-shadow: 0 1px 2px #33221110;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.conversation-log article.mine {
+  align-self: flex-end;
+}
+.conversation-log article.mine > b {
+  text-align: right;
+}
+.conversation-log article.mine p {
+  background: #ffe4d4;
+  border-radius: 16px 4px 16px 16px;
+}
+.conversation-log .system {
+  align-self: center;
+}
+.conversation-log .system b {
+  display: none;
+}
+.conversation-log .system p {
+  background: #eee9e2;
+  color: #6b6159;
+  box-shadow: none;
+  border-radius: 20px;
+  font-size: 12px;
+}
+.conversation-dock {
+  flex: none;
+  background: white;
+  border-top: 1px solid #e9e2db;
+  padding: 8px 12px max(10px, env(safe-area-inset-bottom));
+}
+.chat-tools,
+.conversation-dock form,
+.chat-results article > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.chat-tools {
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.chat-tools small {
+  font-size: 12px;
+  color: #786d66;
+}
+.chat-tools button,
+.chat-results button,
+.chat-roster button,
+.room-invite div > button {
+  color: #a83819;
+  background: #fff1e9;
+  border-radius: 14px;
+  padding: 6px 11px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.chat-tools .chat-accent,
+.chat-results .chat-accent,
+.conversation-dock .go-primary,
+.room-invite .go-primary {
+  color: white;
+  background: #d9512d;
+}
+.chat-screen .conversation-dock input:not([type="checkbox"]) {
+  border: 1px solid #dedad6;
+  background: #faf9f7;
+  border-radius: 22px;
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  font-size: 16px;
+  padding: 9px 14px;
+}
+.conversation-dock .go-primary {
+  margin: 0;
+  width: auto;
+  min-width: 52px;
+  padding: 8px 12px;
+  min-height: 42px;
+  border-radius: 22px;
+}
+.chat-notice,
+.chat-empty {
+  text-align: center;
+  padding: 10px;
+  color: #74543d;
+}
+.chat-screen .chat-order {
+  padding: 16px;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+.chat-order .go-card {
+  margin: 0;
+}
+.chat-results {
+  margin: 14px 0 0;
+}
+.chat-results h2 {
+  font-size: 16px;
+  letter-spacing: 0;
+}
+.chat-results article,
+.chat-roster {
+  background: white;
+  border-radius: 16px;
+  padding: 14px;
+  margin-top: 8px;
+  box-shadow: 0 2px 8px #3827170b;
+}
+.chat-results article h3 {
+  font-size: 16px;
+  letter-spacing: 0;
+}
+.chat-results p,
+.chat-roster p {
+  font-size: 13px;
+  margin: 4px 0;
+}
+.chat-results details {
+  margin: 8px 0;
+}
+.chat-roster {
+  position: absolute;
+  z-index: 5;
+  top: 64px;
+  left: 10px;
+  right: 10px;
+  box-shadow: 0 6px 24px #35251330;
+}
+.chat-roster div,
+.chat-roster p,
+.room-invite header,
+.room-invite > div {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.chat-roster p,
+.chat-roster div {
+  justify-content: space-between;
+}
+.room-invite {
+  border: 0;
+  border-radius: 20px 20px 0 0;
+  margin: auto auto 0;
+  width: min(100%, 520px);
+  padding: 24px 20px max(24px, env(safe-area-inset-bottom));
+  color: #332d28;
+  box-shadow: 0 0 40px #0002;
+}
+.room-invite::backdrop {
+  background: #231b1560;
+  backdrop-filter: blur(2px);
+}
+.room-invite header {
+  color: #ba4224;
+}
+.room-invite h2 {
+  font-size: 20px;
+}
+.room-invite p {
+  margin: 10px 0 16px;
+  font-size: 14px;
+}
+.room-invite input {
+  min-width: 0;
+  flex: 1;
+  border: 1px solid #dfd7ce;
+  border-radius: 10px;
+  background: #faf8f6;
+  padding: 8px;
+  font-size: 14px;
+}
+.room-invite .go-primary,
+.room-invite .go-outline {
+  width: 100%;
+  margin-top: 12px;
+}
+.room-invite small {
+  display: block;
+  margin-top: 8px;
+}

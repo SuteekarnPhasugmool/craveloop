@@ -6,6 +6,19 @@ CraveLoop is an independent mobile delivery prototype exploring a **ShopeeFood i
 
 **All 12 restaurants, 60 menus, prices, distances, fees and dietary evidence are synthetic fixtures.** Deterministic TypeScript enforces confirmed constraints, computes integer-satang costs and ranks choices. The primary Group Order form is manual. With a configured server model, the private form can route a text turn into an editable draft. The member reviews ambiguous requirements separately and confirms before the ranker uses any changes.
 
+## ลอง CraveLoop AI Chat Journey
+
+กด **สร้างห้องแชต** บนแบนเนอร์ CraveLoop ที่หน้าแรก ใส่ชื่อแล้วส่งลิงก์จากแผงเชิญให้เพื่อน เปิดลิงก์คนละเครื่องหรือคนละโปรไฟล์เบราว์เซอร์ สมาชิกแต่ละคนเข้าร่วมมื้อด้วยชื่อของตัวเอง ห้องรองรับผู้ร่วมสั่งรวมผู้จัดสูงสุด 5 คน
+
+1. ทุกคนเห็นข้อความที่ส่งในห้อง ลองพิมพ์ “อยากกินกรอบ ๆ งบ 200 บาท” ผู้ช่วยแบบกฎจะแปลงข้อความที่รู้จักเป็นร่างส่วนตัว ตรวจร่างและยืนยัน หรือเปิดฟอร์มเพื่อกำหนดเงื่อนไขเอง ห้องแบบนี้ใช้ได้โดยไม่ต้องตั้ง API key
+2. เมื่อทุกคนพร้อม ผู้จัดกดค้นหาร้าน ระบบจัดอันดับจากแค็ตตาล็อกจำลอง ทุกคนกดยอมรับร้านเดียวกันแล้วผู้จัดสรุปร้าน
+3. หน้าห้องเปลี่ยนเป็นเมนูของร้านนั้นทันที แต่ละคนเลือกอาหารหนึ่งจานจากเมนูที่ผ่านงบและข้อจำกัดของตน เปลี่ยนได้จนกว่าผู้จัดจะรวมตะกร้า
+4. เมื่อเลือกครบ ผู้จัดเปิดตะกร้าร่วมและสรุป Checkout จำลอง ยอดรวมใช้ราคาจานที่เลือกจริงกับส่วนแบ่งค่าธรรมเนียม ห้องและตะกร้าเก็บในฐานข้อมูล
+
+**ทดสอบผ่าน Wi-Fi** เปิด dev server ตามขั้นตอน Run locally แล้วเข้าเว็บผ่าน IP ของเครื่องที่รัน เช่น `http://192.168.1.20:3000` ใช้พอร์ตที่ Next แสดง เครื่องเพื่อนต้องเข้าถึง IP และพอร์ตนี้ได้ ในโหมด dev หน้าแชร์บน localhost จะเสนอลิงก์ LAN เมื่อพบ IP ภายใน ถ้าเครื่องมีหลายเครือข่ายให้เปิดหน้าแรกผ่าน IP ของ Wi-Fi ที่ต้องการ
+
+**นำขึ้นเซิร์ฟเวอร์เดียว** ใช้ Node 22.12+ และดิสก์ถาวร ตั้ง `PERSISTENCE_DRIVER=sqlite`, `SQLITE_PATH` เป็นพาธบนดิสก์นั้น, `NEXT_PUBLIC_APP_URL` เป็น HTTPS origin จริง และ `APP_SECRET` เป็นค่าสุ่มถาวรอย่างน้อย 32 ตัวอักษร ตั้งก่อน build และใช้ค่าเดิมตอน start ติดตั้งด้วย `npm ci` จากนั้นรัน `npm run db:migrate && npm run seed && npm run build && npm start` จาก root ของโปรเจกต์ ให้ HTTPS reverse proxy ส่งต่อมายังพอร์ตของ Node สำหรับหลาย instance หรือโฮสต์ที่ไม่มีดิสก์ถาวร ให้ใช้ PostgreSQL ตามหัวข้อ deployment ด้านล่าง
+
 ## Primary flow
 
 The delivery home also supports Thai searches across 22 public ShopeeFood category labels. The `shopeefood-demo-v1` discovery fixture pairs each label with one fictional shop and two priced dishes. Only the category labels and listing IDs were taken from the public page. Group Order ranks the separate `seed-v2` catalog. [ShopeeFood Thailand categories](https://shopee.co.th/m/ShopeeFoodCategories)

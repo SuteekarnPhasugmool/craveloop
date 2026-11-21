@@ -2283,3 +2283,41 @@
     line-height: 1.75;
   }
 }
+
+.meal-dishes {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.meal-dishes button {
+  display: flex;
+  align-items: center;
+  text-align: left;
+  gap: 14px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: white;
+  padding: 8px;
+  color: #362e2a;
+}
+.meal-dishes button[aria-pressed="true"] {
+  border-color: #df502c;
+  background: #fff6ef;
+}
+.meal-dishes img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.meal-dishes span {
+  flex: 1;
+}
+.meal-dishes small {
+  display: block;
+  color: #b74524;
+}
+.meal-dishes button > b {
+  margin-right: 10px;
+  color: #bb4826;
+}

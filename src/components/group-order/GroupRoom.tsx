@@ -1,7 +1,12 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Option, SessionView } from "@/contracts";
-import { api, RequestError } from "../api";
+import ChatShell from "./ChatShell";
+import ChatInvite, { roomInviteUrl } from "./ChatInvite";
+import MealChat from "./MealChat";
+import FoodPhoto from "./FoodPhoto";
+import type { ChatDraft } from "@/contracts/chat";
+import { api, requestId, RequestError } from "../api";
 import { baht, DeliveryBrand, ConceptNotice, CraveMark } from "./Shared";
 import Preferences from "./Preferences";
 import Configure from "./Configure";
@@ -39,7 +44,16 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const [name, setName] = useState("");
+  const [draft, setDraft] = useState<ChatDraft>();
+  const [invite, setInvite] = useState(false);
+  useEffect(() => {
+    if (location.hash === "#invite") {
+      setInvite(true);
+      history.replaceState(null, "", location.pathname);
+    }
+  }, []);
   const [form, setForm] = useState(false);
+  const [membersOpen, setMembersOpen] = useState(false);
   const [configure, setConfigure] = useState(false);
   const [connected, setConnected] = useState(true);
   const [copied, setCopied] = useState("");
@@ -127,7 +141,7 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
     setBusy("join");
     setError("");
     try {
-      joinId.current ??= crypto.randomUUID();
+      joinId.current ??= requestId();
       await api(base + "/join", "POST", {
         displayName: name,
         clientJoinId: joinId.current,
@@ -141,7 +155,7 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
   }
   async function share() {
     try {
-      await navigator.clipboard.writeText(location.href);
+      await navigator.clipboard.writeText(roomInviteUrl(sessionId));
       setCopied("คัดลอกลิงก์เชิญแล้ว");
       setTimeout(() => setCopied(""), 3000);
     } catch {
@@ -162,27 +176,20 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
   }
   if (!s)
     return (
-      <div className="go-page">
-        <div className="go-app">
-          <header className="go-header">
-            <DeliveryBrand />
-          </header>
-          <ConceptNotice />
-          <main className="go-loading">
-            <CraveMark />
-            <h1>กำลังเปิด Group Order…</h1>
-            {error && (
-              <p className="go-error" role="alert">
-                {error}
-              </p>
-            )}
-            <button className="go-outline" onClick={() => void refresh()}>
-              ลองอีกครั้ง
-            </button>
-            <a href="/">สร้างกลุ่มใหม่</a>
-          </main>
+      <ChatShell title="Group Order" subtitle="ShopeeFood">
+        <div className="chat-empty" role="status">
+          {error ? (
+            <>
+              <p>{error}</p>
+              <button className="go-outline" onClick={() => void refresh()}>
+                ลองอีกครั้ง
+              </button>
+            </>
+          ) : (
+            <p>กำลังเปิดห้อง…</p>
+          )}
         </div>
-      </div>
+      </ChatShell>
     );
   if (s.experience !== "group_order")
     return (
@@ -250,6 +257,497 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
       : s.ranking
         ? 1
         : 0;
+  const joinPanel = (
+    <section className="go-card">
+      <p className="go-eyebrow">YOU’RE INVITED</p>
+      <h2>มีที่ให้คุณในมื้อนี้</h2>
+      <p className="go-muted">
+        {s.chatJourney
+          ? "ใส่ชื่อเพื่อเข้าร่วมมื้อนี้และคุยกับเพื่อนในห้องแชต"
+          : "ใส่ชื่อเพื่อเข้ากลุ่ม แล้วเข้าร่วมมื้อนี้และระบุความต้องการของคุณเอง"}
+      </p>
+      {s.membershipOpen && group.length < 5 ? (
+        <form onSubmit={join}>
+          <label htmlFor="group-join-name">ชื่อของคุณ</label>
+          <input
+            id="group-join-name"
+            required
+            maxLength={40}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="เช่น Nat"
+          />
+          <button className="go-primary" disabled={!!busy}>
+            {busy === "join" ? "กำลังเข้าร่วม…" : "เข้าร่วม Group Order"}
+          </button>
+        </form>
+      ) : (
+        <p className="go-info-note">
+          กลุ่มปิดรับสมาชิกแล้ว ให้ผู้ดูแลจัดการผู้ร่วมสั่งเพื่อเปิดกลุ่มใหม่ก่อน
+        </p>
+      )}
+    </section>
+  );
+  const drawers = (
+    <>
+      {" "}
+      {form && canEdit && (
+        <Preferences
+          draft={draft}
+          session={s}
+          onClose={() => setForm(false)}
+          onConflict={() => void refresh()}
+          onSaved={(next) => {
+            generation.current++;
+            setS(next);
+            setForm(false);
+            setError("");
+            setTimeout(
+              () =>
+                resultsRef.current?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                }),
+              50,
+            );
+          }}
+        />
+      )}
+      {configure && s.isHost && (
+        <Configure
+          session={s}
+          onClose={() => setConfigure(false)}
+          onSave={async (ids) => {
+            const next = await mutate(
+              "/meal",
+              "POST",
+              {
+                action: "configure",
+                selectedMemberIds: ids,
+                areaId: "bangkok_demo",
+                ...versions(),
+              },
+              "configure",
+            );
+            if (next) {
+              setConfigure(false);
+              setForm(false);
+              return true;
+            }
+            return false;
+          }}
+        />
+      )}
+    </>
+  );
+  const orderPanels = (
+    <>
+      {" "}
+      {final && (
+        <section className="go-card go-handoff">
+          <p className="go-eyebrow">GROUP DECISION CONFIRMED</p>
+          <h2>ตกลงร้านเดียวกันแล้ว ✓</h2>
+          <p className="go-muted">
+            {final.restaurantName} · สมาชิกทุกคนยอมรับผลล่าสุด การตกลงนี้ไม่ใช่คำสั่งซื้อ
+          </p>
+          {s.chatJourney && s.isHost && (
+            <button
+              className="go-text-button"
+              onClick={() => setConfigure(true)}
+            >
+              จัดการผู้ร่วมสั่ง
+            </button>
+          )}
+          {s.chatJourney && !currentCart && mine && (
+            <>
+              <h3>เลือกเมนูของคุณ</h3>
+              <p>
+                เลือกแล้ว {Object.keys(s.menuChoices ?? {}).length}/
+                {selected.length} คน · ราคาอาหารก่อนแบ่งค่าส่ง
+              </p>
+              {!s.dishes?.length && (
+                <p className="go-info-note">
+                  ยังไม่มีเมนูที่ยืนยันราคาได้สำหรับคุณ ให้ผู้จัดเปิดมื้ออีกครั้งเพื่อเลือกร้านใหม่
+                </p>
+              )}
+              <div className="meal-dishes">
+                {s.dishes?.map((d) => (
+                  <button
+                    key={d.menuId}
+                    disabled={!!busy}
+                    aria-pressed={s.menuChoices?.[s.me!.id] === d.menuId}
+                    onClick={() =>
+                      void mutate(
+                        "/dish",
+                        "PUT",
+                        { ...choice(final), menuId: d.menuId },
+                        "dish",
+                      )
+                    }
+                  >
+                    <FoodPhoto menuId={d.menuId} menuName={d.menuName} />
+                    <span>
+                      <strong>{d.menuName}</strong>
+                      <small>{baht(d.itemCostSatang)}</small>
+                    </span>
+                    <b>{s.menuChoices?.[s.me!.id] === d.menuId ? "✓" : "+"}</b>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+          {s.isHost && !currentCart && (
+            <button
+              className="go-primary"
+              disabled={
+                !!busy ||
+                (s.chatJourney
+                  ? selected.some((m) => !s.menuChoices?.[m.id])
+                  : !cartFinite)
+              }
+              onClick={() =>
+                void mutate("/handoff", "POST", choice(final), "handoff")
+              }
+            >
+              {busy === "handoff" ? "กำลังเตรียมตะกร้า…" : "ส่งต่อไปยังตะกร้าจำลอง"}{" "}
+              <span aria-hidden="true">→</span>
+            </button>
+          )}
+          {!cartFinite && (
+            <p className="go-info-note">
+              ยังมีค่าใช้จ่ายที่ไม่ทราบ ไม่สามารถเตรียมตะกร้าโดยประมาณราคาได้
+            </p>
+          )}
+          {!s.isHost && !currentCart && (
+            <p className="go-fine">รอผู้ดูแลส่งต่อการตัดสินใจไปยังตะกร้าจำลอง</p>
+          )}
+        </section>
+      )}
+      {handoff && (
+        <section
+          className={`go-card go-cart ${!currentCart ? "go-cart-invalid" : ""}`}
+          data-testid="group-cart"
+        >
+          <div className="go-section-heading">
+            <div>
+              <p className="go-eyebrow">
+                {currentCart ? "GROUP CART · SIMULATED" : "CART INVALIDATED"}
+              </p>
+              <h2>{currentCart ? "ตะกร้าร่วมของกลุ่ม" : "ตะกร้าเดิมใช้ไม่ได้แล้ว"}</h2>
+            </div>
+            <span className="go-cart-symbol">▱</span>
+          </div>
+          <p className="go-muted">{handoff.restaurantName}</p>
+          {!currentCart ? (
+            <p className="go-info-note">
+              ข้อมูลกลุ่มหรือผลการตัดสินใจเปลี่ยนแล้ว ต้องตกลงผลล่าสุดและเตรียมตะกร้าใหม่ ปุ่ม
+              Checkout ถูกปิดไว้
+            </p>
+          ) : (
+            <>
+              <div className="go-cart-items">
+                {handoff.items.map((item) => (
+                  <div key={item.memberId}>
+                    <span>
+                      <strong>{item.displayName}</strong>
+                      <span>
+                        {item.quantity} × {item.menuName}
+                      </span>
+                      <small>
+                        อาหาร {baht(item.itemCostSatang)} + ค่าจัดส่ง/บริการ{" "}
+                        {baht(item.allocatedFeeSatang)}
+                      </small>
+                    </span>
+                    <b>{baht(item.totalCostSatang)}</b>
+                  </div>
+                ))}
+              </div>
+              <div className="go-cart-totals">
+                <p>
+                  <span>รวมราคาอาหาร</span>
+                  <b>{baht(handoff.subtotalSatang)}</b>
+                </p>
+                <p>
+                  <span>ค่าจัดส่งและบริการ (สมมติ)</span>
+                  <b>{baht(handoff.allocatedFeesSatang)}</b>
+                </p>
+                <p className="go-grand-total">
+                  <span>รวมทั้งกลุ่ม</span>
+                  <b>{baht(handoff.totalSatang)}</b>
+                </p>
+              </div>
+              <p className="go-fine">
+                ข้อมูลตะกร้าจาก snapshot ที่ทุกคนยอมรับ ไม่ใช่ตะกร้าในแอป ShopeeFood จริง
+              </p>
+              {s.isHost && handoff.status === "cart" && final && (
+                <button
+                  className="go-primary"
+                  disabled={!!busy}
+                  onClick={() =>
+                    void mutate(
+                      "/checkout",
+                      "POST",
+                      { ...choice(final), handoffId: handoff.id },
+                      "checkout",
+                    )
+                  }
+                >
+                  {busy === "checkout"
+                    ? "กำลังเตรียมสรุป…"
+                    : "ดูสรุป Checkout จำลอง"}
+                </button>
+              )}
+            </>
+          )}
+        </section>
+      )}
+      {currentCart && handoff?.status === "checkout_summary" && (
+        <section className="go-checkout" data-testid="group-checkout">
+          <span>✓</span>
+          <p className="go-eyebrow">SIMULATED CHECKOUT SUMMARY</p>
+          <h2>
+            มื้อนี้พร้อมไปต่อ
+            <br />
+            ในแนวคิด Group Order
+          </h2>
+          <p>
+            สรุป {handoff.items.length} เมนู · รวม {baht(handoff.totalSatang)}
+          </p>
+          <strong>ยังไม่ได้สร้างคำสั่งซื้อหรือชำระเงิน</strong>
+          <p className="go-fine">
+            ไม่มีเลขคำสั่งซื้อ ไม่มีการส่งข้อมูลไป ShopeeFood และไม่มีการตัดเงิน
+            หน้านี้สาธิตการส่งต่อจากการตัดสินใจร่วมกันเท่านั้น
+          </p>
+        </section>
+      )}
+    </>
+  );
+  if (s.chatJourney) {
+    const title = currentCart
+      ? "ตะกร้ากลุ่ม"
+      : (final?.restaurantName ??
+        `มื้อของ ${s.members[0]?.displayName ?? "กลุ่ม"}`);
+    return (
+      <ChatShell
+        title={title}
+        subtitle={`Group Order · ${group.length} คน`}
+        onMembers={s.me ? () => setMembersOpen((v) => !v) : undefined}
+        onInvite={s.me ? () => setInvite(true) : undefined}
+      >
+        {membersOpen && (
+          <section className="chat-roster" aria-label="สมาชิกในมื้อนี้">
+            <div>
+              <strong>ผู้ร่วมมื้อ</strong>
+              <button onClick={() => setMembersOpen(false)}>ปิด</button>
+            </div>
+            {group.map((m) => (
+              <p key={m.id}>
+                {m.displayName}
+                <small>
+                  {!selected.some((p) => p.id === m.id)
+                    ? "ไม่ได้ร่วมมื้อ"
+                    : m.confirmed
+                      ? "พร้อมแล้ว"
+                      : "ยังไม่ยืนยัน"}
+                </small>
+              </p>
+            ))}
+            {s.isHost && (
+              <button
+                onClick={() => {
+                  setMembersOpen(false);
+                  setConfigure(true);
+                }}
+              >
+                จัดการผู้ร่วมสั่ง
+              </button>
+            )}
+          </section>
+        )}
+        {!connected && (
+          <p className="chat-notice" role="status">
+            กำลังเชื่อมต่ออีกครั้ง…
+          </p>
+        )}
+        {error && (
+          <p className="chat-notice" role="alert">
+            {error}
+          </p>
+        )}
+        {!s.me ? (
+          <main className="chat-order">{joinPanel}</main>
+        ) : final ? (
+          <main className="chat-order">{orderPanels}</main>
+        ) : (
+          <MealChat
+            session={s}
+            onSent={(r) => {
+              generation.current++;
+              setS(r.session);
+              if (r.draft) {
+                setDraft(r.draft);
+                setForm(true);
+              }
+            }}
+            tools={
+              <div className="chat-tools">
+                {canEdit && (
+                  <button
+                    onClick={() => {
+                      setDraft(undefined);
+                      setForm(true);
+                    }}
+                  >
+                    {s.me.confirmed
+                      ? "แก้ความต้องการของฉัน"
+                      : "กรอกความต้องการของฉัน"}
+                  </button>
+                )}
+                {mine && !joined(s.me.id) && (
+                  <button
+                    disabled={!!busy}
+                    onClick={() =>
+                      void mutate(
+                        "/meal",
+                        "POST",
+                        { action: "join", ...versions() },
+                        "joinMeal",
+                      )
+                    }
+                  >
+                    เข้าร่วมมื้อนี้
+                  </button>
+                )}
+                {!mine && <small>ขอผู้จัดเพิ่มชื่อเพื่อร่วมมื้อนี้</small>}
+                {allReady && !s.ranking && s.isHost ? (
+                  <button
+                    className="chat-accent"
+                    disabled={!!busy}
+                    onClick={() => void rank()}
+                  >
+                    ค้นหาร้านสำหรับกลุ่ม
+                  </button>
+                ) : s.ranking ? (
+                  <button
+                    onClick={() =>
+                      resultsRef.current?.scrollIntoView({ block: "nearest" })
+                    }
+                  >
+                    ดูผลเลือกร้าน
+                  </button>
+                ) : (
+                  <small>
+                    พร้อม {ready}/{selected.length} คน
+                  </small>
+                )}
+              </div>
+            }
+            actions={
+              s.ranking && (
+                <section
+                  className="chat-results"
+                  ref={resultsRef}
+                  aria-label="ร้านที่ CraveLoop แนะนำ"
+                >
+                  <h2>
+                    {s.ranking.options.length
+                      ? "เลือกร้านสำหรับมื้อนี้"
+                      : "ยังไม่มีร้านที่ตรงเงื่อนไข"}
+                  </h2>
+                  {!s.ranking.options.length && (
+                    <p>ตรวจงบและความต้องการของคุณอีกครั้งได้ที่ปุ่มด้านล่าง</p>
+                  )}
+                  {s.ingredientProofs?.length ? (
+                    <details>
+                      <summary>เหตุผลที่บางเมนูไม่ผ่านเงื่อนไขของฉัน</summary>
+                      <ul>
+                        {s.ingredientProofs.map((proof) => (
+                          <li key={proof}>{proof}</li>
+                        ))}
+                      </ul>
+                    </details>
+                  ) : null}
+                  {s.ranking.options.map((o) => {
+                    const votes = s.acceptances.filter(
+                      (a) =>
+                        a.rankingId === s.ranking!.id &&
+                        a.restaurantId === o.restaurantId,
+                    ).length;
+                    const accepted =
+                      ownVote?.rankingId === s.ranking!.id &&
+                      ownVote.restaurantId === o.restaurantId;
+                    return (
+                      <article key={o.restaurantId}>
+                        <h3>{o.restaurantName}</h3>
+                        <p>
+                          รวมกลุ่ม {baht(o.totalGroupCostSatang)} · ยอมรับ {votes}/
+                          {selected.length} คน
+                        </p>
+                        <details>
+                          <summary>ดูเมนูและยอดต่อคน</summary>
+                          {o.assignments.map((a) => (
+                            <p key={a.memberId}>
+                              <b>
+                                {
+                                  s.members.find((m) => m.id === a.memberId)
+                                    ?.displayName
+                                }
+                              </b>{" "}
+                              · {a.menuName} · {baht(a.totalCostSatang)}
+                            </p>
+                          ))}
+                        </details>
+                        <div>
+                          {canEdit && (
+                            <button
+                              disabled={!!busy}
+                              onClick={() =>
+                                void mutate(
+                                  "/acceptance/me",
+                                  accepted ? "DELETE" : "PUT",
+                                  choice(o),
+                                  "accept",
+                                )
+                              }
+                            >
+                              {accepted ? "ถอนเสียง" : "ยอมรับร้านนี้"}
+                            </button>
+                          )}
+                          {s.isHost && (
+                            <button
+                              className="chat-accent"
+                              disabled={!!busy || votes !== selected.length}
+                              onClick={() =>
+                                void mutate(
+                                  "/finalize",
+                                  "POST",
+                                  choice(o),
+                                  "finalize",
+                                )
+                              }
+                            >
+                              สรุปร้านนี้
+                            </button>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
+                </section>
+              )
+            }
+          />
+        )}
+        {invite && s.me && (
+          <ChatInvite
+            sessionId={sessionId}
+            onContinue={() => setInvite(false)}
+          />
+        )}
+        {drawers}
+      </ChatShell>
+    );
+  }
   return (
     <div className="go-page">
       <div className="go-app">
@@ -318,7 +816,11 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
                 <input
                   aria-label="ลิงก์เชิญ"
                   readOnly
-                  value={typeof location === "undefined" ? "" : location.href}
+                  value={
+                    typeof location === "undefined"
+                      ? ""
+                      : roomInviteUrl(sessionId)
+                  }
                   onFocus={(e) => e.target.select()}
                 />
                 <small>เลือกข้อความแล้วคัดลอกด้วยตัวเอง</small>
@@ -414,33 +916,7 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
             </div>
             <div className="go-room-content">
               {!s.me ? (
-                <section className="go-card">
-                  <p className="go-eyebrow">YOU’RE INVITED</p>
-                  <h2>มีที่ให้คุณในมื้อนี้</h2>
-                  <p className="go-muted">
-                    ใส่ชื่อเพื่อเข้ากลุ่ม แล้วเข้าร่วมมื้อนี้และระบุความต้องการของคุณเอง
-                  </p>
-                  {s.membershipOpen && group.length < 5 ? (
-                    <form onSubmit={join}>
-                      <label htmlFor="group-join-name">ชื่อของคุณ</label>
-                      <input
-                        id="group-join-name"
-                        required
-                        maxLength={40}
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="เช่น Nat"
-                      />
-                      <button className="go-primary" disabled={!!busy}>
-                        {busy === "join" ? "กำลังเข้าร่วม…" : "เข้าร่วม Group Order"}
-                      </button>
-                    </form>
-                  ) : (
-                    <p className="go-info-note">
-                      กลุ่มปิดรับสมาชิกแล้ว ให้ผู้ดูแลจัดการผู้ร่วมสั่งเพื่อเปิดกลุ่มใหม่ก่อน
-                    </p>
-                  )}
-                </section>
+                joinPanel
               ) : !mine ? (
                 <section className="go-card go-personal-card">
                   <h2>คุณไม่ได้ร่วมมื้อนี้</h2>
@@ -499,7 +975,10 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
                   <button
                     className="go-outline"
                     disabled={!!busy || !canEdit}
-                    onClick={() => setForm(true)}
+                    onClick={() => {
+                      setDraft(undefined);
+                      setForm(true);
+                    }}
                   >
                     {s.me.confirmed
                       ? "แก้ความต้องการของฉัน"
@@ -765,146 +1244,7 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
                   </span>
                 </section>
               )}
-              {final && (
-                <section className="go-card go-handoff">
-                  <p className="go-eyebrow">GROUP DECISION CONFIRMED</p>
-                  <h2>ตกลงร้านเดียวกันแล้ว ✓</h2>
-                  <p className="go-muted">
-                    {final.restaurantName} · สมาชิกทุกคนยอมรับผลล่าสุด
-                    การตกลงนี้ไม่ใช่คำสั่งซื้อ
-                  </p>
-                  {s.isHost && !currentCart && (
-                    <button
-                      className="go-primary"
-                      disabled={!!busy || !cartFinite}
-                      onClick={() =>
-                        void mutate(
-                          "/handoff",
-                          "POST",
-                          choice(final),
-                          "handoff",
-                        )
-                      }
-                    >
-                      {busy === "handoff"
-                        ? "กำลังเตรียมตะกร้า…"
-                        : "ส่งต่อไปยังตะกร้าจำลอง"}{" "}
-                      <span aria-hidden="true">→</span>
-                    </button>
-                  )}
-                  {!cartFinite && (
-                    <p className="go-info-note">
-                      ยังมีค่าใช้จ่ายที่ไม่ทราบ ไม่สามารถเตรียมตะกร้าโดยประมาณราคาได้
-                    </p>
-                  )}
-                  {!s.isHost && !currentCart && (
-                    <p className="go-fine">รอผู้ดูแลส่งต่อการตัดสินใจไปยังตะกร้าจำลอง</p>
-                  )}
-                </section>
-              )}
-              {handoff && (
-                <section
-                  className={`go-card go-cart ${!currentCart ? "go-cart-invalid" : ""}`}
-                  data-testid="group-cart"
-                >
-                  <div className="go-section-heading">
-                    <div>
-                      <p className="go-eyebrow">
-                        {currentCart
-                          ? "GROUP CART · SIMULATED"
-                          : "CART INVALIDATED"}
-                      </p>
-                      <h2>
-                        {currentCart ? "ตะกร้าร่วมของกลุ่ม" : "ตะกร้าเดิมใช้ไม่ได้แล้ว"}
-                      </h2>
-                    </div>
-                    <span className="go-cart-symbol">▱</span>
-                  </div>
-                  <p className="go-muted">{handoff.restaurantName}</p>
-                  {!currentCart ? (
-                    <p className="go-info-note">
-                      ข้อมูลกลุ่มหรือผลการตัดสินใจเปลี่ยนแล้ว
-                      ต้องตกลงผลล่าสุดและเตรียมตะกร้าใหม่ ปุ่ม Checkout ถูกปิดไว้
-                    </p>
-                  ) : (
-                    <>
-                      <div className="go-cart-items">
-                        {handoff.items.map((item) => (
-                          <div key={item.memberId}>
-                            <span>
-                              <strong>{item.displayName}</strong>
-                              <span>
-                                {item.quantity} × {item.menuName}
-                              </span>
-                              <small>
-                                อาหาร {baht(item.itemCostSatang)} + ค่าจัดส่ง/บริการ{" "}
-                                {baht(item.allocatedFeeSatang)}
-                              </small>
-                            </span>
-                            <b>{baht(item.totalCostSatang)}</b>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="go-cart-totals">
-                        <p>
-                          <span>รวมราคาอาหาร</span>
-                          <b>{baht(handoff.subtotalSatang)}</b>
-                        </p>
-                        <p>
-                          <span>ค่าจัดส่งและบริการ (สมมติ)</span>
-                          <b>{baht(handoff.allocatedFeesSatang)}</b>
-                        </p>
-                        <p className="go-grand-total">
-                          <span>รวมทั้งกลุ่ม</span>
-                          <b>{baht(handoff.totalSatang)}</b>
-                        </p>
-                      </div>
-                      <p className="go-fine">
-                        ข้อมูลตะกร้าจาก snapshot ที่ทุกคนยอมรับ ไม่ใช่ตะกร้าในแอป
-                        ShopeeFood จริง
-                      </p>
-                      {s.isHost && handoff.status === "cart" && final && (
-                        <button
-                          className="go-primary"
-                          disabled={!!busy}
-                          onClick={() =>
-                            void mutate(
-                              "/checkout",
-                              "POST",
-                              { ...choice(final), handoffId: handoff.id },
-                              "checkout",
-                            )
-                          }
-                        >
-                          {busy === "checkout"
-                            ? "กำลังเตรียมสรุป…"
-                            : "ดูสรุป Checkout จำลอง"}
-                        </button>
-                      )}
-                    </>
-                  )}
-                </section>
-              )}
-              {currentCart && handoff?.status === "checkout_summary" && (
-                <section className="go-checkout" data-testid="group-checkout">
-                  <span>✓</span>
-                  <p className="go-eyebrow">SIMULATED CHECKOUT SUMMARY</p>
-                  <h2>
-                    มื้อนี้พร้อมไปต่อ
-                    <br />
-                    ในแนวคิด Group Order
-                  </h2>
-                  <p>
-                    สรุป {handoff.items.length} เมนู · รวม{" "}
-                    {baht(handoff.totalSatang)}
-                  </p>
-                  <strong>ยังไม่ได้สร้างคำสั่งซื้อหรือชำระเงิน</strong>
-                  <p className="go-fine">
-                    ไม่มีเลขคำสั่งซื้อ ไม่มีการส่งข้อมูลไป ShopeeFood และไม่มีการตัดเงิน
-                    หน้านี้สาธิตการส่งต่อจากการตัดสินใจร่วมกันเท่านั้น
-                  </p>
-                </section>
-              )}
+              {orderPanels}
             </div>
           </div>
           <footer className="go-room-footer">
@@ -913,52 +1253,7 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
             ข้อมูลจำลองทั้งหมด · ไม่มีการสั่งอาหารจริง
           </footer>
         </main>
-        {form && canEdit && (
-          <Preferences
-            session={s}
-            onClose={() => setForm(false)}
-            onConflict={() => void refresh()}
-            onSaved={(next) => {
-              generation.current++;
-              setS(next);
-              setForm(false);
-              setError("");
-              setTimeout(
-                () =>
-                  resultsRef.current?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start",
-                  }),
-                50,
-              );
-            }}
-          />
-        )}
-        {configure && s.isHost && (
-          <Configure
-            session={s}
-            onClose={() => setConfigure(false)}
-            onSave={async (ids) => {
-              const next = await mutate(
-                "/meal",
-                "POST",
-                {
-                  action: "configure",
-                  selectedMemberIds: ids,
-                  areaId: "bangkok_demo",
-                  ...versions(),
-                },
-                "configure",
-              );
-              if (next) {
-                setConfigure(false);
-                setForm(false);
-                return true;
-              }
-              return false;
-            }}
-          />
-        )}
+        {drawers}
       </div>
     </div>
   );

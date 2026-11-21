@@ -1,4 +1,7 @@
 "use client";
+import { useRouter } from "next/navigation";
+import ChatInvite from "./ChatInvite";
+import "./chat-room.css";
 import { useMemo, useRef, useState } from "react";
 import { api } from "@/components/api";
 import { CraveMark, baht } from "./Shared";
@@ -51,6 +54,9 @@ export default function DeliveryHome({
 }: {
   catalog: HomeCatalogItem[];
 }) {
+  const router = useRouter();
+  const [createdRoom, setCreatedRoom] = useState<string>();
+  const [chatJourney, setChatJourney] = useState(false);
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
@@ -79,11 +85,17 @@ export default function DeliveryHome({
         mode: "delivery",
         expectedSize: 4,
         experience: "group_order",
+        ...(chatJourney ? { chatJourney: true } : {}),
       });
       try {
         localStorage.setItem("craveloop:last-group", r.sessionId);
       } catch {}
-      location.assign(`/group/${r.sessionId}`);
+      if (chatJourney) {
+        setCreatedRoom(r.sessionId);
+        setStep(0);
+        setBusy(false);
+        setChatJourney(false);
+      } else router.push(`/group/${r.sessionId}`);
     } catch {
       setError("สร้างกลุ่มไม่สำเร็จ กรุณาตรวจการเชื่อมต่อแล้วลองอีกครั้ง");
       setBusy(false);
@@ -122,7 +134,7 @@ export default function DeliveryHome({
       setLinkError("ใส่ลิงก์ Group Order หรือรหัสกลุ่มที่ถูกต้อง");
       return;
     }
-    location.assign(`/group/${match[1]}`);
+    router.push(`/group/${match[1]}`);
   }
   const filtered = useMemo(
     () =>
@@ -345,11 +357,16 @@ export default function DeliveryHome({
           <section className="dh-crave-entry">
             <CraveMark />
             <div>
-              <strong>CraveLoop ช่วยเลือกให้ทั้งกลุ่ม</strong>
-              <p>คนละงบ คนละความอยาก ก็มีเมนูครบทุกคน</p>
+              <strong>CraveLoop · แชตเลือกมื้อกลุ่ม</strong>
+              <p>ชวนเพื่อนคุยแล้วเลือกร้านด้วยกัน</p>
             </div>
-            <button onClick={() => setStep(1)}>
-              ชวนเพื่อนเลือก <span aria-hidden="true">›</span>
+            <button
+              onClick={() => {
+                setChatJourney(true);
+                setStep(2);
+              }}
+            >
+              สร้างห้องแชต <span aria-hidden="true">›</span>
             </button>
           </section>
           {showResults ? (
@@ -712,11 +729,23 @@ export default function DeliveryHome({
             เลือกโซน Bangkok demo แล้ว
           </p>
         )}
+        {createdRoom && (
+          <ChatInvite
+            sessionId={createdRoom}
+            onContinue={() => {
+              router.push(`/group/${createdRoom}`);
+              setCreatedRoom(undefined);
+            }}
+          />
+        )}
         {step > 0 && (
           <div
             className="go-modal-backdrop"
             onClick={(e) => {
-              if (e.target === e.currentTarget && !busy) setStep(0);
+              if (e.target === e.currentTarget && !busy) {
+                setStep(0);
+                setChatJourney(false);
+              }
             }}
           >
             <section
@@ -729,7 +758,10 @@ export default function DeliveryHome({
               <button
                 className="go-close"
                 aria-label="ปิดการสร้างกลุ่ม"
-                onClick={() => setStep(0)}
+                onClick={() => {
+                  setStep(0);
+                  setChatJourney(false);
+                }}
                 disabled={busy}
               >
                 ×
@@ -740,7 +772,11 @@ export default function DeliveryHome({
                 <small>GROUP MEAL ASSISTANT</small>
               </div>
               <h2 id="go-start-title">
-                {step === 1 ? "ต่างคนต่างอยาก ก็ลงตัวได้" : "สร้าง Group Order ของคุณ"}
+                {chatJourney
+                  ? "สร้างห้องแชตมื้อนี้"
+                  : step === 1
+                    ? "ต่างคนต่างอยาก ก็ลงตัวได้"
+                    : "สร้าง Group Order ของคุณ"}
               </h2>
               {step === 1 ? (
                 <>
@@ -760,7 +796,9 @@ export default function DeliveryHome({
               ) : (
                 <form onSubmit={create}>
                   <p className="go-muted">
-                    คุณเป็นผู้ดูแลกลุ่ม แชร์ลิงก์ให้เพื่อนเข้ามาได้สูงสุด 5 คน และเลือกผู้ร่วมมื้อได้เอง
+                    {chatJourney
+                      ? "ตั้งชื่อที่เพื่อนจะเห็นในแชต แล้วแชร์ลิงก์ชวนเพื่อนมาร่วมมื้อ"
+                      : "คุณเป็นผู้ดูแลกลุ่ม แชร์ลิงก์ให้เพื่อนเข้ามาได้สูงสุด 5 คน และเลือกผู้ร่วมมื้อได้เอง"}
                   </p>
                   <label htmlFor="go-host-name">ชื่อของคุณ</label>
                   <input
@@ -772,32 +810,42 @@ export default function DeliveryHome({
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
-                  <label htmlFor="go-delivery-area">พื้นที่จัดส่งร่วมกัน</label>
-                  <select
-                    id="go-delivery-area"
-                    value="bangkok_demo"
-                    onChange={() => {}}
-                  >
-                    <option value="bangkok_demo">
-                      Bangkok demo · โซนจำลองเดียวที่รองรับ
-                    </option>
-                  </select>
-                  <p className="go-fine">ไม่มีการอ่านตำแหน่งหรือพื้นที่จัดส่งสด</p>
-                  <div className="go-summary-row">
-                    <span>รูปแบบมื้อนี้</span>
-                    <b>เดลิเวอรี · Bangkok demo</b>
-                  </div>
+                  {!chatJourney && (
+                    <>
+                      <label htmlFor="go-delivery-area">พื้นที่จัดส่งร่วมกัน</label>
+                      <select
+                        id="go-delivery-area"
+                        value="bangkok_demo"
+                        onChange={() => {}}
+                      >
+                        <option value="bangkok_demo">
+                          Bangkok demo · โซนจำลองเดียวที่รองรับ
+                        </option>
+                      </select>
+                      <p className="go-fine">ไม่มีการอ่านตำแหน่งหรือพื้นที่จัดส่งสด</p>
+                      <div className="go-summary-row">
+                        <span>รูปแบบมื้อนี้</span>
+                        <b>เดลิเวอรี · Bangkok demo</b>
+                      </div>
+                    </>
+                  )}
                   {error && (
                     <p role="alert" className="go-error">
                       {error}
                     </p>
                   )}
                   <button className="go-primary" disabled={busy}>
-                    {busy ? "กำลังสร้างกลุ่ม…" : "สร้าง Group Order"}{" "}
+                    {busy
+                      ? "กำลังสร้างกลุ่ม…"
+                      : chatJourney
+                        ? "สร้างห้องและชวนเพื่อน"
+                        : "สร้าง Group Order"}{" "}
                     <span aria-hidden="true">↗</span>
                   </button>
                   <p className="go-fine">
-                    สร้างกลุ่มแล้ว คุณยังต้องกดเข้าร่วมมื้อนี้และยืนยันข้อมูลด้วยตัวเอง
+                    {chatJourney
+                      ? "การสร้างห้องจะเข้าร่วมมื้อนี้ในชื่อของคุณ"
+                      : "สร้างกลุ่มแล้ว คุณยังต้องกดเข้าร่วมมื้อนี้และยืนยันข้อมูลด้วยตัวเอง"}
                   </p>
                 </form>
               )}

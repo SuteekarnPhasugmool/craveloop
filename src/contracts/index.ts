@@ -69,6 +69,7 @@ export const VersionSchema = z.object({
 export type Versions = { preferenceVersion: number; rosterVersion: number };
 export const CreateSchema = z
   .object({
+    chatJourney: z.literal(true).optional(),
     hostName: z.string().trim().min(1).max(40),
     areaId: z.literal("bangkok_demo"),
     mode: ModeSchema,
@@ -210,6 +211,15 @@ export type MemberView = {
   revision: number;
 };
 export type SessionView = Versions & {
+  chatJourney?: boolean;
+  messages?: import("./chat").ChatMessage[];
+  menuChoices?: Record<string, string>;
+  dishes?: {
+    menuId: string;
+    menuName: string;
+    itemCostSatang: number;
+    totalCostSatang: number;
+  }[];
   ingredientProofs?: string[];
   experience?: "group_order";
   handoff?: CartHandoff;

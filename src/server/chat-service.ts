@@ -20,6 +20,7 @@ export async function getChat(
 ): Promise<ChatResponse> {
   const s = await readSession(id);
   requireSession(s);
+  if (s.chatJourney) actor(s, { token, key: "" });
   return { session: view(s, token), chat: chatState(s) };
 }
 export async function postChat(
@@ -31,7 +32,8 @@ export async function postChat(
   return transact(id, (s) => {
     requireSession(s);
     assert(
-      s.experience !== "group_order",
+      s.experience !== "group_order" ||
+        (s.chatJourney && b.action === "message"),
       409,
       "GROUP_ORDER_ROUTE",
       "ใช้หน้า Group Order และ API meal สำหรับมื้อนี้",

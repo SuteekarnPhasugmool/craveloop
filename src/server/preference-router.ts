@@ -39,7 +39,12 @@ export async function routePrivateTurn(id: string, body: unknown, c: Context) {
   const turn = await transact(id, (s) => {
     requireSession(s);
     const m = owner(s);
-    assert(aiStatus().available, 503, "AI_UNAVAILABLE", "กรุณาใช้แบบฟอร์มกรอกเอง");
+    assert(
+      !s.chatJourney && aiStatus().available,
+      503,
+      "AI_UNAVAILABLE",
+      "กรุณาใช้แบบฟอร์มกรอกเอง",
+    );
     let started = false;
     const draftId = cached(s, m.id, c.key, { action: "route", body: b }, () => {
       started = true;

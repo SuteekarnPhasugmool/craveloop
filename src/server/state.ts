@@ -41,6 +41,8 @@ export type StoredInput = {
   draft?: PreferenceDraft;
 };
 export type StoredSession = {
+  chatJourney?: boolean;
+  menuChoices?: Record<string, string>;
   experience?: "group_order";
   handoff?: CartHandoff;
   chat?: ChatState;

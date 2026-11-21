@@ -21,7 +21,8 @@ import {
   type Context,
 } from "./session-service";
 import type { StoredSession } from "./state";
-import type { z } from "zod";
+import { availableDishes } from "./group-menu";
+import { z } from "zod";
 
 function groupOrder(s: StoredSession) {
   assert(
@@ -156,6 +157,36 @@ function finalizedChoice(s: StoredSession, b: z.infer<typeof HandoffSchema>) {
   return { ranking, option: fresh, members };
 }
 
+const DishSchema = HandoffSchema.extend({
+  menuId: z.string().min(1).max(100),
+}).strict();
+export async function selectDish(id: string, body: unknown, c: Context) {
+  const b = DishSchema.parse(body);
+  return transact(id, (s) => {
+    requireSession(s);
+    const member = actor(s, c);
+    const { option } = finalizedChoice(s, b);
+    assert(s.chatJourney, 409, "MENU_UNAVAILABLE", "ห้องนี้ใช้เมนูที่ตกลงร่วมกัน");
+    cached(s, member.id, c.key, { action: "select_dish", body: b }, () => {
+      assert(
+        !s.handoff || s.handoff.status === "invalidated",
+        409,
+        "CART_LOCKED",
+        "มื้อนี้รวมตะกร้าแล้ว",
+      );
+      assert(
+        availableDishes(option, member).some((d) => d.menuId === b.menuId),
+        422,
+        "DISH_UNAVAILABLE",
+        "เมนูนี้ไม่ผ่านเงื่อนไขของคุณ",
+      );
+      (s.menuChoices ??= {})[member.id] = b.menuId;
+      return { applied: true };
+    });
+    return { session: s, result: view(s, c.token) };
+  });
+}
+
 export async function postHandoff(id: string, body: unknown, c: Context) {
   const b = HandoffSchema.parse(body);
   return transact(id, (s) => {
@@ -179,7 +210,26 @@ export async function postHandoff(id: string, body: unknown, c: Context) {
         s.handoff.status === "invalidated" ||
         s.handoff.rankingId !== ranking.id
       ) {
-        s.handoff = simulatedHandoff(option, ranking, members);
+        let cartOption = option;
+        if (s.chatJourney) {
+          const assignments = option.assignments.map((a) => {
+            const member = members.find((m) => m.id === a.memberId)!;
+            const dish = availableDishes(option, member).find(
+              (d) => d.menuId === s.menuChoices?.[member.id],
+            );
+            assert(dish, 409, "MISSING_DISH", "รอทุกคนเลือกเมนูก่อนรวมตะกร้า");
+            return { ...a, ...dish };
+          });
+          cartOption = {
+            ...option,
+            assignments,
+            totalGroupCostSatang: assignments.reduce(
+              (sum, a) => sum + a.totalCostSatang,
+              0,
+            ),
+          };
+        }
+        s.handoff = simulatedHandoff(cartOption, ranking, members);
         event(s, "cart_handoff_created", {
           handoffId: s.handoff.id,
           rankingId: ranking.id,

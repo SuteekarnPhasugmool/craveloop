@@ -42,17 +42,21 @@ const split = (v: string) => [
 ];
 export default function Preferences({
   session,
+  draft,
   onClose,
   onSaved,
   onConflict,
 }: {
   session: SessionView;
+  draft?: import("@/contracts/chat").ChatDraft;
   onClose: () => void;
   onSaved: (s: SessionView) => void;
   onConflict: () => void;
 }) {
   const [p, setP] = useState<Preference>(() =>
-    structuredClone(session.me?.preference ?? emptyPreference),
+    structuredClone(
+      draft?.preference ?? session.me?.preference ?? emptyPreference,
+    ),
   );
   const [revision] = useState(session.me!.revision);
   const [budget, setBudget] = useState(
@@ -245,6 +249,11 @@ export default function Preferences({
         <p className="go-muted">
           กรอกเองและยืนยันด้วยตัวเอง ไม่มี AI แอบอนุมานข้อจำกัดของคุณ
         </p>
+        {draft?.questions.map((q) => (
+          <p className="go-info-note" key={q}>
+            {q}
+          </p>
+        ))}
         <form onSubmit={submit} inert={busy}>
           {session.ai.available && (
             <details className="go-advanced">

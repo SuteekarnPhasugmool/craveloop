@@ -9,6 +9,7 @@ import {
 } from "@/contracts/group-order";
 import { rankingUpdate } from "@/domain/ranking-feedback";
 import { mealMembers, mealReady, assertMealParticipant } from "@/domain/meal";
+import { availableDishes } from "./group-menu";
 import { appendChatEvent } from "./chat-events";
 import { randomUUID } from "node:crypto";
 import {
@@ -89,6 +90,7 @@ export function event(
   });
 }
 export function invalidate(s: StoredSession, reason: string) {
+  delete s.menuChoices;
   if (s.handoff) s.handoff.status = "invalidated";
   s.currentRankingId = null;
   s.acceptances = [];
@@ -225,6 +227,20 @@ export function view(s: StoredSession, token?: string): SessionView {
   }
   return {
     id: s.id,
+    ...(s.chatJourney
+      ? {
+          chatJourney: true,
+          ...(me
+            ? {
+                messages: s.chat?.messages,
+                menuChoices: s.menuChoices ?? {},
+                dishes: visibleRanking?.options
+                  .filter((o) => o.restaurantId === s.finalizedOptionId)
+                  .flatMap((o) => availableDishes(o, me)),
+              }
+            : {}),
+        }
+      : {}),
     ...(s.experience ? { experience: s.experience } : {}),
     ...(s.handoff
       ? {
@@ -265,7 +281,7 @@ export function view(s: StoredSession, token?: string): SessionView {
     lastChange: stale
       ? "ข้อมูลเมนู กราฟ หรือวิธีคำนวณเปลี่ยนแล้ว ผู้ดูแลต้องคำนวณใหม่ หากปิดมื้อแล้วให้เปิดมื้ออีกครั้ง"
       : s.lastChange,
-    ai: aiStatus(),
+    ai: s.chatJourney ? { available: false, model: null } : aiStatus(),
     expiresAt: s.expiresAt,
     dataOrigin: "synthetic",
     catalogVersion: CATALOG_VERSION,
@@ -335,13 +351,16 @@ export async function createRoom(body: unknown, c: Context) {
           createdAt: now(),
         },
       ],
+      ...(b.chatJourney && b.experience === "group_order"
+        ? { chatJourney: true }
+        : {}),
       ...(b.experience === "group_order"
         ? { experience: "group_order" as const }
         : {}),
       ...(b.experience === "chat" || b.experience === "group_order"
         ? {
             chat: {
-              botJoined: false,
+              botJoined: !!b.chatJourney && b.experience === "group_order",
               messages: [],
               meal: {
                 phase:
@@ -352,7 +371,10 @@ export async function createRoom(body: unknown, c: Context) {
                   b.experience === "group_order"
                     ? [stableId(`member:${id}:host`)]
                     : [],
-                joinedMemberIds: [],
+                joinedMemberIds:
+                  b.chatJourney && b.experience === "group_order"
+                    ? [stableId(`member:${id}:host`)]
+                    : [],
               },
             },
           }
@@ -444,6 +466,7 @@ export async function joinRoom(id: string, body: unknown, c: Context) {
       s.members.push(member);
       if (s.experience === "group_order")
         s.chat!.meal!.selectedMemberIds.push(member.id);
+      if (s.chatJourney) s.chat!.meal!.joinedMemberIds.push(member.id);
       s.rosterVersion++;
       invalidate(
         s,
@@ -868,6 +891,7 @@ export async function extraction(id: string, body: unknown, c: Context) {
   const s = await readSession(id);
   requireSession(s);
   const m = actor(s, c);
+  assert(!s.chatJourney, 409, "MOCK_ONLY", "ห้องแชตนี้ใช้ผู้ช่วยจำลอง");
   assertMealParticipant(s, m.id);
   const input = s.inputs.find((i) => i.id === b.inputId);
   assert(input, 404, "INPUT_NOT_FOUND", "Input not found.");

@@ -7,6 +7,23 @@ export class RequestError extends Error {
     super(message);
   }
 }
+// randomUUID is unavailable on plain HTTP LAN origins.
+export function requestId() {
+  if (crypto.randomUUID) return crypto.randomUUID();
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  bytes[6] = (bytes[6] & 15) | 64;
+  bytes[8] = (bytes[8] & 63) | 128;
+  const hex = Array.from(bytes, (n) => n.toString(16).padStart(2, "0")).join(
+    "",
+  );
+  return [
+    hex.slice(0, 8),
+    hex.slice(8, 12),
+    hex.slice(12, 16),
+    hex.slice(16, 20),
+    hex.slice(20),
+  ].join("-");
+}
 export async function api<T>(
   url: string,
   method = "GET",
@@ -14,7 +31,7 @@ export async function api<T>(
 ): Promise<T> {
   const headers: Record<string, string> = {};
   const isForm = body instanceof FormData;
-  if (method !== "GET") headers["Idempotency-Key"] = crypto.randomUUID();
+  if (method !== "GET") headers["Idempotency-Key"] = requestId();
   if (body !== undefined && !isForm)
     headers["Content-Type"] = "application/json";
   const init: RequestInit = {
