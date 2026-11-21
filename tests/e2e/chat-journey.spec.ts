@@ -1,4 +1,8 @@
 import { test, expect } from "@playwright/test";
+test.use({
+  permissions: ["microphone"],
+  launchOptions: { args: ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"] },
+});
 
 test("shared chat, personal menu choices and checkout survive refresh", async ({
   browser,
@@ -32,7 +36,7 @@ test("shared chat, personal menu choices and checkout survive refresh", async ({
     for (const member of [page, guest]) {
       await member.bringToFront();
       if (member === page) {
-        await page.getByRole("button", { name: "กรอกความต้องการของฉัน" }).click();
+        await page.locator(".chat-welcome-bubble").getByRole("button", { name: "กรอกความต้องการของฉัน" }).click();
       } else {
         await member.getByLabel("ข้อความถึงกลุ่ม").fill("อยากกินกรอบ ๆ งบ 200 บาท");
         await member.getByRole("button", { name: "ส่ง", exact: true }).click();
@@ -40,16 +44,30 @@ test("shared chat, personal menu choices and checkout survive refresh", async ({
       const dialog = member.getByRole("dialog", { name: "ความต้องการของฉัน" });
       await expect(dialog.getByRole("button", { name: "ยืนยันความต้องการ" })).toBeInViewport();
       if (member === page) {
-        await dialog.getByRole("button", { name: "ข้าว", exact: true }).click();
-        await dialog.getByRole("button", { name: "แห้ง", exact: true }).click();
-        await dialog.getByLabel("งบสูงสุด (บาท)").fill("200");
+        await dialog.getByRole("textbox", { name: "อยากกินอะไร" }).fill("ข้าว แห้ง");
+        await dialog.getByRole("textbox", { name: "ข้อจำกัด" }).fill("200 บาท");
+        await dialog.getByLabel("เลือกรูปประกอบ").setInputFiles("tests/fixtures/crispy.png");
+        await expect(dialog.getByAltText("รูปประกอบความต้องการ")).toBeVisible();
+        await dialog.getByRole("button", { name: "อัดข้อความเสียง" }).click();
+        await expect(dialog.getByRole("status")).toContainText("กำลังอัดเสียง");
+        await page.waitForTimeout(450); // Capture a short sample from Chromium's fake microphone.
+        await dialog.getByRole("button", { name: "หยุดอัดเสียง" }).click();
+        await expect(dialog.getByLabel("ฟังข้อความเสียง")).toBeVisible();
       }
-      await expect(dialog.getByLabel("งบสูงสุด (บาท)")).toHaveValue("200");
+      await expect(dialog.getByRole("textbox", { name: "ข้อจำกัด" })).toHaveValue("200 บาท");
       await dialog
         .getByRole("button", { name: "ยืนยันความต้องการ", exact: true })
         .click();
       await expect(dialog).toHaveCount(0);
       if (member === page) {
+        await page.reload();
+        await page.getByRole("button", { name: "แก้ความต้องการของฉัน" }).click();
+        await expect(dialog.getByRole("textbox", { name: "อยากกินอะไร" })).toHaveValue("ข้าว แห้ง");
+        await expect.poll(() => dialog.getByAltText("รูปประกอบความต้องการ").evaluate(el => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+        await expect.poll(() => dialog.getByLabel("ฟังข้อความเสียง").evaluate(el => (el as HTMLAudioElement).readyState)).toBeGreaterThan(0);
+        const mediaUrl = await dialog.getByLabel("ฟังข้อความเสียง").getAttribute("src");
+        expect((await guest.request.get(mediaUrl!)).status()).toBe(404);
+        await dialog.getByRole("button", { name: "ปิดความต้องการของฉัน" }).click();
         await expect(page.getByText("ยืนยันแล้ว 1/2 คน", { exact: true })).toBeVisible();
         await page.getByRole("button", { name: "ค้นหาจากคนที่ยืนยันแล้ว" }).click();
         await expect(page.getByRole("region", { name: "ผลค้นหาเบื้องต้น" })).toBeVisible();

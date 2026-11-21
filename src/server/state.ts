@@ -9,6 +9,8 @@ import type {
   Mode,
 } from "@/contracts";
 export type StoredMember = {
+  answers?: { craving: string; constraints: string };
+  media?: Partial<Record<"image" | "voice", StoredMedia>>;
   router?: {
     id: string;
     revision: number;
@@ -27,6 +29,7 @@ export type StoredMember = {
   preference: Preference | null;
   createdAt: string;
 };
+export type StoredMedia = { data: string; mime: string; id: string; expiresAt: string };
 export type StoredInput = {
   id: string;
   memberId: string;

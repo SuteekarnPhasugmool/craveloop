@@ -86,6 +86,7 @@ export const JoinSchema = z
   })
   .strict();
 export const ConfirmSchema = VersionSchema.extend({
+  answers: z.object({ craving: z.string().max(1000), constraints: z.string().max(1000) }).strict().optional(),
   confirmedPreference: PreferenceSchema,
   expectedMemberRevision: z.number().int().min(0),
   noodleDraft: z.string().length(64).optional(),
@@ -234,7 +235,11 @@ export type SessionView = Versions & {
   expectedSize: number;
   membershipOpen: boolean;
   members: MemberView[];
-  me: (MemberView & { preference: Preference | null }) | null;
+  me: (MemberView & {
+    preference: Preference | null;
+    answers?: { craving: string; constraints: string };
+    media?: Partial<Record<"image" | "voice", string>>;
+  }) | null;
   isHost: boolean;
   ranking: Ranking | null;
   acceptances: Acceptance[];

@@ -10,6 +10,12 @@ let deleted = 0,
 for (const { id } of ids) {
   await transact(id, (s) => {
     if (!s) throw new Error("Session disappeared during cleanup");
+    for (const member of s.members) {
+      for (const kind of ["image", "voice"] as const) {
+        const media = member.media?.[kind];
+        if (media && Date.parse(media.expiresAt) <= Date.now()) delete member.media![kind];
+      }
+    }
     for (const i of s.inputs)
       if (
         i.imageDataUrl &&

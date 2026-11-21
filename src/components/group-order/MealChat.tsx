@@ -57,11 +57,13 @@ export default function MealChat({
             <b>
               CraveLoop <small>ผู้ช่วยจำลอง</small>
             </b>
-            <p>
-              สวัสดีทุกคน 👋 มื้อนี้อยากกินอะไรกันบ้าง? กดปุ่มด้านล่างเพื่อบอกของที่อยากกิน งบ และของที่แพ้
-              เมื่อทุกคนยืนยันแล้ว CraveLoop จะช่วยหาร้านให้เลย
-            </p>
-            {tools}
+            <div className="chat-welcome-bubble">
+              <p>
+                สวัสดีทุกคน 👋 มื้อนี้อยากกินอะไรกันบ้าง? กดปุ่มด้านล่างเพื่อบอกของที่อยากกิน งบ และของที่แพ้
+                เมื่อทุกคนยืนยันแล้ว CraveLoop จะช่วยหาร้านให้เลย
+              </p>
+              {tools}
+            </div>
           </article>
           {session.messages?.map((m) => (
             <article

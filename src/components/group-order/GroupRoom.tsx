@@ -10,6 +10,7 @@ import type { ChatDraft } from "@/contracts/chat";
 import { api, requestId, RequestError } from "../api";
 import { baht, DeliveryBrand, ConceptNotice, CraveMark } from "./Shared";
 import Preferences from "./Preferences";
+import ChatPreferences from "./ChatPreferences";
 import Configure from "./Configure";
 import "./group-order.css";
 const reasons: Record<string, string> = {
@@ -317,11 +318,12 @@ export default function GroupRoom({
       )}
     </section>
   );
+  const PreferenceDialog = s.chatJourney ? ChatPreferences : Preferences;
   const drawers = (
     <>
       {" "}
       {form && canEdit && (
-        <Preferences
+        <PreferenceDialog
           draft={draft}
           session={s}
           onClose={() => setForm(false)}

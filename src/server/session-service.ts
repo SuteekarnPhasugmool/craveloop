@@ -35,6 +35,7 @@ import { rankRestaurants } from "@/domain/ranking";
 import { aiStatus, extractPreferences } from "@/adapters/openai";
 import { env } from "./env";
 import { AppError, assert } from "./errors";
+import type { MediaChanges } from "./preference-media";
 import { hash, derive, stableId, matches } from "./auth";
 import { transact, readSession } from "./database";
 import type { StoredSession, StoredMember, StoredInput } from "./state";
@@ -270,7 +271,13 @@ export function view(s: StoredSession, token?: string): SessionView {
     expectedSize: s.expectedSize,
     membershipOpen: s.membershipOpen,
     members: s.members.map(memberView),
-    me: me ? { ...memberView(me), preference: me.preference } : null,
+    me: me ? {
+      ...memberView(me), preference: me.preference,
+      ...(me.answers && { answers: me.answers }),
+      ...(me.media && { media: Object.fromEntries(Object.entries(me.media)
+        .filter(([, file]) => Date.parse(file.expiresAt) > Date.now())
+        .map(([kind, file]) => [kind, file.id])) }),
+    } : null,
     ...(me && currentRanking && !stale
       ? {
           ingredientProofs: [
@@ -576,16 +583,25 @@ export async function previewNoodles(
       : [],
   };
 }
+export async function getPreferenceMedia(id: string, kind: "image" | "voice", c: Context) {
+  const session = await readSession(id);
+  requireSession(session);
+  const media = actor(session, c).media?.[kind];
+  assert(media && Date.parse(media.expiresAt) > Date.now(), 404, "MEDIA_NOT_FOUND", "ไม่พบไฟล์แนบ");
+  return media;
+}
 export async function mutateRoom(
   id: string,
   action: "confirm" | "patch" | "rank" | "accept" | "withdraw" | "finalize",
   body: unknown,
   c: Context,
+  mediaChanges?: MediaChanges,
 ) {
   return transact(id, (s) => {
     requireSession(s);
     const m = actor(s, c, ["patch", "rank", "finalize"].includes(action));
-    const result = cached(s, m.id, c.key, { action, body }, () => {
+    const mediaIds = mediaChanges && Object.fromEntries(Object.entries(mediaChanges).map(([kind, media]) => [kind, media?.id ?? null]));
+    const result = cached(s, m.id, c.key, { action, body, mediaIds }, () => {
       const b = (
         action === "confirm"
           ? ConfirmSchema
@@ -673,6 +689,19 @@ export async function mutateRoom(
         const replan = s.rankings.length > 0 && !s.membershipOpen;
         const previewStarted = s.preliminaryRestaurants !== undefined;
         m.preference = p.confirmedPreference;
+        if (p.answers || mediaChanges) {
+          assert(s.chatJourney, 422, "CHAT_REQUIRED", "ใช้ไฟล์แนบและคำตอบในห้องแชต");
+          if (p.answers) m.answers = p.answers;
+          if (mediaChanges) {
+            const expiresAt = new Date(Math.min(Date.parse(s.expiresAt), Date.now() + env().UPLOAD_TTL_MINUTES * 60000)).toISOString();
+            m.media ??= {};
+            for (const kind of ["image", "voice"] as const) {
+              const media = mediaChanges[kind];
+              if (media === null) delete m.media[kind];
+              else if (media) m.media[kind] = { ...media, expiresAt };
+            }
+          }
+        } else delete m.answers;
         delete m.router;
         m.confirmed = true;
         m.revision++;

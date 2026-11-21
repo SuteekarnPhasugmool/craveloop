@@ -137,7 +137,7 @@
   font-weight: 400;
   margin-left: 4px;
 }
-.conversation-log article p {
+.conversation-log article p, .chat-welcome-bubble {
   padding: 10px 13px;
   border-radius: 4px 16px 16px 16px;
   background: white;
@@ -147,6 +147,12 @@
   box-shadow: 0 1px 2px #33221110;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
+}
+.conversation-log .chat-welcome-bubble > p {
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+  background: transparent;
 }
 .conversation-log article.mine {
   align-self: flex-end;
@@ -226,14 +232,26 @@
 .chat-pref h2 { font-size: 20px; margin: 0; }
 .chat-pref header button { width: 36px; height: 36px; border-radius: 50%; background: #f4eee7; font-size: 20px; }
 .chat-pref-body { overflow: auto; overscroll-behavior: contain; padding: 0 18px 8px; }
-.chat-pref fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
-.chat-pref label, .chat-pref legend, .chat-pref summary { display: block; font-size: 13px; font-weight: 600; margin: 8px 0 4px; }
-.chat-pref summary { display: list-item; cursor: pointer; }
-.chat-pref label input { width: 100%; min-width: 0; font-size: 16px; border: 1px solid #d6cdc4; border-radius: 9px; padding: 6px 10px; margin-top: 3px; background: white; }
-.chat-pref-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chat-pref-chips button { padding: 5px 14px; border-radius: 20px; border: 1px solid #ddd1c7; background: white; }
-.chat-pref-chips button[aria-pressed="true"] { background: #ffebdf; color: #91300e; border-color: #bc5228; }
-.chat-pref-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.chat-pref section + section { margin-top: 12px; }
+.chat-pref section label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: 650; }
+.chat-pref textarea {
+  display: block; width: 100%; resize: vertical; min-height: 60px; max-height: 145px;
+  border: 1px solid #d6cdc4; border-radius: 12px; padding: 9px 12px;
+  font: inherit; font-size: 16px; line-height: 1.45; background: white; color: #392f29;
+}
+.chat-pref textarea::placeholder { color: #837e79; opacity: 1; }
+.chat-pref textarea:focus-visible { outline: 2px solid #c85026; outline-offset: 1px; }
+.pref-media-buttons, .pref-media-preview { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.pref-media-buttons button, .pref-media-preview button {
+  border: 1px solid #e5d8cf; background: #fff; border-radius: 12px; color: #893c23;
+  padding: 7px 11px; font-size: 13px; font-weight: 600;
+}
+.pref-media-buttons button { display: inline-flex; align-items: center; gap: 6px; min-height: 38px; }
+.pref-media-buttons svg { width: 17px; height: 17px; }
+.pref-media-buttons .is-recording { background: #ffebe2; }
+.pref-media-preview img { width: 76px; height: 64px; object-fit: cover; border-radius: 9px; }
+.pref-media-preview audio { width: 0; flex: 1; height: 36px; }
+.pref-media-note { display: block; margin-top: 8px; font-size: 12px; color: #706860; }
 .chat-pref footer { border-top: 1px solid #ebe4dc; }
 .chat-pref footer button { width: 100%; }
 .chat-tools button,
