@@ -27,6 +27,8 @@ const strings = z
   .transform((v) => [...new Set(v.map((s) => s.toLowerCase()))]);
 export const PreferenceSchema = z
   .object({
+    foodBase: z.enum(["rice", "noodles"]).optional(),
+    servingStyle: z.enum(["soup", "dry"]).optional(),
     noodle: z.enum(["any", "broth", "stir_fried"]).optional(),
     desiredDish: z.string().trim().min(1).max(120).optional(),
     cuisinePreferences: z.array(z.enum(cuisineTags)).max(7),
@@ -83,7 +85,15 @@ export const JoinSchema = z
     clientJoinId: z.string().uuid(),
   })
   .strict();
+export const SocialLinkSchema = z.string().trim().max(8192).pipe(z.url({ protocol: /^https?$/ }));
+const PrivateAnswersSchema = z.object({
+  craving: z.string().max(1000),
+  constraints: z.string().max(1000),
+  socialLink: SocialLinkSchema.optional(),
+}).strict();
+export type PrivateAnswers = z.infer<typeof PrivateAnswersSchema>;
 export const ConfirmSchema = VersionSchema.extend({
+  answers: PrivateAnswersSchema.optional(),
   confirmedPreference: PreferenceSchema,
   expectedMemberRevision: z.number().int().min(0),
   noodleDraft: z.string().length(64).optional(),
@@ -97,7 +107,7 @@ export const PatchSchema = VersionSchema.extend({
   action: z.literal("reopen").optional(),
   removeMemberId: z.string().uuid().optional(),
 }).strict();
-export const RankSchema = VersionSchema.strict();
+export const RankSchema = VersionSchema.extend({ confirmedOnly: z.literal(true).optional() }).strict();
 export const ChoiceSchema = VersionSchema.extend({
   rankingId: z.string().uuid(),
   restaurantId: z.string().min(1).max(80),
@@ -211,6 +221,7 @@ export type MemberView = {
   revision: number;
 };
 export type SessionView = Versions & {
+  preliminaryRestaurants?: string[];
   chatJourney?: boolean;
   messages?: import("./chat").ChatMessage[];
   menuChoices?: Record<string, string>;
@@ -231,7 +242,11 @@ export type SessionView = Versions & {
   expectedSize: number;
   membershipOpen: boolean;
   members: MemberView[];
-  me: (MemberView & { preference: Preference | null }) | null;
+  me: (MemberView & {
+    preference: Preference | null;
+    answers?: PrivateAnswers;
+    media?: Partial<Record<"image" | "voice", string>>;
+  }) | null;
   isHost: boolean;
   ranking: Ranking | null;
   acceptances: Acceptance[];

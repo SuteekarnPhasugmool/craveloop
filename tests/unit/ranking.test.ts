@@ -279,6 +279,22 @@ describe("fit and fairness", () => {
   it("empty requests produce neutral50 and no NaN", () => {
     expect(menuFit(pref(), menu()).score).toBe(50);
   });
+  it("scores the chat food and serving keywords and soft ingredient dislikes", () => {
+    const rice = menu({ ingredients: ["rice", "chicken"], textureTags: [] });
+    const noodles = menu({
+      ingredients: ["wheat"],
+      noodleStyle: "broth",
+      textureTags: ["brothy"],
+    });
+    const dryRice = pref({ foodBase: "rice", servingStyle: "dry" });
+    expect(menuFit(dryRice, rice).score).toBe(100);
+    expect(menuFit(dryRice, noodles).score).toBe(0);
+    expect(
+      menuFit(pref({ foodBase: "noodles", servingStyle: "soup" }), noodles)
+        .score,
+    ).toBe(100);
+    expect(menuFit({ ...dryRice, dislikes: ["ไก่"] }, rice).score).toBe(80);
+  });
   it("renormalizes only requested families and does not credit unknown tags", () => {
     expect(
       menuFit(pref({ textureTags: ["crispy", "brothy"] }), menu()).score,

@@ -35,6 +35,7 @@ import { rankRestaurants } from "@/domain/ranking";
 import { aiStatus, extractPreferences } from "@/adapters/openai";
 import { env } from "./env";
 import { AppError, assert } from "./errors";
+import type { MediaChanges } from "./preference-media";
 import { hash, derive, stableId, matches } from "./auth";
 import { transact, readSession } from "./database";
 import type { StoredSession, StoredMember, StoredInput } from "./state";
@@ -90,6 +91,7 @@ export function event(
   });
 }
 export function invalidate(s: StoredSession, reason: string) {
+  delete s.preliminaryRestaurants;
   delete s.menuChoices;
   if (s.handoff) s.handoff.status = "invalidated";
   s.currentRankingId = null;
@@ -106,14 +108,14 @@ export function editable(s: StoredSession) {
     "Host must reopen the room before changes.",
   );
 }
-function snapshot(s: StoredSession) {
+function snapshot(s: StoredSession, participants = mealMembers(s)) {
   return {
     preferenceVersion: s.preferenceVersion,
     rosterVersion: s.rosterVersion,
     areaId: s.areaId,
     mode: s.mode,
     catalogVersion: CATALOG_VERSION,
-    members: mealMembers(s).map((m) => ({
+    members: participants.map((m) => ({
       id: m.id,
       preference: m.preference!,
     })),
@@ -149,7 +151,8 @@ function computeRanking(
   s.rankings.push(ranking);
   s.currentRankingId = ranking.id;
   s.acceptances = [];
-  s.membershipOpen = false;
+  // Auto-search can happen before an invited friend has opened the link.
+  if (!s.chatJourney) s.membershipOpen = false;
   s.status = "voting";
   s.runs.push({
     id: randomUUID(),
@@ -167,6 +170,16 @@ function computeRanking(
     status: result.status,
   });
   return ranking;
+}
+export function rankReadyChatMeal(s: StoredSession) {
+  if (s.chatJourney && s.status === "collecting" && mealReady(s)) computeRanking(s);
+}
+function previewConfirmedRestaurants(s: StoredSession) {
+  const confirmed = mealMembers(s).filter(member =>
+    member.confirmed && member.preference && s.chat?.meal?.joinedMemberIds.includes(member.id)
+  );
+  assert(confirmed.length > 0, 422, "NO_CONFIRMED_MEMBERS", "รออย่างน้อยหนึ่งคนยืนยันก่อนค้นหา");
+  s.preliminaryRestaurants = rankRestaurants(snapshot(s, confirmed), catalog).options.map(o => o.restaurantName);
 }
 export function view(s: StoredSession, token?: string): SessionView {
   const me = s.members.find((m) => m.active && matches(token, m.tokenHash));
@@ -233,6 +246,7 @@ export function view(s: StoredSession, token?: string): SessionView {
           ...(me
             ? {
                 messages: s.chat?.messages,
+                preliminaryRestaurants: s.preliminaryRestaurants,
                 menuChoices: s.menuChoices ?? {},
                 dishes: visibleRanking?.options
                   .filter((o) => o.restaurantId === s.finalizedOptionId)
@@ -257,7 +271,13 @@ export function view(s: StoredSession, token?: string): SessionView {
     expectedSize: s.expectedSize,
     membershipOpen: s.membershipOpen,
     members: s.members.map(memberView),
-    me: me ? { ...memberView(me), preference: me.preference } : null,
+    me: me ? {
+      ...memberView(me), preference: me.preference,
+      ...(me.answers && { answers: me.answers }),
+      ...(me.media && { media: Object.fromEntries(Object.entries(me.media)
+        .filter(([, file]) => Date.parse(file.expiresAt) > Date.now())
+        .map(([kind, file]) => [kind, file.id])) }),
+    } : null,
     ...(me && currentRanking && !stale
       ? {
           ingredientProofs: [
@@ -441,7 +461,7 @@ export async function joinRoom(id: string, body: unknown, c: Context) {
         "This browser has already joined the room.",
       );
       assert(
-        s.membershipOpen && s.status === "collecting",
+        s.membershipOpen && (s.status === "collecting" || (s.chatJourney && s.status === "voting")),
         409,
         "MEMBERSHIP_CLOSED",
         "Host must reopen before a new member joins.",
@@ -563,16 +583,25 @@ export async function previewNoodles(
       : [],
   };
 }
+export async function getPreferenceMedia(id: string, kind: "image" | "voice", c: Context) {
+  const session = await readSession(id);
+  requireSession(session);
+  const media = actor(session, c).media?.[kind];
+  assert(media && Date.parse(media.expiresAt) > Date.now(), 404, "MEDIA_NOT_FOUND", "ไม่พบไฟล์แนบ");
+  return media;
+}
 export async function mutateRoom(
   id: string,
   action: "confirm" | "patch" | "rank" | "accept" | "withdraw" | "finalize",
   body: unknown,
   c: Context,
+  mediaChanges?: MediaChanges,
 ) {
   return transact(id, (s) => {
     requireSession(s);
     const m = actor(s, c, ["patch", "rank", "finalize"].includes(action));
-    const result = cached(s, m.id, c.key, { action, body }, () => {
+    const mediaIds = mediaChanges && Object.fromEntries(Object.entries(mediaChanges).map(([kind, media]) => [kind, media?.id ?? null]));
+    const result = cached(s, m.id, c.key, { action, body, mediaIds }, () => {
       const b = (
         action === "confirm"
           ? ConfirmSchema
@@ -658,7 +687,21 @@ export async function mutateRoom(
         }
         const previousRankingId = s.currentRankingId;
         const replan = s.rankings.length > 0 && !s.membershipOpen;
+        const previewStarted = s.preliminaryRestaurants !== undefined;
         m.preference = p.confirmedPreference;
+        if (p.answers || mediaChanges) {
+          assert(s.chatJourney, 422, "CHAT_REQUIRED", "ใช้ไฟล์แนบและคำตอบในห้องแชต");
+          if (p.answers) m.answers = p.answers;
+          if (mediaChanges) {
+            const expiresAt = new Date(Math.min(Date.parse(s.expiresAt), Date.now() + env().UPLOAD_TTL_MINUTES * 60000)).toISOString();
+            m.media ??= {};
+            for (const kind of ["image", "voice"] as const) {
+              const media = mediaChanges[kind];
+              if (media === null) delete m.media[kind];
+              else if (media) m.media[kind] = { ...media, expiresAt };
+            }
+          }
+        } else delete m.answers;
         delete m.router;
         m.confirmed = true;
         m.revision++;
@@ -671,7 +714,8 @@ export async function mutateRoom(
           memberId: m.id,
           revision: m.revision,
         });
-        if (replan && mealReady(s)) computeRanking(s, previousRankingId);
+        if ((s.chatJourney || replan) && mealReady(s)) computeRanking(s, previousRankingId);
+        else if (previewStarted) previewConfirmedRestaurants(s);
       } else if (action === "patch") {
         const p = PatchSchema.parse(body);
         assert(
@@ -737,10 +781,20 @@ export async function mutateRoom(
               : "Room constraints changed. Results and acceptances cleared.",
         );
         event(s, "room_changed", { mode: s.mode, action: p.action ?? "edit" });
-        if (auto && mealReady(s)) computeRanking(s, previousRankingId);
+        if ((auto || s.chatJourney) && mealReady(s)) computeRanking(s, previousRankingId);
       } else if (action === "rank") {
         editable(s);
-        computeRanking(s);
+        if (RankSchema.parse(body).confirmedOnly) {
+          assert(
+            s.chatJourney && !mealReady(s),
+            409,
+            "PREVIEW_UNAVAILABLE",
+            "ใช้การค้นหาเบื้องต้นระหว่างรอสมาชิกยืนยัน",
+          );
+          previewConfirmedRestaurants(s);
+        } else {
+          computeRanking(s);
+        }
       } else {
         const p = ChoiceSchema.parse(body);
         const ranking = s.rankings.find((r) => r.id === s.currentRankingId);
@@ -768,6 +822,7 @@ export async function mutateRoom(
         );
         if (action !== "finalize") assertMealParticipant(s, m.id);
         if (action === "accept") {
+          if (s.chatJourney) s.membershipOpen = false;
           s.acceptances = s.acceptances.filter((a) => a.memberId !== m.id);
           s.acceptances.push({
             memberId: m.id,

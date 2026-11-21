@@ -3,12 +3,15 @@ import type { RoutedDraft } from "@/contracts/router";
 import type { CartHandoff } from "@/contracts/group-order";
 import type {
   Preference,
+  PrivateAnswers,
   PreferenceDraft,
   Ranking,
   Acceptance,
   Mode,
 } from "@/contracts";
 export type StoredMember = {
+  answers?: PrivateAnswers;
+  media?: Partial<Record<"image" | "voice", StoredMedia>>;
   router?: {
     id: string;
     revision: number;
@@ -27,6 +30,7 @@ export type StoredMember = {
   preference: Preference | null;
   createdAt: string;
 };
+export type StoredMedia = { data: string; mime: string; id: string; expiresAt: string };
 export type StoredInput = {
   id: string;
   memberId: string;
@@ -41,6 +45,7 @@ export type StoredInput = {
   draft?: PreferenceDraft;
 };
 export type StoredSession = {
+  preliminaryRestaurants?: string[];
   chatJourney?: boolean;
   menuChoices?: Record<string, string>;
   experience?: "group_order";

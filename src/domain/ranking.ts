@@ -9,9 +9,9 @@ import {
   type Restaurant,
 } from "../contracts";
 import { allocateFee, deliveryFee } from "./costs";
-import { checkMenu } from "./feasibility";
+import { checkMenu, normalizeIngredientId } from "./feasibility";
 
-export const ALGORITHM_VERSION = "fit-60-40-v3";
+export const ALGORITHM_VERSION = "fit-60-40-v4";
 export function groupScores(scores: number[]) {
   if (
     scores.length === 0 ||
@@ -36,7 +36,12 @@ export function menuFit(
     [preference.flavorTags, menu.flavorTags, 0.3],
     [preference.textureTags, menu.textureTags, 0.2],
   ];
-  if (preference.noodle) {
+  if (preference.foodBase) {
+    const bases = [];
+    if (menu.noodleStyle) bases.push("noodles");
+    if (menu.ingredients.includes("rice") && !menu.noodleStyle) bases.push("rice");
+    families.push([[preference.foodBase], bases, 0.5]);
+  } else if (preference.noodle) {
     const requested =
       preference.noodle === "any" ? ["noodle"] : ["noodle", preference.noodle];
     families.push([
@@ -44,6 +49,10 @@ export function menuFit(
       menu.noodleStyle ? ["noodle", menu.noodleStyle] : [],
       0.5,
     ]);
+  }
+  if (preference.servingStyle) {
+    const soup = menu.noodleStyle === "broth" || menu.textureTags.includes("brothy");
+    families.push([[preference.servingStyle], [soup ? "soup" : "dry"], 0.3]);
   }
   if (preference.desiredDish) {
     families.push([[preference.desiredDish], [menu.name], 0.5]);
@@ -60,12 +69,13 @@ export function menuFit(
     weight += familyWeight;
   }
   const allTags = new Set([
+    ...menu.ingredients,
     ...menu.cuisineTags,
     ...menu.flavorTags,
     ...menu.textureTags,
   ]);
   const disliked = [...new Set(preference.dislikes)].filter((tag) =>
-    allTags.has(tag),
+    allTags.has(normalizeIngredientId(tag)),
   ).length;
   const base = weight === 0 ? 50 : (weighted / weight) * 100;
   return {

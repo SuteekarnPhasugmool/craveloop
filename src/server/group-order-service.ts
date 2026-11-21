@@ -16,6 +16,7 @@ import {
   cached,
   view,
   invalidate,
+  rankReadyChatMeal,
   event,
   editable,
   type Context,
@@ -92,6 +93,7 @@ export async function postMeal(id: string, body: unknown, c: Context) {
           selectedMemberIds: b.selectedMemberIds,
         });
       }
+      rankReadyChatMeal(s);
       return { applied: true };
     });
     return { session: s, result: view(s, c.token) };

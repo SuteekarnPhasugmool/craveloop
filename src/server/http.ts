@@ -9,7 +9,7 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { randomUUID } from "node:crypto";
-import sharp from "sharp";
+import { decodeImage, readMediaChanges } from "./preference-media";
 import { cookieName, hash } from "./auth";
 import { AppError, assert } from "./errors";
 import { env } from "./env";
@@ -17,6 +17,7 @@ import {
   createRoom,
   joinRoom,
   getRoom,
+  getPreferenceMedia,
   previewNoodles,
   mutateRoom,
   saveInput,
@@ -150,6 +151,21 @@ export async function handle(req: NextRequest, path: string[] = []) {
     const route = path.slice(1).join("/");
     if (!route && req.method === "GET") {
       data = await getRoom(id, ctx.token);
+    } else if (route === "preferences/me" && req.method === "PUT" && req.headers.get("content-type")?.startsWith("multipart/form-data")) {
+      let form: FormData;
+      let confirmation: unknown;
+      try {
+        form = await req.formData();
+        confirmation = JSON.parse(String(form.get("confirmation")));
+      } catch {
+        throw new AppError(400, "INVALID_FORM", "อ่านคำตอบไม่สำเร็จ กรุณาลองอีกครั้ง");
+      }
+      data = await mutateRoom(id, "confirm", confirmation, ctx, await readMediaChanges(form));
+    } else if (req.method === "GET" && (route === "preferences/me/media/image" || route === "preferences/me/media/voice")) {
+      const media = await getPreferenceMedia(id, route.endsWith("/image") ? "image" : "voice", ctx);
+      return new NextResponse(new Uint8Array(Buffer.from(media.data, "base64")), { headers: {
+        "Content-Type": media.mime, "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff",
+      } });
     } else if (route === "preferences/me/noodles" && req.method === "POST") {
       data = await previewNoodles(id, await json(req), ctx);
     } else if (route === "preferences/me/router" && req.method === "POST") {
@@ -199,41 +215,8 @@ export async function handle(req: NextRequest, path: string[] = []) {
       let imageDataUrl: string | undefined;
       const file = form.get("image");
       if (file instanceof File) {
-        assert(
-          ["image/jpeg", "image/png", "image/webp"].includes(file.type) &&
-            file.size > 0 &&
-            file.size <= 5 * 1024 * 1024,
-          422,
-          "INVALID_IMAGE",
-          "Upload a JPEG, PNG or WebP up to 5 MB.",
-        );
-        try {
-          const bytes = Buffer.from(await file.arrayBuffer());
-          const image = sharp(bytes, {
-            limitInputPixels: 1600 * 1600,
-            animated: false,
-          });
-          const meta = await image.metadata();
-          assert(
-            meta.width &&
-              meta.height &&
-              Math.max(meta.width, meta.height) <= 1600 &&
-              ["jpeg", "png", "webp"].includes(meta.format ?? "") &&
-              (!meta.pages || meta.pages === 1),
-            422,
-            "INVALID_IMAGE",
-            "Image must be a single frame up to 1600 pixels.",
-          );
-          const decoded = await image.rotate().webp().toBuffer();
-          imageDataUrl = `data:image/webp;base64,${decoded.toString("base64")}`;
-        } catch (e) {
-          if (e instanceof AppError) throw e;
-          throw new AppError(
-            422,
-            "INVALID_IMAGE",
-            "Image could not be decoded. Use a smaller JPEG, PNG or WebP.",
-          );
-        }
+        const decoded = await decodeImage(file);
+        imageDataUrl = `data:image/webp;base64,${decoded.toString("base64")}`;
       }
       assert(
         kind === "text" || imageDataUrl,

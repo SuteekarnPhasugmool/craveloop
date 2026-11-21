@@ -12,26 +12,7 @@ import {
 } from "@/contracts";
 import { api, RequestError } from "../api";
 import { CraveMark } from "./Shared";
-const names: Record<string, string> = {
-  thai: "ไทย",
-  japanese: "ญี่ปุ่น",
-  korean: "เกาหลี",
-  chinese: "จีน",
-  western: "ตะวันตก",
-  indian: "อินเดีย",
-  other: "อื่น ๆ",
-  spicy: "เผ็ด",
-  savory: "กลมกล่อม",
-  sweet: "หวาน",
-  sour: "เปรี้ยว",
-  mild: "รสอ่อน",
-  crispy: "กรอบ",
-  brothy: "น้ำซุป",
-  grilled: "ย่าง",
-  creamy: "ครีม",
-  fresh: "สด",
-  chewy: "เส้นหนึบ",
-};
+import { names } from "@/domain/preference-answers";
 const split = (v: string) => [
   ...new Set(
     v
@@ -78,7 +59,7 @@ export default function Preferences({
     excludedIngredients: split(excluded),
     dietaryRequirements: split(diet),
     allergies: split(allergies),
-    dislikes: split(dislikes),
+    dislikes: split(dislikes).map(value => Object.keys(names).find(tag => names[tag] === value) ?? value),
   };
   const request = {
     expectedMemberRevision: revision,

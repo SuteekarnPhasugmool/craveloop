@@ -1,10 +1,15 @@
 import { test, expect } from "@playwright/test";
+test.use({
+  permissions: ["microphone"],
+  launchOptions: { args: ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"] },
+});
 
 test("shared chat, personal menu choices and checkout survive refresh", async ({
   browser,
   page,
   baseURL,
 }) => {
+  const socialLink = "https://www.instagram.com/reel/demo-food/";
   const guest = await browser.newPage({
     baseURL,
     viewport: { width: 390, height: 844 },
@@ -18,7 +23,9 @@ test("shared chat, personal menu choices and checkout survive refresh", async ({
       .click();
     const invite = page.getByRole("dialog", { name: "แชร์ห้องแชต" });
     await expect(page).toHaveURL(new URL("/", baseURL!).href);
-    const url = await invite.getByLabel("ลิงก์ห้องแชต").inputValue();
+    const inviteUrl = new URL(await invite.getByLabel("ลิงก์ห้องแชต").inputValue());
+    // Loopback-only test servers cannot listen on the advertised LAN interface.
+    const url = new URL(inviteUrl.pathname, baseURL).href;
     await invite.getByRole("button", { name: "เข้าห้องแชต" }).click();
     await expect(page.getByLabel("ข้อความถึงกลุ่ม")).toBeInViewport();
     await expect(
@@ -29,23 +36,67 @@ test("shared chat, personal menu choices and checkout survive refresh", async ({
     await guest.getByRole("button", { name: "เข้าร่วม Group Order" }).click();
     for (const member of [page, guest]) {
       await member.bringToFront();
-      await member.getByLabel("ข้อความถึงกลุ่ม").fill("อยากกินกรอบ ๆ งบ 200 บาท");
-      await member.getByRole("button", { name: "ส่ง", exact: true }).click();
+      if (member === page) {
+        await page.locator(".chat-welcome-bubble").getByRole("button", { name: "กรอกความต้องการของฉัน" }).click();
+      } else {
+        await member.getByLabel("ข้อความถึงกลุ่ม").fill("อยากกินกรอบ ๆ งบ 200 บาท");
+        await member.getByRole("button", { name: "ส่ง", exact: true }).click();
+      }
       const dialog = member.getByRole("dialog", { name: "ความต้องการของฉัน" });
-      await expect(dialog.getByLabel("งบสูงสุด (บาท)")).toHaveValue("200");
-      await dialog.getByRole("checkbox").last().check();
+      await expect(dialog.getByRole("button", { name: "ยืนยันความต้องการ" })).toBeInViewport();
+      if (member === page) {
+        for (const name of ["อยากกินอะไร", "ข้อจำกัด"]) {
+          await expect(dialog.getByRole("textbox", { name })).toHaveCSS("resize", "none");
+        }
+        await dialog.getByRole("button", { name: "แนบลิงก์วิดีโอ" }).click();
+        await dialog.getByLabel("ลิงก์วิดีโอ").fill("https://www.tiktok.com/@demo/video/123");
+        await dialog.getByLabel("ลิงก์วิดีโอ").fill(socialLink);
+        await dialog.getByRole("textbox", { name: "อยากกินอะไร" }).fill("ข้าว แห้ง");
+        await dialog.getByRole("textbox", { name: "ข้อจำกัด" }).fill("200 บาท");
+        await dialog.getByLabel("เลือกรูปประกอบ").setInputFiles("tests/fixtures/crispy.png");
+        await expect(dialog.getByAltText("รูปประกอบความต้องการ")).toBeVisible();
+        await dialog.getByRole("button", { name: "อัดข้อความเสียง" }).click();
+        await expect(dialog.getByRole("status")).toContainText("กำลังอัดเสียง");
+        await page.waitForTimeout(450); // Capture a short sample from Chromium's fake microphone.
+        await dialog.getByRole("button", { name: "หยุดอัดเสียง" }).click();
+        await expect(dialog.getByLabel("ฟังข้อความเสียง")).toBeVisible();
+      }
+      await expect(dialog.getByRole("textbox", { name: "ข้อจำกัด" })).toHaveValue("200 บาท");
       await dialog
         .getByRole("button", { name: "ยืนยันความต้องการ", exact: true })
         .click();
       await expect(dialog).toHaveCount(0);
+      if (member === page) {
+        await page.reload();
+        await page.getByRole("button", { name: "แก้ความต้องการของฉัน" }).click();
+        await expect(dialog.getByRole("textbox", { name: "อยากกินอะไร" })).toHaveValue("ข้าว แห้ง");
+        await expect(dialog.getByLabel("ลิงก์วิดีโอ")).toHaveValue(socialLink);
+        await expect(dialog.getByRole("link", { name: "เปิดลิงก์" })).toHaveAttribute("href", socialLink);
+        await expect.poll(() => dialog.getByAltText("รูปประกอบความต้องการ").evaluate(el => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+        await expect.poll(() => dialog.getByLabel("ฟังข้อความเสียง").evaluate(el => (el as HTMLAudioElement).readyState)).toBeGreaterThan(0);
+        const mediaUrl = await dialog.getByLabel("ฟังข้อความเสียง").getAttribute("src");
+        expect((await guest.request.get(mediaUrl!)).status()).toBe(404);
+        await dialog.getByRole("button", { name: "ลบลิงก์" }).click();
+        await dialog.getByRole("button", { name: "ยืนยันความต้องการ" }).click();
+        await expect(dialog).toHaveCount(0);
+        await page.reload();
+        await page.getByRole("button", { name: "แก้ความต้องการของฉัน" }).click();
+        await expect(dialog.getByRole("button", { name: "แนบลิงก์วิดีโอ" })).toHaveAttribute("aria-expanded", "false");
+        await dialog.getByRole("button", { name: "ปิดความต้องการของฉัน" }).click();
+        await expect(page.getByText("ยืนยันแล้ว 1/2 คน", { exact: true })).toBeVisible();
+        await page.getByRole("button", { name: "ค้นหาจากคนที่ยืนยันแล้ว" }).click();
+        await expect(page.getByRole("region", { name: "ผลค้นหาเบื้องต้น" })).toBeVisible();
+        await expect(guest.getByRole("button", { name: "ค้นหาจากคนที่ยืนยันแล้ว" })).toHaveCount(0);
+      }
     }
     await page.bringToFront();
     await expect(
       page
         .getByRole("log")
         .getByText("อยากกินกรอบ ๆ งบ 200 บาท", { exact: true }),
-    ).toHaveCount(2);
-    await page.getByRole("button", { name: "ค้นหาร้านสำหรับกลุ่ม" }).click();
+    ).toHaveCount(1);
+    await expect(page.getByText("ยืนยันแล้ว 2/2 คน", { exact: true })).toBeVisible();
+    await expect(page.getByRole("region", { name: "ผลค้นหาเบื้องต้น" })).toHaveCount(0);
     for (const member of [page, guest]) {
       await member.bringToFront();
       await member.getByRole("button", { name: "ยอมรับร้านนี้" }).first().click();
