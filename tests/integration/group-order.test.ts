@@ -134,6 +134,40 @@ async function finalized() {
 }
 
 describe("synthetic Group Order handoff and checkout lifecycle", () => {
+  it("finalizes and checks out after PostgreSQL JSONB reorders snapshot keys", async () => {
+    const r = await ready();
+    const s = await ranked(r);
+    const c = choice(s);
+    for (const token of r.tokens)
+      await mutateRoom(r.id, "accept", c, ctx(token));
+    await transact(r.id, (stored) => {
+      const reorder = (value: unknown): unknown => {
+        if (Array.isArray(value)) return value.map(reorder);
+        if (value && typeof value === "object")
+          return Object.fromEntries(
+            Object.entries(value)
+              .reverse()
+              .map(([key, item]) => [key, reorder(item)]),
+          );
+        return value;
+      };
+      stored!.rankings = reorder(stored!.rankings) as NonNullable<
+        typeof stored
+      >["rankings"];
+      return { session: stored!, result: null };
+    });
+    await mutateRoom(r.id, "finalize", c, ctx(r.tokens[0]));
+    const cart = await postHandoff(r.id, c, ctx(r.tokens[0]));
+    expect(
+      (
+        await postCheckout(
+          r.id,
+          { ...c, handoffId: cart.handoff!.id },
+          ctx(r.tokens[0]),
+        )
+      ).handoff?.status,
+    ).toBe("checkout_summary");
+  });
   it("reuses one provider turn per key and requires its owner to review the latest draft", async () => {
     const r = await ready(),
       [owner, peer] = r.tokens;

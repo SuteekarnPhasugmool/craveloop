@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from "node:util";
 import {
   GRAPH_VERSION,
   describeIngredientPath,
@@ -789,7 +790,7 @@ export async function mutateRoom(
             (o) => o.restaurantId === p.restaurantId,
           )!;
           assert(
-            option && JSON.stringify(option) === JSON.stringify(original),
+            option && isDeepStrictEqual(option, original),
             409,
             "CATALOG_CHANGED",
             "Catalog evidence changed. Rank again before finalizing.",
