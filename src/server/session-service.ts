@@ -1,3 +1,12 @@
+import {
+  GRAPH_VERSION,
+  describeIngredientPath,
+} from "@/domain/ingredient-graph";
+import { simulateNoodleChoice } from "@/domain/guided-choice";
+import {
+  NoodlePreviewSchema,
+  type NoodlePreview,
+} from "@/contracts/group-order";
 import { rankingUpdate } from "@/domain/ranking-feedback";
 import { mealMembers, mealReady, assertMealParticipant } from "@/domain/meal";
 import { appendChatEvent } from "./chat-events";
@@ -13,11 +22,13 @@ import {
   type SessionView,
   type Versions,
   type Ranking,
+  type Preference,
 } from "@/contracts";
 import {
   catalog,
   CATALOG_VERSION,
   ALGORITHM_VERSION,
+  currentSnapshot,
 } from "@/adapters/catalog";
 import { rankRestaurants } from "@/domain/ranking";
 import { aiStatus, extractPreferences } from "@/adapters/openai";
@@ -125,6 +136,7 @@ function computeRanking(
     preferenceVersion: s.preferenceVersion,
     rosterVersion: s.rosterVersion,
     catalogVersion: CATALOG_VERSION,
+    graphVersion: GRAPH_VERSION,
     algorithmVersion: ALGORITHM_VERSION,
     createdAt: now(),
   };
@@ -165,14 +177,16 @@ export function view(s: StoredSession, token?: string): SessionView {
   });
   const rankingIndex = s.rankings.findIndex((r) => r.id === s.currentRankingId);
   const currentRanking = s.rankings[rankingIndex];
-  const visibleRanking = currentRanking
-    ? {
-        ...currentRanking,
-        update:
-          currentRanking.update ??
-          rankingUpdate(currentRanking, s.rankings[rankingIndex - 1] ?? null),
-      }
-    : null;
+  const stale = currentRanking && !currentSnapshot(currentRanking);
+  const visibleRanking =
+    currentRanking && !stale
+      ? {
+          ...currentRanking,
+          update:
+            currentRanking.update ??
+            rankingUpdate(currentRanking, s.rankings[rankingIndex - 1] ?? null),
+        }
+      : null;
   // Platform group summaries never need private hard-constraint proof records.
   // Keep the authoritative ranking unchanged for transactional revalidation.
   if (visibleRanking && s.experience === "group_order") {
@@ -202,11 +216,24 @@ export function view(s: StoredSession, token?: string): SessionView {
         }),
       ).values(),
     );
+  } else if (visibleRanking) {
+    visibleRanking.rejections = visibleRanking.rejections.map((r) =>
+      r.graphFacts && r.memberId !== me?.id
+        ? { code: "CONSTRAINT_NOT_MET", restaurantId: r.restaurantId }
+        : r,
+    );
   }
   return {
     id: s.id,
     ...(s.experience ? { experience: s.experience } : {}),
-    ...(s.handoff ? { handoff: s.handoff } : {}),
+    ...(s.handoff
+      ? {
+          handoff:
+            stale || !currentSnapshot(s.handoff)
+              ? { ...s.handoff, status: "invalidated" as const }
+              : s.handoff,
+        }
+      : {}),
     ...(s.chat?.meal ? { meal: s.chat.meal } : {}),
     areaId: s.areaId,
     mode: s.mode,
@@ -215,13 +242,29 @@ export function view(s: StoredSession, token?: string): SessionView {
     membershipOpen: s.membershipOpen,
     members: s.members.map(memberView),
     me: me ? { ...memberView(me), preference: me.preference } : null,
+    ...(me && currentRanking && !stale
+      ? {
+          ingredientProofs: [
+            ...new Set(
+              currentRanking.rejections.flatMap((r) => {
+                if (r.memberId !== me.id || !r.menuId || !r.graphFacts)
+                  return [];
+                const proof = describeIngredientPath(r.menuId, r.graphFacts);
+                return proof ? [proof] : [];
+              }),
+            ),
+          ],
+        }
+      : {}),
     isHost: matches(token, s.hostTokenHash),
     ranking: visibleRanking,
-    acceptances: s.acceptances,
+    acceptances: stale ? [] : s.acceptances,
     preferenceVersion: s.preferenceVersion,
     rosterVersion: s.rosterVersion,
-    finalizedOptionId: s.finalizedOptionId,
-    lastChange: s.lastChange,
+    finalizedOptionId: stale ? null : s.finalizedOptionId,
+    lastChange: stale
+      ? "ข้อมูลเมนู กราฟ หรือวิธีคำนวณเปลี่ยนแล้ว ผู้ดูแลต้องคำนวณใหม่ หากปิดมื้อแล้วให้เปิดมื้ออีกครั้ง"
+      : s.lastChange,
     ai: aiStatus(),
     expiresAt: s.expiresAt,
     dataOrigin: "synthetic",
@@ -424,6 +467,79 @@ export async function getRoom(id: string, token?: string) {
   requireSession(s);
   return view(s, token);
 }
+function noodleDraft(
+  s: StoredSession,
+  m: StoredMember,
+  preference: Preference,
+) {
+  return derive(
+    JSON.stringify([
+      "noodle-choice",
+      s.id,
+      m.id,
+      m.revision,
+      s.preferenceVersion,
+      s.rosterVersion,
+      s.currentRankingId,
+      CATALOG_VERSION,
+      ALGORITHM_VERSION,
+      GRAPH_VERSION,
+      preference,
+    ]),
+  );
+}
+
+export async function previewNoodles(
+  id: string,
+  body: unknown,
+  c: Context,
+): Promise<NoodlePreview> {
+  const b = NoodlePreviewSchema.parse(body);
+  const s = await readSession(id);
+  requireSession(s);
+  const m = actor(s, c);
+  assert(
+    s.experience === "group_order",
+    409,
+    "GROUP_ORDER_REQUIRED",
+    "Open a Group Order room.",
+  );
+  editable(s);
+  assertMealParticipant(s, m.id);
+  versions(s, b);
+  assert(
+    m.revision === b.expectedMemberRevision,
+    409,
+    "STALE_MEMBER_REVISION",
+    "Reopen your form.",
+  );
+  const roster = mealMembers(s);
+  if (
+    roster.some(
+      (peer) =>
+        peer.id !== m.id &&
+        (!peer.confirmed ||
+          !peer.preference ||
+          !s.chat?.meal?.joinedMemberIds.includes(peer.id)),
+    )
+  )
+    return { choices: [] };
+  const input = snapshot(s);
+  input.members = input.members.map((member) =>
+    member.id === m.id
+      ? { ...member, preference: b.confirmedPreference }
+      : member,
+  );
+  const result = simulateNoodleChoice(input, catalog, m.id);
+  return {
+    choices: result.changesResult
+      ? result.available.map((style) => ({
+          style,
+          draft: noodleDraft(s, m, { ...b.confirmedPreference, noodle: style }),
+        }))
+      : [],
+  };
+}
 export async function mutateRoom(
   id: string,
   action: "confirm" | "patch" | "rank" | "accept" | "withdraw" | "finalize",
@@ -454,6 +570,52 @@ export async function mutateRoom(
           "STALE_MEMBER_REVISION",
           "Your preferences changed. Refresh first.",
         );
+        const noodle = p.confirmedPreference.noodle;
+        if (p.routerDraftId) {
+          const draft = m.router;
+          assert(
+            draft?.result &&
+              draft.id === p.routerDraftId &&
+              draft.revision === m.revision &&
+              draft.preferenceVersion === s.preferenceVersion &&
+              draft.rosterVersion === s.rosterVersion,
+            409,
+            "STALE_DRAFT",
+            "Review your current private draft.",
+          );
+          assert(
+            !draft.result.questions.length || p.reviewedQuestions,
+            422,
+            "REVIEW_QUESTIONS",
+            "ตรวจคำถามเรื่องข้อจำกัดก่อนยืนยัน",
+          );
+        }
+        if (p.confirmedPreference.desiredDish) {
+          assert(
+            catalog.some((r) =>
+              r.menus.some(
+                (menu) => menu.name === p.confirmedPreference.desiredDish,
+              ),
+            ),
+            422,
+            "UNKNOWN_DISH",
+            "เลือกชื่อเมนูจาก catalog ปัจจุบัน",
+          );
+        }
+        if (
+          p.noodleDraft ||
+          (s.experience === "group_order" &&
+            noodle &&
+            noodle !== "any" &&
+            noodle !== m.preference?.noodle)
+        ) {
+          assert(
+            p.noodleDraft === noodleDraft(s, m, p.confirmedPreference),
+            409,
+            "STALE_NOODLE_DRAFT",
+            "Review the current choices in your own preference form.",
+          );
+        }
         if (p.draftId) {
           const input = s.inputs.find(
             (i) => i.memberId === m.id && i.draftId === p.draftId,
@@ -474,6 +636,7 @@ export async function mutateRoom(
         const previousRankingId = s.currentRankingId;
         const replan = s.rankings.length > 0 && !s.membershipOpen;
         m.preference = p.confirmedPreference;
+        delete m.router;
         m.confirmed = true;
         m.revision++;
         s.preferenceVersion++;
@@ -563,8 +726,7 @@ export async function mutateRoom(
             ranking.id === p.rankingId &&
             ranking.preferenceVersion === s.preferenceVersion &&
             ranking.rosterVersion === s.rosterVersion &&
-            ranking.catalogVersion === CATALOG_VERSION &&
-            ranking.algorithmVersion === ALGORITHM_VERSION,
+            currentSnapshot(ranking),
           409,
           "STALE_RANKING",
           "This ranking is no longer current.",

@@ -68,6 +68,7 @@ export function simulatedHandoff(
     preferenceVersion: ranking.preferenceVersion,
     rosterVersion: ranking.rosterVersion,
     catalogVersion: ranking.catalogVersion,
+    graphVersion: ranking.graphVersion,
     algorithmVersion: ranking.algorithmVersion,
     areaId: "bangkok_demo",
     items,

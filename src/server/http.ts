@@ -1,4 +1,5 @@
 import { getChat, postChat } from "./chat-service";
+import { routePrivateTurn } from "./preference-router";
 import { postMeal, postHandoff, postCheckout } from "./group-order-service";
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
@@ -11,6 +12,7 @@ import {
   createRoom,
   joinRoom,
   getRoom,
+  previewNoodles,
   mutateRoom,
   saveInput,
   extraction,
@@ -116,7 +118,7 @@ export async function handle(req: NextRequest, path: string[] = []) {
       );
       limit(
         `${id ?? "create"}:${req.cookies.get(cookieName(id ?? ""))?.value ?? req.headers.get("x-forwarded-for") ?? "local"}`,
-        path[1] === "extractions" ? 8 : 80,
+        path[1] === "extractions" || path[3] === "router" ? 8 : 80,
       );
     }
     if (mutation) req = await boundedRequest(req);
@@ -138,6 +140,10 @@ export async function handle(req: NextRequest, path: string[] = []) {
     const route = path.slice(1).join("/");
     if (!route && req.method === "GET") {
       data = await getRoom(id, ctx.token);
+    } else if (route === "preferences/me/noodles" && req.method === "POST") {
+      data = await previewNoodles(id, await json(req), ctx);
+    } else if (route === "preferences/me/router" && req.method === "POST") {
+      data = await routePrivateTurn(id, await json(req), ctx);
     } else if (route === "meal" && req.method === "POST") {
       data = await postMeal(id, await json(req), ctx);
     } else if (route === "handoff" && req.method === "POST") {

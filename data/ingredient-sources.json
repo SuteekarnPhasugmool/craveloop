@@ -1,0 +1,18 @@
+[
+  {
+    "url": "fixture://seed-v2/recipes/r03-m03", "scope": "recipe", "subject": "r03-m03",
+    "lines": ["Contains: กะปิสูตร X."]
+  },
+  {
+    "url": "fixture://seed-v2/products/paste-x", "scope": "product", "subject": "paste-x",
+    "lines": ["Contains: กุ้ง.", "May contain: ถั่วลิสง."]
+  },
+  {
+    "url": "fixture://seed-v2/recipes/r10-m01", "scope": "recipe", "subject": "r10-m01",
+    "lines": ["Contains: กะปิสูตร Y."]
+  },
+  {
+    "url": "fixture://seed-v2/products/paste-y", "scope": "product", "subject": "paste-y",
+    "lines": ["Contains: ถั่วเหลือง.", "May contain: งา."]
+  }
+]

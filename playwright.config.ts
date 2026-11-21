@@ -8,6 +8,7 @@ export default defineConfig({
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
     baseURL: "http://localhost:3000",
+    channel: process.env.PLAYWRIGHT_CHANNEL,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
@@ -18,7 +19,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run db:migrate && npm run seed && npm run dev",
+    command: `npm run db:migrate && npm run seed && npm run ${process.env.NODE_ENV === "production" ? "start" : "dev"}`,
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120000,

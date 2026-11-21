@@ -19,6 +19,10 @@ vi.mock("openai", async (importOriginal) => {
 });
 import OpenAI from "openai";
 import { aiStatus, extractPreferences } from "../../src/adapters/openai";
+import { routePreference } from "../../src/adapters/preference-router";
+import { emptyPreference } from "../../src/contracts";
+import { menuFit } from "../../src/domain/ranking";
+import { catalog } from "../../src/adapters/catalog";
 const draft = {
   cuisinePreferences: ["thai"],
   flavorTags: ["mild"],
@@ -50,6 +54,53 @@ beforeEach(() => {
   options.mockClear();
 });
 afterEach(() => vi.unstubAllEnvs());
+it("routes feedback in one call, grounds a named dish and preserves unmentioned fields", async () => {
+  const base = {
+    ...emptyPreference,
+    allergies: ["peanut"],
+    budgetMaxSatang: 14000,
+  };
+  parse.mockResolvedValue(
+    complete({
+      intent: "change_preference",
+      questions: [],
+      patch: [
+        {
+          field: "desiredDish",
+          name: "Crispy tofu rice",
+          quote: "Crispy tofu rice",
+        },
+        { field: "flavorTags", values: ["mild"], quote: "missing evidence" },
+      ],
+    }),
+  );
+  const routed = await routePreference("อยากกิน Crispy tofu rice", base, true);
+  expect(parse).toHaveBeenCalledTimes(1);
+  expect(routed.preference).toEqual({
+    ...base,
+    desiredDish: "Crispy tofu rice",
+  });
+  expect(menuFit(routed.preference, catalog[0].menus[0]).score).toBeGreaterThan(
+    menuFit(routed.preference, catalog[0].menus[1]).score,
+  );
+});
+it("keeps ambiguous budgets and allergy removal separate from soft choices", async () => {
+  const base = {
+    ...emptyPreference,
+    allergies: ["shrimp"],
+    budgetMaxSatang: 12000,
+  };
+  parse.mockResolvedValue(
+    complete({ intent: "change_preference", patch: [], questions: [] }),
+  );
+  const result = await routePreference(
+    "งบ 100 หรือ 150 บาท ลบข้อแพ้กุ้ง",
+    base,
+    true,
+  );
+  expect(result.preference).toEqual(base);
+  expect(result.questions.length).toBeGreaterThan(0);
+});
 describe("multimodal draft adapter (mocked provider; no live inference claim)", () => {
   it("missing credentials reports unavailable and makes zero provider calls", async () => {
     vi.stubEnv("OPENAI_API_KEY", "");

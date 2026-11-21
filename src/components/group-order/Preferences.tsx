@@ -1,5 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { NoodlePreview } from "@/contracts/group-order";
+import type { RoutedDraft } from "@/contracts/router";
 import {
   emptyPreference,
   cuisineTags,
@@ -63,6 +65,70 @@ export default function Preferences({
   const [checked, setChecked] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [text, setText] = useState("");
+  const [routed, setRouted] = useState<RoutedDraft | null>(null);
+  const [reviewed, setReviewed] = useState(false);
+  const proposed = {
+    ...p,
+    budgetMaxSatang: budget === "" ? null : Math.round(Number(budget) * 100),
+    excludedIngredients: split(excluded),
+    dietaryRequirements: split(diet),
+    allergies: split(allergies),
+    dislikes: split(dislikes),
+  };
+  const request = {
+    expectedMemberRevision: revision,
+    expectedPreferenceVersion: session.preferenceVersion,
+    expectedRosterVersion: session.rosterVersion,
+    confirmedPreference: proposed,
+  };
+  const previewBody = p.noodle === "any" ? JSON.stringify(request) : "";
+  const [preview, setPreview] = useState<
+    | (NoodlePreview & {
+        body: string;
+        rankingId?: string;
+        answer?: string;
+        failed?: boolean;
+      })
+    | null
+  >(null);
+  const rankingId = session.ranking?.id;
+  const current =
+    preview?.body === previewBody && preview.rankingId === rankingId
+      ? preview
+      : null;
+  const choice = current?.choices.find((c) => c.style === current.answer);
+  const needsChoice =
+    !!previewBody &&
+    (!current || (!!current.choices.length && !current.answer));
+
+  useEffect(() => {
+    setPreview(null);
+    if (!previewBody) return;
+    let active = true;
+    const timer = setTimeout(async () => {
+      try {
+        const result = await api<NoodlePreview>(
+          `/api/sessions/${session.id}/preferences/me/noodles`,
+          "POST",
+          JSON.parse(previewBody),
+        );
+        if (active) setPreview({ ...result, body: previewBody, rankingId });
+      } catch {
+        if (active)
+          setPreview({
+            choices: [],
+            body: previewBody,
+            rankingId,
+            failed: true,
+          });
+      }
+    }, 200);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [previewBody, rankingId, session.id]);
   function toggle(
     key: "cuisinePreferences" | "flavorTags" | "textureTags",
     t: string,
@@ -78,9 +144,40 @@ export default function Preferences({
         }) as Preference,
     );
   }
+  async function draftText() {
+    setBusy(true);
+    setError("");
+    setChecked(false);
+    setReviewed(false);
+    try {
+      const next = await api<RoutedDraft>(
+        `/api/sessions/${session.id}/preferences/me/router`,
+        "POST",
+        { ...request, text },
+      );
+      setRouted(next);
+      const draft = next.preference;
+      setP(draft);
+      setBudget(
+        draft.budgetMaxSatang === null
+          ? ""
+          : String(draft.budgetMaxSatang / 100),
+      );
+      setExcluded(draft.excludedIngredients.join(", "));
+      setDiet(draft.dietaryRequirements.join(", "));
+      setAllergies(draft.allergies.join(", "));
+      setDislikes(draft.dislikes.join(", "));
+    } catch (e) {
+      setRouted(null);
+      setError(e instanceof Error ? e.message : "กรุณากรอกข้อมูลเอง");
+    } finally {
+      setBusy(false);
+    }
+  }
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!checked) return;
+    if (!checked || needsChoice || (routed?.questions.length && !reviewed))
+      return;
     setBusy(true);
     setError("");
     try {
@@ -88,18 +185,19 @@ export default function Preferences({
         `/api/sessions/${session.id}/preferences/me`,
         "PUT",
         {
-          confirmedPreference: {
-            ...p,
-            budgetMaxSatang:
-              budget === "" ? null : Math.round(Number(budget) * 100),
-            excludedIngredients: split(excluded),
-            dietaryRequirements: split(diet),
-            allergies: split(allergies),
-            dislikes: split(dislikes),
-          },
-          expectedMemberRevision: revision,
-          expectedPreferenceVersion: session.preferenceVersion,
-          expectedRosterVersion: session.rosterVersion,
+          ...request,
+          ...(routed
+            ? {
+                routerDraftId: routed.id,
+                reviewedQuestions: reviewed || undefined,
+              }
+            : {}),
+          ...(choice
+            ? {
+                noodleDraft: choice.draft,
+                confirmedPreference: { ...proposed, noodle: choice.style },
+              }
+            : {}),
         },
       );
       onSaved(next);
@@ -147,7 +245,52 @@ export default function Preferences({
         <p className="go-muted">
           กรอกเองและยืนยันด้วยตัวเอง ไม่มี AI แอบอนุมานข้อจำกัดของคุณ
         </p>
-        <form onSubmit={submit}>
+        <form onSubmit={submit} inert={busy}>
+          {session.ai.available && (
+            <details className="go-advanced">
+              <summary>ร่างความต้องการจากข้อความด้วย AI</summary>
+              <label htmlFor="group-router">
+                อยากกินอะไร หรืออยากแก้อะไรจากครั้งก่อน
+              </label>
+              <input
+                id="group-router"
+                value={text}
+                maxLength={2000}
+                onChange={(e) => setText(e.target.value)}
+              />
+              <button
+                className="go-outline"
+                type="button"
+                disabled={!text.trim() || busy}
+                onClick={draftText}
+              >
+                ส่งข้อความให้ AI ร่าง
+              </button>
+              {routed && (
+                <p role="status">
+                  {routed.intent === "chat"
+                    ? "ข้อความนี้ไม่มีความต้องการใหม่"
+                    : "ตรวจร่างในช่องด้านล่างก่อนยืนยัน"}{" "}
+                  {routed.evidence.join(" · ")}
+                </p>
+              )}
+            </details>
+          )}
+          {p.desiredDish && (
+            <p>
+              เมนูที่อยากกิน · {p.desiredDish}{" "}
+              <button
+                type="button"
+                className="go-outline"
+                onClick={() => {
+                  setP({ ...p, desiredDish: undefined });
+                  setChecked(false);
+                }}
+              >
+                ลบเมนูที่อยากกิน
+              </button>
+            </p>
+          )}
           <label htmlFor="group-budget">งบสูงสุด (บาท)</label>
           <div className="go-budget-field">
             <span>฿</span>
@@ -169,6 +312,71 @@ export default function Preferences({
           <p className="go-fine">
             รวมราคาอาหารและส่วนแบ่งค่าจัดส่ง/บริการแล้ว · ว่าง = ไม่จำกัด
           </p>
+          <fieldset>
+            <legend>ประเภทอาหาร</legend>
+            <div className="go-tags">
+              <button
+                type="button"
+                aria-pressed={!!p.noodle}
+                onClick={() => {
+                  setChecked(false);
+                  setP({ ...p, noodle: p.noodle ? undefined : "any" });
+                }}
+              >
+                อยากกินเส้น
+              </button>
+            </div>
+            {p.noodle && p.noodle !== "any" && (
+              <p>
+                ที่ยืนยันไว้ · {p.noodle === "broth" ? "เส้นน้ำ" : "เส้นผัด"}{" "}
+                <button
+                  type="button"
+                  className="go-outline"
+                  onClick={() => {
+                    setChecked(false);
+                    setP({ ...p, noodle: "any" });
+                  }}
+                >
+                  เลือกแบบเส้นอีกครั้ง
+                </button>
+              </p>
+            )}
+            {previewBody && !current && (
+              <p role="status">กำลังตรวจเมนูที่ผ่านเงื่อนไขของกลุ่ม…</p>
+            )}
+            {current?.failed && (
+              <p role="status">
+                ตรวจตัวเลือกเพิ่มเติมไม่ได้ คุณยังยืนยันความชอบอาหารเส้นได้
+              </p>
+            )}
+            {!!current?.choices.length && (
+              <fieldset>
+                <legend>อยากกินเส้นน้ำหรือเส้นผัด?</legend>
+                <div className="go-tags">
+                  {[
+                    ...current.choices.map((c) => ({
+                      value: c.style,
+                      label: c.style === "broth" ? "เส้นน้ำ" : "เส้นผัด",
+                    })),
+                    { value: "either", label: "ได้ทั้งคู่" },
+                    { value: "skip", label: "ข้าม" },
+                  ].map((option) => (
+                    <button
+                      type="button"
+                      key={option.value}
+                      aria-pressed={current.answer === option.value}
+                      onClick={() => {
+                        setChecked(false);
+                        setPreview({ ...current, answer: option.value });
+                      }}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+            )}
+          </fieldset>
           {(
             [
               ["flavorTags", "รสชาติ", flavorTags],
@@ -274,6 +482,28 @@ export default function Preferences({
             />
             <p className="go-fine">ใช้ลดคะแนนความชอบ ไม่ใช่ข้อห้ามเด็ดขาด</p>
           </details>
+          {!!routed?.questions.length && (
+            <fieldset>
+              <legend>คำถามที่ต้องตรวจในร่าง</legend>
+              <ul>
+                {routed.questions.map((q) => (
+                  <li key={q}>{q}</li>
+                ))}
+              </ul>
+              <label className="go-check">
+                <input
+                  type="checkbox"
+                  required
+                  checked={reviewed}
+                  onChange={(e) => {
+                    setReviewed(e.target.checked);
+                    setChecked(false);
+                  }}
+                />
+                ตรวจคำถามและแก้ข้อมูลในฟอร์มแล้ว
+              </label>
+            </fieldset>
+          )}
           <label className="go-check">
             <input
               type="checkbox"
@@ -292,7 +522,15 @@ export default function Preferences({
               {error}
             </p>
           )}
-          <button className="go-primary" disabled={!checked || busy}>
+          <button
+            className="go-primary"
+            disabled={
+              !checked ||
+              busy ||
+              needsChoice ||
+              (!!routed?.questions.length && !reviewed)
+            }
+          >
             {busy ? "กำลังบันทึก…" : "ยืนยันความต้องการ"}{" "}
             <span aria-hidden="true">✓</span>
           </button>

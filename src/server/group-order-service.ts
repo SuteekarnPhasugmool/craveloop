@@ -3,11 +3,7 @@ import {
   HandoffSchema,
   CheckoutSchema,
 } from "@/contracts/group-order";
-import {
-  catalog,
-  CATALOG_VERSION,
-  ALGORITHM_VERSION,
-} from "@/adapters/catalog";
+import { catalog, CATALOG_VERSION, currentSnapshot } from "@/adapters/catalog";
 import { simulatedHandoff } from "@/adapters/group-order";
 import { mealMembers, mealReady } from "@/domain/meal";
 import { rankRestaurants } from "@/domain/ranking";
@@ -111,8 +107,7 @@ function finalizedChoice(s: StoredSession, b: z.infer<typeof HandoffSchema>) {
       ranking.id === b.rankingId &&
       ranking.preferenceVersion === s.preferenceVersion &&
       ranking.rosterVersion === s.rosterVersion &&
-      ranking.catalogVersion === CATALOG_VERSION &&
-      ranking.algorithmVersion === ALGORITHM_VERSION,
+      currentSnapshot(ranking),
     409,
     "STALE_RANKING",
     "ข้อเสนอนี้เก่าแล้ว กรุณาตรวจผลล่าสุด",
@@ -167,6 +162,17 @@ export async function postHandoff(id: string, body: unknown, c: Context) {
     requireSession(s);
     const m = actor(s, c, true);
     const { ranking, option, members } = finalizedChoice(s, b);
+    if (
+      s.handoff?.rankingId === ranking.id &&
+      s.handoff.status !== "invalidated"
+    ) {
+      assert(
+        currentSnapshot(s.handoff),
+        409,
+        "STALE_HANDOFF",
+        "กรุณาเปิดมื้อและคำนวณใหม่",
+      );
+    }
     cached(s, m.id, c.key, { action: "cart_handoff", body: b }, () => {
       if (
         !s.handoff ||
@@ -200,8 +206,7 @@ export async function postCheckout(id: string, body: unknown, c: Context) {
         handoff.restaurantId === b.restaurantId &&
         handoff.preferenceVersion === s.preferenceVersion &&
         handoff.rosterVersion === s.rosterVersion &&
-        handoff.catalogVersion === CATALOG_VERSION &&
-        handoff.algorithmVersion === ALGORITHM_VERSION,
+        currentSnapshot(handoff),
       409,
       "STALE_HANDOFF",
       "ตะกร้านี้ใช้ต่อไม่ได้ กรุณาตกลงข้อเสนอล่าสุดและส่งใหม่",

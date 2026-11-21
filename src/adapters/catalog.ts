@@ -1,8 +1,21 @@
 import { z } from "zod";
 import seed from "../../data/catalog.seed.json";
 import type { Restaurant } from "../contracts";
-export { ALGORITHM_VERSION } from "../domain/ranking";
-export const CATALOG_VERSION = "seed-v1";
+import { ALGORITHM_VERSION } from "../domain/ranking";
+import { GRAPH_VERSION } from "../domain/ingredient-graph";
+export { ALGORITHM_VERSION };
+export const CATALOG_VERSION = "seed-v2";
+export function currentSnapshot(snapshot: {
+  catalogVersion: string;
+  algorithmVersion: string;
+  graphVersion?: string;
+}) {
+  return (
+    snapshot.catalogVersion === CATALOG_VERSION &&
+    snapshot.algorithmVersion === ALGORITHM_VERSION &&
+    snapshot.graphVersion === GRAPH_VERSION
+  );
+}
 const money = z.number().int().min(0).max(Number.MAX_SAFE_INTEGER);
 const proof = z
   .object({ verified: z.boolean(), evidenceId: z.string().min(1) })
@@ -24,6 +37,7 @@ const menu = z
     crossContactEvidence: z.record(z.string(), proof),
     cuisineTags: z.array(z.string()),
     flavorTags: z.array(z.string()),
+    noodleStyle: z.enum(["broth", "stir_fried"]).optional(),
     textureTags: z.array(z.string()),
     available: z.boolean(),
     priceIncludesFees: z.boolean(),

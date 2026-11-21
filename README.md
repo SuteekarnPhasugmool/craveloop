@@ -4,9 +4,11 @@
 
 CraveLoop is an independent mobile delivery prototype exploring a **ShopeeFood integration concept**: a group shares its needs, receives a workable catalog meal for every participant, agrees on one restaurant, then reviews a persistent **simulated cart and checkout summary**. It does not connect to ShopeeFood, LINE or a delivery platform, submit an order, take payment or issue an order number.
 
-**All 12 restaurants, 60 menus, prices, distances, fees and dietary evidence are synthetic fixtures.** Deterministic TypeScript enforces confirmed constraints, computes integer-satang costs and ranks choices. The primary Group Order form is manual. Optional AI remains available through the preserved private form/API workflow and proposes editable drafts only; it is not a primary chat/router integration.
+**All 12 restaurants, 60 menus, prices, distances, fees and dietary evidence are synthetic fixtures.** Deterministic TypeScript enforces confirmed constraints, computes integer-satang costs and ranks choices. The primary Group Order form is manual. With a configured server model, the private form can route a text turn into an editable draft. The member reviews ambiguous requirements separately and confirms before the ranker uses any changes.
 
 ## Primary flow
+
+In a private Group Order form, **อยากกินเส้น** records a broad noodle preference. Once the other selected participants have joined and confirmed, the server compares available noodle styles against the whole group's constraints. It asks a skippable question when the answer changes the recommended restaurants, their order or the member's assigned dish. Choosing an answer creates a draft for that member to confirm. The private room card also shows the recipe and product-label evidence behind a hidden ingredient rejection. [Three-person demo](docs/DEMO_GROUP_ORDER.md)
 
 The home screen follows the supplied mobile-app reference: orange delivery/search header, a two-row shortcut rail, horizontal catalog/menu cards, concept banners and fixed bottom navigation. Search supports catalog names and Thai tag labels; category filters, menu details, the single demo-zone sheet and group-link recovery are functional. Prices are source fixture **food prices before fee allocation**, with no invented discount, review or sales claims. Group Order is the first shortcut; CraveLoop also has a direct entry below the shortcuts.
 
@@ -20,7 +22,7 @@ Host meal configuration is one atomic `/meal` operation: reopen, select actual a
 
 The Group Order API hides private constraint-evidence fields from public result projections and reports generic no-match reason families. Peer preference forms, uploaded images and extraction drafts remain private. The group can see names, consent/readiness, assigned menus, costs, fit, acceptances and simulated cart items; menu choices can still imply preferences.
 
-The new Group Order contracts are in [GROUP_ORDER_CONTRACTS.md](docs/GROUP_ORDER_CONTRACTS.md); current comprehensive behavior is in [CRAVELOOP_MASTER_SPEC.md](CRAVELOOP_MASTER_SPEC.md), version 3. The new flow is implemented and verified locally: typecheck, unit/integration suites, production build and all eight production browser cases passed. Consult [VERIFICATION.md](docs/VERIFICATION.md) for actual completed checks rather than treating this description as a test result.
+See the [Group Order API contracts](docs/GROUP_ORDER_CONTRACTS.md), [master spec](CRAVELOOP_MASTER_SPEC.md) and [local verification record](docs/VERIFICATION.md).
 
 ## Run locally
 
@@ -28,7 +30,7 @@ Use Node.js 22.12+ and npm. Preserve an existing configured `.env`.
 
 ```sh
 npm install
-cp .env.example .env
+# SQLite and manual preferences work with the development defaults.
 # Set a private APP_SECRET for production; generate with: openssl rand -hex 32
 npm run db:migrate
 npm run seed
@@ -50,16 +52,17 @@ npm run test:integration
 npx playwright install chromium
 npm run test:e2e
 npm run eval
+npm run kg:draft
 # Stop dev/browser QA before building; do not run both against .next concurrently.
 npm run build
 npm start
 ```
 
-Use disposable demo data for E2E. Integration tests use temporary SQLite. Playwright can bootstrap a local server or reuse one on port 3000 outside CI; `CI=1` rejects reuse. Browser contexts test separate identities, not actual venue devices. Ignored `test-results` and `playwright-report` can contain test conversation data.
+Use disposable demo data for E2E. Integration tests use temporary SQLite. Playwright can bootstrap a local server or reuse one on port 3000 outside CI. Set `CI=1` to require a fresh server. To test a compiled build, run `npm run build` first, then set `NODE_ENV=production`, a private test `APP_SECRET` of at least 32 characters and a disposable `SQLITE_PATH` before starting Playwright. Set `PLAYWRIGHT_CHANNEL=chrome` to use installed Chrome. Ignored `test-results` and `playwright-report` can contain test conversation data.
 
 `npm run eval` is offline: 34 authored fixtures, exact deterministic outcomes and assignment checks. It does not measure live extraction accuracy. `npm run ai:smoke` requires a supported vision/structured-output `OPENAI_MODEL` and server key. `npm run eval -- --live` explicitly invokes that configured provider on labeled samples. Fixture images are [self-authored illustrations](tests/fixtures/README.md), not a photo benchmark. No model is selected silently.
 
-Current 20 November checks: **98 unit tests, 61 integration tests, eight production E2E cases, typecheck, production build, local SQLite migration and seed passed**. The latest production browser suite passed 8/8 in 1.8 minutes, including screenshot-reference home search/filter/recovery and the three-independent-context Group Order flow; the legacy scenarios include four contexts. See [VERIFICATION.md](docs/VERIFICATION.md) for actual commands and scope. The older six-browser-case count predates Group Order. PostgreSQL, hosted devices and real AI remain unverified.
+The [verification record](docs/VERIFICATION.md) includes the current test counts, three-policy evaluation and results from local browser runs. Real devices, PostgreSQL deployment and live model quality require separate verification.
 
 ## PostgreSQL/Supabase and deployment
 
@@ -88,4 +91,4 @@ Current 20 November checks: **98 unit tests, 61 integration tests, eight product
 
 [Demo script](docs/DEMO_GROUP_ORDER.md), [verification](docs/VERIFICATION.md), [Codex log](docs/CODEX_LOG.md), [current master](CRAVELOOP_MASTER_SPEC.md), [version 2 archive](docs/archive/CRAVELOOP_MASTER_SPEC.v2.0-2026-11-19.md).
 
-`AI_PIPELINE_PLAN.md` is a separately authored future plan, unchanged by this implementation. Its proposed router, video/KG/fairness-mode/embedding/mediator work is not silently included. Development on 18–20 November predates the recorded 21 November event; do not claim it was written during the competition or that a submission/deployment/partnership succeeded.
+`AI_PIPELINE_PLAN.md` is a separately authored future plan, unchanged by this implementation. The guided-choice implementation includes the private router adapter, reviewed ingredient graph and offline graph-drafting worker. The verification record identifies which checks used fixtures. Development on 18–20 November predates the recorded 21 November event; do not claim it was written during the competition or that a submission/deployment/partnership succeeded.

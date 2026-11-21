@@ -4,7 +4,7 @@
     "name": "Demo Mixed Kitchen",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
-    "catalogVersion": "seed-v1",
+    "catalogVersion": "seed-v2",
     "channels": [
       "dine_in",
       "delivery"
@@ -146,7 +146,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r01-m04"
+        "id": "r01-m04",
+        "noodleStyle": "broth"
       },
       {
         "name": "Grilled chicken salad",
@@ -184,7 +185,7 @@
     "name": "Demo Vegetarian Comfort",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
-    "catalogVersion": "seed-v1",
+    "catalogVersion": "seed-v2",
     "channels": [
       "dine_in",
       "delivery"
@@ -309,7 +310,7 @@
         "id": "r02-m03"
       },
       {
-        "name": "Vegetable broth noodles",
+        "name": "Vegetable stir-fried noodles",
         "prices": {
           "dine_in": 7000,
           "delivery": 8000
@@ -339,7 +340,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r02-m04"
+        "id": "r02-m04",
+        "noodleStyle": "stir_fried"
       },
       {
         "name": "Grilled mushroom salad",
@@ -382,7 +384,7 @@
     "name": "Demo Rice & Grill",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
-    "catalogVersion": "seed-v1",
+    "catalogVersion": "seed-v2",
     "channels": [
       "dine_in",
       "delivery"
@@ -518,7 +520,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r03-m04"
+        "id": "r03-m04",
+        "noodleStyle": "broth"
       },
       {
         "name": "Grilled tofu salad",
@@ -561,7 +564,7 @@
     "name": "Demo Premium Bowls",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
-    "catalogVersion": "seed-v1",
+    "catalogVersion": "seed-v2",
     "channels": [
       "dine_in",
       "delivery"
@@ -611,7 +614,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r04-m01"
+        "id": "r04-m01",
+        "noodleStyle": "broth"
       },
       {
         "name": "Mild chicken rice",
@@ -707,7 +711,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r04-m04"
+        "id": "r04-m04",
+        "noodleStyle": "broth"
       },
       {
         "name": "Grilled chicken salad",
@@ -745,7 +750,7 @@
     "name": "Demo Spicy Pork",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
-    "catalogVersion": "seed-v1",
+    "catalogVersion": "seed-v2",
     "channels": [
       "dine_in",
       "delivery"
@@ -873,7 +878,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r05-m04"
+        "id": "r05-m04",
+        "noodleStyle": "broth"
       },
       {
         "name": "Grilled pork salad",
@@ -911,7 +917,7 @@
     "name": "Demo Delivery Kitchen",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
-    "catalogVersion": "seed-v1",
+    "catalogVersion": "seed-v2",
     "channels": [
       "delivery"
     ],
@@ -1047,7 +1053,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r06-m04"
+        "id": "r06-m04",
+        "noodleStyle": "broth"
       },
       {
         "name": "Creamy grilled chicken salad",
@@ -1083,7 +1090,7 @@
     "name": "Demo Dine-in Plates",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
-    "catalogVersion": "seed-v1",
+    "catalogVersion": "seed-v2",
     "channels": [
       "dine_in"
     ],
@@ -1223,7 +1230,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r07-m04"
+        "id": "r07-m04",
+        "noodleStyle": "broth"
       },
       {
         "name": "Grilled grilled chicken salad",
@@ -1260,7 +1268,7 @@
     "name": "Demo Closed Hotpot",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
-    "catalogVersion": "seed-v1",
+    "catalogVersion": "seed-v2",
     "channels": [
       "dine_in",
       "delivery"
@@ -1402,7 +1410,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r08-m04"
+        "id": "r08-m04",
+        "noodleStyle": "broth"
       },
       {
         "name": "Grilled chicken salad",
@@ -1440,7 +1449,7 @@
     "name": "Demo Unknown Prices",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
-    "catalogVersion": "seed-v1",
+    "catalogVersion": "seed-v2",
     "channels": [
       "dine_in",
       "delivery"
@@ -1582,7 +1591,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r09-m04"
+        "id": "r09-m04",
+        "noodleStyle": "broth"
       },
       {
         "name": "Grilled chicken salad",
@@ -1620,7 +1630,7 @@
     "name": "Demo Incomplete Ingredients",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
-    "catalogVersion": "seed-v1",
+    "catalogVersion": "seed-v2",
     "channels": [
       "dine_in",
       "delivery"
@@ -1724,7 +1734,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r10-m04"
+        "id": "r10-m04",
+        "noodleStyle": "broth"
       },
       {
         "name": "Grilled chicken salad",
@@ -1758,7 +1769,7 @@
     "name": "Demo Mild Noodle Bar",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
-    "catalogVersion": "seed-v1",
+    "catalogVersion": "seed-v2",
     "channels": [
       "dine_in",
       "delivery"
@@ -1804,7 +1815,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r11-m01"
+        "id": "r11-m01",
+        "noodleStyle": "broth"
       },
       {
         "name": "Mild noodle bowl 02",
@@ -1832,7 +1844,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r11-m02"
+        "id": "r11-m02",
+        "noodleStyle": "broth"
       },
       {
         "name": "Mild noodle bowl 03",
@@ -1866,7 +1879,8 @@
         ],
         "available": false,
         "priceIncludesFees": true,
-        "id": "r11-m03"
+        "id": "r11-m03",
+        "noodleStyle": "broth"
       },
       {
         "name": "Mild noodle bowl 04",
@@ -1899,7 +1913,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r11-m04"
+        "id": "r11-m04",
+        "noodleStyle": "broth"
       },
       {
         "name": "Mild noodle bowl 05",
@@ -1927,7 +1942,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r11-m05"
+        "id": "r11-m05",
+        "noodleStyle": "broth"
       }
     ]
   },
@@ -1936,7 +1952,7 @@
     "name": "Demo Mixed Curry",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
-    "catalogVersion": "seed-v1",
+    "catalogVersion": "seed-v2",
     "channels": [
       "dine_in",
       "delivery"
@@ -2077,7 +2093,8 @@
         ],
         "available": true,
         "priceIncludesFees": true,
-        "id": "r12-m04"
+        "id": "r12-m04",
+        "noodleStyle": "broth"
       },
       {
         "name": "Curry grilled chicken salad",

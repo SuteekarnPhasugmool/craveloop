@@ -14,6 +14,9 @@ import {
 } from "../src/contracts";
 import { CatalogSchema, catalog } from "../src/adapters/catalog";
 import { groupScores, rankRestaurants } from "../src/domain/ranking";
+import { simulateNoodleChoice } from "../src/domain/guided-choice";
+import { buildChatDraft } from "../src/domain/chat-draft";
+import { noodleScenarios } from "../tests/fixtures/noodle-policy";
 import { aiStatus, extractPreferences } from "../src/adapters/openai";
 config({ path: [".env.local", ".env"], quiet: true });
 
@@ -65,7 +68,7 @@ const SeedCase = z.object({
   kind: z.literal("seed_ranking"),
   fixture: z.object({
     snapshot: RankingCase.shape.fixture.shape.snapshot,
-    catalogRef: z.literal("seed-v1"),
+    catalogRef: z.literal("seed-v2"),
   }),
   expected: z.object({
     feasibleIds: z.array(z.string()),
@@ -151,6 +154,85 @@ function hasHardViolation(
 }
 
 async function main() {
+  const guidedPolicies = ["immediate", "always", "outcome_changes"].map(
+    (policy) => {
+      let questions = 0,
+        requiredClarifications = 0,
+        hardViolations = 0;
+      const winners = [];
+      for (const fixture of noodleScenarios) {
+        // In each scenario Nat resolves the same ambiguous budget to the
+        // fixture's confirmed 120 THB before any soft-question policy runs.
+        const nat = fixture.snapshot.members.find((m) => m.id === "Nat")!;
+        const unclear = buildChatDraft("งบ 100 หรือ 120 บาท", {
+          ...nat.preference,
+          budgetMaxSatang: null,
+        });
+        assert.equal(unclear.preference.budgetMaxSatang, null);
+        assert.ok(unclear.questions.length);
+        const clarified = buildChatDraft("งบ 120 บาท", unclear.preference);
+        assert.deepEqual(clarified.preference, nat.preference);
+        requiredClarifications += unclear.questions.length;
+        const preview = simulateNoodleChoice(
+          fixture.snapshot,
+          fixture.catalog,
+          "May",
+        );
+        const ask =
+          policy === "always"
+            ? preview.available.length > 1
+            : policy === "outcome_changes" && preview.changesResult;
+        if (ask) questions++;
+        const members = fixture.snapshot.members.map((m) =>
+          m.id === "May" && ask
+            ? {
+                ...m,
+                preference: { ...m.preference, noodle: "broth" as const },
+              }
+            : m,
+        );
+        const result = rankRestaurants(
+          { ...fixture.snapshot, members },
+          fixture.catalog,
+        );
+        winners.push(result.options[0].restaurantId);
+        for (const o of result.options) {
+          const venue = fixture.catalog.find((r) => r.id === o.restaurantId)!;
+          for (const a of o.assignments) {
+            const pref = members.find((m) => m.id === a.memberId)!.preference;
+            const menu = venue.menus.find((m) => m.id === a.menuId)!;
+            if (
+              hasHardViolation(pref, venue, menu, fixture.snapshot.mode, a) ||
+              (menu.id === "r03-m03" &&
+                pref.excludedIngredients.includes("shrimp"))
+            )
+              hardViolations++;
+          }
+        }
+      }
+      assert.equal(hardViolations, 0);
+      return {
+        policy,
+        syntheticGroups: noodleScenarios.length,
+        questions,
+        requiredClarifications,
+        winners,
+        hardViolations,
+      };
+    },
+  );
+  assert.deepEqual(
+    guidedPolicies.map((p) => p.questions),
+    [0, 2, 1],
+  );
+  assert.deepEqual(
+    guidedPolicies.map((p) => p.winners),
+    [
+      ["r02", "r01"],
+      ["r01", "r01"],
+      ["r01", "r01"],
+    ],
+  );
   for (const item of suite.cases) {
     if (item.kind === "seed_ranking") {
       const start = performance.now();
@@ -352,6 +434,7 @@ async function main() {
           ? "live extraction + offline deterministic fixtures"
           : "offline deterministic fixtures and fixture-schema validation ONLY",
         fixtureCases: suite.cases.length,
+        guidedPolicies,
         rankingCasesPassed: rankings,
         scoreFixturesPassed: scoreFixtures,
         determinismChecksPassed: determinism,
