@@ -225,7 +225,7 @@ export default function PreferenceAttachments({
             setLinkOpen(true);
             requestAnimationFrame(() => linkInput.current?.focus());
           }}>
-          <HomeIcon name="link" />แนบลิงก์
+          <HomeIcon name="link" />แนบลิงก์วิดีโอ
         </button>
         {stage === "recording" ? (
           <button
@@ -254,10 +254,10 @@ export default function PreferenceAttachments({
         )}
       </div>
       {linkOpen && <div className="pref-social-link" id="pref-social-link">
-        <label htmlFor="pref-link-url">ลิงก์จากโซเชียลมีเดีย</label>
+        <label htmlFor="pref-link-url">ลิงก์วิดีโอ</label>
         <input id="pref-link-url" ref={linkInput} type="url" inputMode="url" disabled={disabled}
           autoCapitalize="none" spellCheck={false} maxLength={8192}
-          placeholder="วางลิงก์ TikTok, Instagram หรือแพลตฟอร์มอื่น" value={socialLink}
+          placeholder="วางลิงก์วิดีโอจาก TikTok, YouTube หรือ Reels" value={socialLink}
           onChange={e => onSocialLinkChange(e.target.value)} />
         <div>
           {link.success && <a href={link.data} target="_blank" rel="noopener noreferrer">เปิดลิงก์</a>}
