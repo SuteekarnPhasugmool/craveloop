@@ -3,7 +3,8 @@ import { useMemo, useRef, useState } from "react";
 import { api } from "@/components/api";
 import { CraveMark, baht } from "./Shared";
 import type { HomeCatalogItem } from "./home-catalog";
-import { HomeIcon, FoodIllustration } from "./HomeIcons";
+import { HomeIcon } from "./HomeIcons";
+import FoodPhoto from "./FoodPhoto";
 import "./group-order.css";
 import "./delivery-home.css";
 type Filter =
@@ -231,7 +232,7 @@ export default function DeliveryHome({
     },
     { label: "ดูทุกเมนู", icon: "menu", tone: "orange", action: () => browse() },
   ];
-  function menuCard(item: HomeCatalogItem, index: number) {
+  function menuCard(item: HomeCatalogItem) {
     return (
       <button
         className="dh-menu-card"
@@ -240,11 +241,8 @@ export default function DeliveryHome({
         onClick={() => setDetail(item)}
       >
         <div className="dh-menu-image">
-          <FoodIllustration
-            variant={index}
-            noodles={/noodle|broth/i.test(item.menuName)}
-          />
-          <span>ภาพประกอบ</span>
+          <FoodPhoto menuId={item.menuId} menuName={item.menuName} />
+          <span>ภาพถ่ายตัวอย่าง</span>
           <i>DEMO</i>
         </div>
         <div className="dh-menu-meta">
@@ -491,7 +489,7 @@ export default function DeliveryHome({
               <div className="dh-bottom-disclosure">
                 ร้าน เมนู ราคา ค่าส่ง และหลักฐานอาหารเป็นข้อมูลสมมติ
                 <br />
-                ภาพอาหารเป็นภาพประกอบ ไม่ใช่ภาพจากร้านจริง
+                ภาพถ่ายอาหารตัวอย่าง · ร้านและเมนูเป็นข้อมูลสาธิต
               </div>
             </>
           )}
@@ -680,11 +678,8 @@ export default function DeliveryHome({
                 ×
               </button>
               <div className="dh-detail-art">
-                <FoodIllustration
-                  variant={catalog.findIndex((i) => i.menuId === detail.menuId)}
-                  noodles={/noodle|broth/i.test(detail.menuName)}
-                />
-                <span>ภาพประกอบ · เมนูสมมติ</span>
+                <FoodPhoto menuId={detail.menuId} menuName={detail.menuName} />
+                <span>ภาพถ่ายอาหารตัวอย่าง</span>
               </div>
               <p className="go-eyebrow">{detail.restaurantName}</p>
               <h2 id="dh-detail-title">{detail.menuName}</h2>

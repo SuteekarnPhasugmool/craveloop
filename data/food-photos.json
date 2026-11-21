@@ -1,0 +1,128 @@
+{
+  "tea": {
+    "src": "/food/tea.jpg",
+    "alt": "Tea",
+    "source": "https://unsplash.com",
+    "imageSource": "https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=640&q=80"
+  },
+  "cake": {
+    "src": "/food/cake.jpg",
+    "alt": "Pancakes",
+    "source": "https://www.bbcgoodfood.com/recipes/2907669/easy-pancakes",
+    "imageSource": "https://www.themealdb.com/images/media/meals/rwuyqx1511383174.jpg"
+  },
+  "icecream": {
+    "src": "/food/icecream.jpg",
+    "alt": "Grape Nut Ice Cream",
+    "source": "https://www.myforkinglife.com/grape-nut-ice-cream-recipe/#recipe",
+    "imageSource": "https://www.themealdb.com/images/media/meals/1xscby1764790242.jpg"
+  },
+  "rice": {
+    "src": "/food/rice.jpg",
+    "alt": "Chicken Handi",
+    "source": "https://www.themealdb.com/meal/52795",
+    "imageSource": "https://www.themealdb.com/images/media/meals/wyxwsp1486979827.jpg"
+  },
+  "noodles": {
+    "src": "/food/noodles.jpg",
+    "alt": "Noodle bowl salad",
+    "source": "https://www.bbcgoodfood.com/recipes/noodle-bowl-salad",
+    "imageSource": "https://www.themealdb.com/images/media/meals/zry07j1763779321.jpg"
+  },
+  "pork": {
+    "src": "/food/pork.jpg",
+    "alt": "Tonkatsu pork",
+    "source": "https://www.bbcgoodfood.com/recipes/tonkatsu-pork",
+    "imageSource": "https://www.themealdb.com/images/media/meals/lwsnkl1604181187.jpg"
+  },
+  "porridge": {
+    "src": "/food/porridge.jpg",
+    "alt": "Seafood rice",
+    "source": "https://www.bbcgoodfood.com/recipes/easiest-ever-paella",
+    "imageSource": "https://www.themealdb.com/images/media/meals/5r5rvx1763287943.jpg"
+  },
+  "fried": {
+    "src": "/food/fried.jpg",
+    "alt": "Kentucky Fried Chicken",
+    "source": "http://www.tablespoon.com/recipes/copycat-kfc-original-style-chicken/97c93d14-9d8c-4bc7-96dc-1e0b37e4fcaa",
+    "imageSource": "https://www.themealdb.com/images/media/meals/40r49m1763197022.jpg"
+  },
+  "burger": {
+    "src": "/food/burger.jpg",
+    "alt": "kofta burgers",
+    "source": "https://www.bbcgoodfood.com/recipes/diy-kofta-burgers",
+    "imageSource": "https://www.themealdb.com/images/media/meals/lgmnff1763789847.jpg"
+  },
+  "pizza": {
+    "src": "/food/pizza.jpg",
+    "alt": "Cassava pizza",
+    "source": "https://goya.es/en/recipes/cassava-pizza",
+    "imageSource": "https://www.themealdb.com/images/media/meals/lrfdwz1764438393.jpg"
+  },
+  "salad": {
+    "src": "/food/salad.jpg",
+    "alt": "Papaya salad",
+    "source": "https://dominicagourmet.com/green-papaya-salad-with-fried-snapper/",
+    "imageSource": "https://www.themealdb.com/images/media/meals/7ytdtz1784833420.jpg"
+  },
+  "seafood": {
+    "src": "/food/seafood.jpg",
+    "alt": "Kung Po Prawns",
+    "source": "https://www.bbcgoodfood.com/recipes/1415664/kung-po-prawns",
+    "imageSource": "https://www.themealdb.com/images/media/meals/1525873040.jpg"
+  },
+  "beef": {
+    "src": "/food/beef.jpg",
+    "alt": "Beef pho",
+    "source": "https://www.bbcgoodfood.com/recipes/beef-pho",
+    "imageSource": "https://www.themealdb.com/images/media/meals/pbzcrx1763765096.jpg"
+  },
+  "sushi": {
+    "src": "/food/sushi.jpg",
+    "alt": "Sushi",
+    "source": "https://www.bbcgoodfood.com/recipes/simple-sushi",
+    "imageSource": "https://www.themealdb.com/images/media/meals/g046bb1663960946.jpg"
+  },
+  "pasta": {
+    "src": "/food/pasta.jpg",
+    "alt": "Mediterranean Pasta Salad",
+    "source": "https://thelemonsqueezy.com/recipe/mediterranean-pasta-salad/",
+    "imageSource": "https://www.themealdb.com/images/media/meals/wvqpwt1468339226.jpg"
+  },
+  "soup": {
+    "src": "/food/soup.jpg",
+    "alt": "Leblebi Soup",
+    "source": "http://allrecipes.co.uk/recipe/43419/leblebi--tunisian-chickpea-soup-.aspx",
+    "imageSource": "https://www.themealdb.com/images/media/meals/x2fw9e1560460636.jpg"
+  },
+  "dumpling": {
+    "src": "/food/dumpling.jpg",
+    "alt": "Beef Dumpling Stew",
+    "source": "https://www.bbc.co.uk/food/recipes/beefstewwithdumpling_87333",
+    "imageSource": "https://www.themealdb.com/images/media/meals/uyqrrv1511553350.jpg"
+  },
+  "fruit": {
+    "src": "/food/fruit.jpg",
+    "alt": "Fresh fruit",
+    "source": "https://unsplash.com",
+    "imageSource": "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=640&q=80"
+  },
+  "fish": {
+    "src": "/food/fish.jpg",
+    "alt": "Salmon noodle soup",
+    "source": "https://www.bbcgoodfood.com/recipes/salmon-noodle-soup",
+    "imageSource": "https://www.themealdb.com/images/media/meals/ikizdm1763760862.jpg"
+  },
+  "tofu": {
+    "src": "/food/tofu.jpg",
+    "alt": "Ma Po Tofu",
+    "source": "https://www.chinasichuanfood.com/mapo-tofu-recipe/",
+    "imageSource": "https://www.themealdb.com/images/media/meals/1525874812.jpg"
+  },
+  "coffee": {
+    "src": "/food/coffee.jpg",
+    "alt": "Coffee",
+    "source": "https://unsplash.com",
+    "imageSource": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=640&q=80"
+  }
+}
