@@ -85,8 +85,15 @@ export const JoinSchema = z
     clientJoinId: z.string().uuid(),
   })
   .strict();
+export const SocialLinkSchema = z.string().trim().max(8192).pipe(z.url({ protocol: /^https?$/ }));
+const PrivateAnswersSchema = z.object({
+  craving: z.string().max(1000),
+  constraints: z.string().max(1000),
+  socialLink: SocialLinkSchema.optional(),
+}).strict();
+export type PrivateAnswers = z.infer<typeof PrivateAnswersSchema>;
 export const ConfirmSchema = VersionSchema.extend({
-  answers: z.object({ craving: z.string().max(1000), constraints: z.string().max(1000) }).strict().optional(),
+  answers: PrivateAnswersSchema.optional(),
   confirmedPreference: PreferenceSchema,
   expectedMemberRevision: z.number().int().min(0),
   noodleDraft: z.string().length(64).optional(),
@@ -237,7 +244,7 @@ export type SessionView = Versions & {
   members: MemberView[];
   me: (MemberView & {
     preference: Preference | null;
-    answers?: { craving: string; constraints: string };
+    answers?: PrivateAnswers;
     media?: Partial<Record<"image" | "voice", string>>;
   }) | null;
   isHost: boolean;

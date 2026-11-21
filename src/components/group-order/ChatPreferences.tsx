@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { emptyPreference, type SessionView } from "@/contracts";
+import { emptyPreference, SocialLinkSchema, type SessionView } from "@/contracts";
 import type { ChatDraft } from "@/contracts/chat";
 import { describeAnswers, parseAnswers } from "@/domain/preference-answers";
 import { api, RequestError } from "../api";
@@ -43,6 +43,7 @@ export default function ChatPreferences({
     };
   });
   const [answers, setAnswers] = useState(initial);
+  const [socialLink, setSocialLink] = useState(session.me?.answers?.socialLink ?? "");
   const [revision] = useState(session.me!.revision);
   const [changes, setChanges] = useState<AttachmentChanges>({});
   const [mediaBusy, setMediaBusy] = useState(false);
@@ -61,9 +62,12 @@ export default function ChatPreferences({
     setSaving(true);
     try {
       const confirmedPreference = parseAnswers(answers, initial, base);
+      const link = socialLink.trim();
+      if (link && !SocialLinkSchema.safeParse(link).success)
+        throw new Error("กรุณาวางลิงก์ที่ขึ้นต้นด้วย https:// หรือ http://");
       const save = (s: SessionView) => {
         const confirmation = {
-          answers,
+          answers: { ...answers, socialLink: link || undefined },
           confirmedPreference,
           expectedMemberRevision: revision,
           expectedPreferenceVersion: s.preferenceVersion,
@@ -161,6 +165,8 @@ export default function ChatPreferences({
             />
           </section>
           <PreferenceAttachments
+            socialLink={socialLink}
+            onSocialLinkChange={setSocialLink}
             changes={changes}
             saved={{
               image: saved?.image && `${url}/media/image?v=${saved.image}`,
@@ -173,7 +179,7 @@ export default function ChatPreferences({
             }
           />
           <small className="pref-media-note">
-            รูปและเสียงเป็นไฟล์แนบส่วนตัว โปรดพิมพ์ข้อจำกัดที่ต้องการใช้ค้นหาร้าน
+            รูป ลิงก์ และเสียงเห็นเฉพาะคุณ โปรดพิมพ์ข้อจำกัดที่ต้องการใช้ค้นหาร้าน
           </small>
           {draft?.questions.map((q) => (
             <small key={q}>{q}</small>

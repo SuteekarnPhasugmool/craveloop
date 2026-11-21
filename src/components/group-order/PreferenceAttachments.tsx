@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { HomeIcon } from "./HomeIcons";
+import { SocialLinkSchema } from "@/contracts";
 
 export type AttachmentChanges = Partial<Record<"image" | "voice", Blob | null>>;
 
@@ -50,12 +51,16 @@ async function preparePhoto(file: File) {
 }
 
 export default function PreferenceAttachments({
+  socialLink,
+  onSocialLinkChange,
   changes,
   saved,
   disabled,
   onChange,
   onBusy,
 }: {
+  socialLink: string;
+  onSocialLinkChange: (link: string) => void;
   changes: AttachmentChanges;
   saved: Partial<Record<"image" | "voice", string>>;
   disabled: boolean;
@@ -64,6 +69,9 @@ export default function PreferenceAttachments({
 }) {
   const picker = useRef<HTMLInputElement>(null);
   const audioPicker = useRef<HTMLInputElement>(null);
+  const [linkOpen, setLinkOpen] = useState(Boolean(socialLink));
+  const linkInput = useRef<HTMLInputElement>(null);
+  const link = SocialLinkSchema.safeParse(socialLink);
   const recorder = useRef<MediaRecorder | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const mounted = useRef(false);
@@ -212,6 +220,13 @@ export default function PreferenceAttachments({
           <HomeIcon name="photo" />
           {stage === "photo" ? "กำลังเตรียมรูป…" : image ? "เปลี่ยนรูป" : "แนบรูป"}
         </button>
+        <button type="button" disabled={disabled} aria-expanded={linkOpen}
+          aria-controls="pref-social-link" onClick={() => {
+            setLinkOpen(true);
+            requestAnimationFrame(() => linkInput.current?.focus());
+          }}>
+          <HomeIcon name="link" />แนบลิงก์
+        </button>
         {stage === "recording" ? (
           <button
             type="button"
@@ -238,6 +253,17 @@ export default function PreferenceAttachments({
           </button>
         )}
       </div>
+      {linkOpen && <div className="pref-social-link" id="pref-social-link">
+        <label htmlFor="pref-link-url">ลิงก์จากโซเชียลมีเดีย</label>
+        <input id="pref-link-url" ref={linkInput} type="url" inputMode="url" disabled={disabled}
+          autoCapitalize="none" spellCheck={false} maxLength={8192}
+          placeholder="วางลิงก์ TikTok, Instagram หรือแพลตฟอร์มอื่น" value={socialLink}
+          onChange={e => onSocialLinkChange(e.target.value)} />
+        <div>
+          {link.success && <a href={link.data} target="_blank" rel="noopener noreferrer">เปิดลิงก์</a>}
+          <button type="button" disabled={disabled} onClick={() => { onSocialLinkChange(""); setLinkOpen(false); }}>ลบลิงก์</button>
+        </div>
+      </div>}
       {pickVoice && stage === "idle" && (
         <button
           className="pref-audio-file"

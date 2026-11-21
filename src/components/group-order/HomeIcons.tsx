@@ -6,6 +6,7 @@ export function HomeIcon({
   className?: string;
 }) {
   const paths: Record<string, React.ReactNode> = {
+    link: <path d="m10 14 4-4m-5 2-2 2a3.5 3.5 0 0 0 5 5l3-3a3.5 3.5 0 0 0 0-5m0 1 2-2a3.5 3.5 0 0 0-5-5l-3 3a3.5 3.5 0 0 0 0 5" />,
     photo: <><rect x="3" y="4" width="18" height="16" rx="3" /><circle cx="9" cy="9" r="1.5" /><path d="m4 17 5-5 3 3 3-4 6 6" /></>,
     microphone: <><rect x="9" y="2" width="6" height="13" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v4m-4 0h8" /></>,
     pin: (

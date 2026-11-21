@@ -3,13 +3,14 @@ import type { RoutedDraft } from "@/contracts/router";
 import type { CartHandoff } from "@/contracts/group-order";
 import type {
   Preference,
+  PrivateAnswers,
   PreferenceDraft,
   Ranking,
   Acceptance,
   Mode,
 } from "@/contracts";
 export type StoredMember = {
-  answers?: { craving: string; constraints: string };
+  answers?: PrivateAnswers;
   media?: Partial<Record<"image" | "voice", StoredMedia>>;
   router?: {
     id: string;

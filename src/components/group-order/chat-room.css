@@ -235,7 +235,7 @@
 .chat-pref section + section { margin-top: 12px; }
 .chat-pref section label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: 650; }
 .chat-pref textarea {
-  display: block; width: 100%; resize: vertical; min-height: 60px; max-height: 145px;
+  display: block; box-sizing: border-box; width: 100%; height: 68px; resize: none; overflow-y: auto;
   border: 1px solid #d6cdc4; border-radius: 12px; padding: 9px 12px;
   font: inherit; font-size: 16px; line-height: 1.45; background: white; color: #392f29;
 }
@@ -248,6 +248,12 @@
 }
 .pref-media-buttons button { display: inline-flex; align-items: center; gap: 6px; min-height: 38px; }
 .pref-media-buttons svg { width: 17px; height: 17px; }
+.pref-media-buttons { flex-wrap: wrap; }
+.pref-social-link { margin-top: 10px; }
+.pref-social-link label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.pref-social-link input { box-sizing: border-box; width: 100%; min-width: 0; }
+.pref-social-link > div { display: flex; align-items: center; gap: 14px; margin-top: 4px; font-size: 13px; }
+.pref-social-link a, .pref-social-link button { color: #893c23; text-decoration: underline; padding: 4px 0; }
 .pref-media-buttons .is-recording { background: #ffebe2; }
 .pref-media-preview img { width: 76px; height: 64px; object-fit: cover; border-radius: 9px; }
 .pref-media-preview audio { width: 0; flex: 1; height: 36px; }

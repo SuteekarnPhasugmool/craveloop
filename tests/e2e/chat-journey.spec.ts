@@ -9,6 +9,7 @@ test("shared chat, personal menu choices and checkout survive refresh", async ({
   page,
   baseURL,
 }) => {
+  const socialLink = "https://www.instagram.com/p/demo-food/";
   const guest = await browser.newPage({
     baseURL,
     viewport: { width: 390, height: 844 },
@@ -44,6 +45,12 @@ test("shared chat, personal menu choices and checkout survive refresh", async ({
       const dialog = member.getByRole("dialog", { name: "ความต้องการของฉัน" });
       await expect(dialog.getByRole("button", { name: "ยืนยันความต้องการ" })).toBeInViewport();
       if (member === page) {
+        for (const name of ["อยากกินอะไร", "ข้อจำกัด"]) {
+          await expect(dialog.getByRole("textbox", { name })).toHaveCSS("resize", "none");
+        }
+        await dialog.getByRole("button", { name: "แนบลิงก์" }).click();
+        await dialog.getByLabel("ลิงก์จากโซเชียลมีเดีย").fill("https://www.tiktok.com/@demo/video/123");
+        await dialog.getByLabel("ลิงก์จากโซเชียลมีเดีย").fill(socialLink);
         await dialog.getByRole("textbox", { name: "อยากกินอะไร" }).fill("ข้าว แห้ง");
         await dialog.getByRole("textbox", { name: "ข้อจำกัด" }).fill("200 บาท");
         await dialog.getByLabel("เลือกรูปประกอบ").setInputFiles("tests/fixtures/crispy.png");
@@ -63,10 +70,18 @@ test("shared chat, personal menu choices and checkout survive refresh", async ({
         await page.reload();
         await page.getByRole("button", { name: "แก้ความต้องการของฉัน" }).click();
         await expect(dialog.getByRole("textbox", { name: "อยากกินอะไร" })).toHaveValue("ข้าว แห้ง");
+        await expect(dialog.getByLabel("ลิงก์จากโซเชียลมีเดีย")).toHaveValue(socialLink);
+        await expect(dialog.getByRole("link", { name: "เปิดลิงก์" })).toHaveAttribute("href", socialLink);
         await expect.poll(() => dialog.getByAltText("รูปประกอบความต้องการ").evaluate(el => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
         await expect.poll(() => dialog.getByLabel("ฟังข้อความเสียง").evaluate(el => (el as HTMLAudioElement).readyState)).toBeGreaterThan(0);
         const mediaUrl = await dialog.getByLabel("ฟังข้อความเสียง").getAttribute("src");
         expect((await guest.request.get(mediaUrl!)).status()).toBe(404);
+        await dialog.getByRole("button", { name: "ลบลิงก์" }).click();
+        await dialog.getByRole("button", { name: "ยืนยันความต้องการ" }).click();
+        await expect(dialog).toHaveCount(0);
+        await page.reload();
+        await page.getByRole("button", { name: "แก้ความต้องการของฉัน" }).click();
+        await expect(dialog.getByRole("button", { name: "แนบลิงก์" })).toHaveAttribute("aria-expanded", "false");
         await dialog.getByRole("button", { name: "ปิดความต้องการของฉัน" }).click();
         await expect(page.getByText("ยืนยันแล้ว 1/2 คน", { exact: true })).toBeVisible();
         await page.getByRole("button", { name: "ค้นหาจากคนที่ยืนยันแล้ว" }).click();
