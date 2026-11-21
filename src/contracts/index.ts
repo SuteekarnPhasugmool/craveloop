@@ -27,6 +27,8 @@ const strings = z
   .transform((v) => [...new Set(v.map((s) => s.toLowerCase()))]);
 export const PreferenceSchema = z
   .object({
+    foodBase: z.enum(["rice", "noodles"]).optional(),
+    servingStyle: z.enum(["soup", "dry"]).optional(),
     noodle: z.enum(["any", "broth", "stir_fried"]).optional(),
     desiredDish: z.string().trim().min(1).max(120).optional(),
     cuisinePreferences: z.array(z.enum(cuisineTags)).max(7),
@@ -97,7 +99,7 @@ export const PatchSchema = VersionSchema.extend({
   action: z.literal("reopen").optional(),
   removeMemberId: z.string().uuid().optional(),
 }).strict();
-export const RankSchema = VersionSchema.strict();
+export const RankSchema = VersionSchema.extend({ confirmedOnly: z.literal(true).optional() }).strict();
 export const ChoiceSchema = VersionSchema.extend({
   rankingId: z.string().uuid(),
   restaurantId: z.string().min(1).max(80),
@@ -211,6 +213,7 @@ export type MemberView = {
   revision: number;
 };
 export type SessionView = Versions & {
+  preliminaryRestaurants?: string[];
   chatJourney?: boolean;
   messages?: import("./chat").ChatMessage[];
   menuChoices?: Record<string, string>;

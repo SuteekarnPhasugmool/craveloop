@@ -52,7 +52,7 @@ afterAll(async () => {
   await closeDatabase();
   rmSync(dir, { recursive: true, force: true });
 });
-async function group() {
+async function group(chatJourney = false) {
   const h = await createRoom(
     {
       hostName: "May",
@@ -60,6 +60,7 @@ async function group() {
       mode: "delivery",
       expectedSize: 4,
       experience: "group_order",
+      ...(chatJourney ? { chatJourney: true } : {}),
     },
     ctx(),
   );
@@ -134,6 +135,64 @@ async function finalized() {
 }
 
 describe("synthetic Group Order handoff and checkout lifecycle", () => {
+  it("auto-searches without a host command and includes a late invite before voting", async () => {
+    const host = await createRoom({
+      experience: "group_order", chatJourney: true, hostName: "May",
+      areaId: "bangkok_demo", mode: "delivery", expectedSize: 4,
+    }, ctx());
+    const id = host.result.sessionId;
+    const solo = await confirm(id, host.token, emptyPreference);
+    expect(solo.ranking!.options[0].assignments).toHaveLength(1);
+    const guest = await joinRoom(id, {displayName: "Nat", clientJoinId: randomUUID()}, ctx());
+    expect((await getRoom(id, host.token)).ranking).toBeNull();
+    const together = await confirm(id, guest.token, emptyPreference);
+    expect(together.ranking!.options[0].assignments).toHaveLength(2);
+    expect(together.ranking!.id).not.toBe(solo.ranking!.id);
+  });
+  it("previews only confirmed chat preferences, then ranks once for the full meal", async () => {
+    const {
+      id,
+      tokens: [host, guest, last],
+    } = await group(true);
+    const preview = async (token: string) => {
+      const s = await getRoom(id, token);
+      return mutateRoom(
+        id,
+        "rank",
+        { ...versions(s), confirmedOnly: true },
+        ctx(token),
+      );
+    };
+    await expect(preview(host)).rejects.toMatchObject({
+      code: "NO_CONFIRMED_MEMBERS",
+    });
+    await confirm(id, guest, emptyPreference);
+    await expect(preview(guest)).rejects.toMatchObject({
+      code: "HOST_REQUIRED",
+    });
+    const early = await preview(host);
+    expect(early.preliminaryRestaurants?.length).toBeGreaterThan(0);
+    expect(early.ranking).toBeNull();
+    expect(early.meal?.selectedMemberIds).toHaveLength(3);
+    const waiting = await confirm(id, host, emptyPreference);
+    expect(waiting.preliminaryRestaurants?.length).toBeGreaterThan(0);
+    expect(waiting.ranking).toBeNull();
+    const before = await getRoom(id, last);
+    const body = {
+      ...versions(before),
+      expectedMemberRevision: before.me!.revision,
+      confirmedPreference: emptyPreference,
+    };
+    const context = ctx(last);
+    const complete = await mutateRoom(id, "confirm", body, context);
+    expect(complete.status).toBe("voting");
+    expect(complete.preliminaryRestaurants).toBeUndefined();
+    expect(complete.ranking!.options[0].assignments).toHaveLength(3);
+    expect((await mutateRoom(id, "confirm", body, context)).ranking?.id).toBe(
+      complete.ranking!.id,
+    );
+    expect((await readSession(id))!.rankings).toHaveLength(1);
+  });
   it("reuses one provider turn per key and requires its owner to review the latest draft", async () => {
     const r = await ready(),
       [owner, peer] = r.tokens;

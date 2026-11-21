@@ -624,6 +624,43 @@ export default function GroupRoom({
                   </button>
                 )}
                 {!mine && <small>ขอผู้จัดเพิ่มชื่อเพื่อร่วมมื้อนี้</small>}
+                <small role="status">
+                  ยืนยันแล้ว {ready}/{selected.length} คน
+                </small>
+                {s.isHost &&
+                  ready > 0 &&
+                  !allReady &&
+                  !s.preliminaryRestaurants && (
+                    <button
+                      className="chat-accent"
+                      disabled={!!busy}
+                      onClick={() =>
+                        void mutate(
+                          "/rank",
+                          "POST",
+                          { ...versions(), confirmedOnly: true },
+                          "rank",
+                        )
+                      }
+                    >
+                      ค้นหาจากคนที่ยืนยันแล้ว
+                    </button>
+                  )}
+                {s.preliminaryRestaurants && (
+                  <section aria-label="ผลค้นหาเบื้องต้น">
+                    <strong>ผลเบื้องต้นจาก {ready} คน</strong>
+                    {s.preliminaryRestaurants.length ? (
+                      <ul>
+                        {s.preliminaryRestaurants.map((name) => (
+                          <li key={name}>{name}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div>ยังไม่มีร้านที่ตรงเงื่อนไข</div>
+                    )}
+                    <small>เมื่อทุกคนยืนยัน เราจะค้นหาอีกครั้งให้ทั้งกลุ่ม</small>
+                  </section>
+                )}
                 {allReady && !s.ranking && s.isHost ? (
                   <button
                     className="chat-accent"
@@ -640,11 +677,7 @@ export default function GroupRoom({
                   >
                     ดูผลเลือกร้าน
                   </button>
-                ) : (
-                  <small>
-                    พร้อม {ready}/{selected.length} คน
-                  </small>
-                )}
+                ) : null}
               </div>
             }
             actions={

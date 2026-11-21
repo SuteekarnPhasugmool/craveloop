@@ -18,7 +18,9 @@ test("shared chat, personal menu choices and checkout survive refresh", async ({
       .click();
     const invite = page.getByRole("dialog", { name: "แชร์ห้องแชต" });
     await expect(page).toHaveURL(new URL("/", baseURL!).href);
-    const url = await invite.getByLabel("ลิงก์ห้องแชต").inputValue();
+    const inviteUrl = new URL(await invite.getByLabel("ลิงก์ห้องแชต").inputValue());
+    // Loopback-only test servers cannot listen on the advertised LAN interface.
+    const url = new URL(inviteUrl.pathname, baseURL).href;
     await invite.getByRole("button", { name: "เข้าห้องแชต" }).click();
     await expect(page.getByLabel("ข้อความถึงกลุ่ม")).toBeInViewport();
     await expect(
@@ -29,23 +31,39 @@ test("shared chat, personal menu choices and checkout survive refresh", async ({
     await guest.getByRole("button", { name: "เข้าร่วม Group Order" }).click();
     for (const member of [page, guest]) {
       await member.bringToFront();
-      await member.getByLabel("ข้อความถึงกลุ่ม").fill("อยากกินกรอบ ๆ งบ 200 บาท");
-      await member.getByRole("button", { name: "ส่ง", exact: true }).click();
+      if (member === page) {
+        await page.getByRole("button", { name: "กรอกความต้องการของฉัน" }).click();
+      } else {
+        await member.getByLabel("ข้อความถึงกลุ่ม").fill("อยากกินกรอบ ๆ งบ 200 บาท");
+        await member.getByRole("button", { name: "ส่ง", exact: true }).click();
+      }
       const dialog = member.getByRole("dialog", { name: "ความต้องการของฉัน" });
+      await expect(dialog.getByRole("button", { name: "ยืนยันความต้องการ" })).toBeInViewport();
+      if (member === page) {
+        await dialog.getByRole("button", { name: "ข้าว", exact: true }).click();
+        await dialog.getByRole("button", { name: "แห้ง", exact: true }).click();
+        await dialog.getByLabel("งบสูงสุด (บาท)").fill("200");
+      }
       await expect(dialog.getByLabel("งบสูงสุด (บาท)")).toHaveValue("200");
-      await dialog.getByRole("checkbox").last().check();
       await dialog
         .getByRole("button", { name: "ยืนยันความต้องการ", exact: true })
         .click();
       await expect(dialog).toHaveCount(0);
+      if (member === page) {
+        await expect(page.getByText("ยืนยันแล้ว 1/2 คน", { exact: true })).toBeVisible();
+        await page.getByRole("button", { name: "ค้นหาจากคนที่ยืนยันแล้ว" }).click();
+        await expect(page.getByRole("region", { name: "ผลค้นหาเบื้องต้น" })).toBeVisible();
+        await expect(guest.getByRole("button", { name: "ค้นหาจากคนที่ยืนยันแล้ว" })).toHaveCount(0);
+      }
     }
     await page.bringToFront();
     await expect(
       page
         .getByRole("log")
         .getByText("อยากกินกรอบ ๆ งบ 200 บาท", { exact: true }),
-    ).toHaveCount(2);
-    await page.getByRole("button", { name: "ค้นหาร้านสำหรับกลุ่ม" }).click();
+    ).toHaveCount(1);
+    await expect(page.getByText("ยืนยันแล้ว 2/2 คน", { exact: true })).toBeVisible();
+    await expect(page.getByRole("region", { name: "ผลค้นหาเบื้องต้น" })).toHaveCount(0);
     for (const member of [page, guest]) {
       await member.bringToFront();
       await member.getByRole("button", { name: "ยอมรับร้านนี้" }).first().click();

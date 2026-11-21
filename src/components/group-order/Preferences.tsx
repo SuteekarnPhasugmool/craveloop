@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { NoodlePreview } from "@/contracts/group-order";
 import type { RoutedDraft } from "@/contracts/router";
 import {
@@ -78,7 +78,7 @@ export default function Preferences({
     excludedIngredients: split(excluded),
     dietaryRequirements: split(diet),
     allergies: split(allergies),
-    dislikes: split(dislikes),
+    dislikes: split(dislikes).map(value => Object.keys(names).find(tag => names[tag] === value) ?? value),
   };
   const request = {
     expectedMemberRevision: revision,
@@ -86,7 +86,14 @@ export default function Preferences({
     expectedRosterVersion: session.rosterVersion,
     confirmedPreference: proposed,
   };
-  const previewBody = p.noodle === "any" ? JSON.stringify(request) : "";
+  const previewBody = !session.chatJourney && p.noodle === "any" ? JSON.stringify(request) : "";
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    dialog.showModal();
+    return () => dialog.close();
+  }, [session.chatJourney]);
   const [preview, setPreview] = useState<
     | (NoodlePreview & {
         body: string;
@@ -180,16 +187,18 @@ export default function Preferences({
   }
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!checked || needsChoice || (routed?.questions.length && !reviewed))
+    if ((!session.chatJourney && !checked) || needsChoice || (routed?.questions.length && !reviewed))
       return;
     setBusy(true);
     setError("");
     try {
-      const next = await api<SessionView>(
+      const save = (current: SessionView) => api<SessionView>(
         `/api/sessions/${session.id}/preferences/me`,
         "PUT",
         {
           ...request,
+          expectedPreferenceVersion: current.preferenceVersion,
+          expectedRosterVersion: current.rosterVersion,
           ...(routed
             ? {
                 routerDraftId: routed.id,
@@ -204,6 +213,15 @@ export default function Preferences({
             : {}),
         },
       );
+      const next = await save(session).catch(async error => {
+        // A peer can join or confirm while this private popup is open.
+        if (!session.chatJourney || !(error instanceof RequestError) || error.code !== "STALE_VERSION")
+          throw error;
+        const current = await api<SessionView>(`/api/sessions/${session.id}`);
+        if (!current.me || current.me.id !== session.me?.id || current.me.revision !== revision)
+          throw error;
+        return save(current);
+      });
       onSaved(next);
     } catch (e) {
       setError(
@@ -217,6 +235,203 @@ export default function Preferences({
     } finally {
       setBusy(false);
     }
+  }
+  if (session.chatJourney) {
+    const foodBase = p.foodBase ?? (p.noodle ? "noodles" : undefined);
+    const servingStyle =
+      p.servingStyle ??
+      (p.noodle === "broth"
+        ? "soup"
+        : p.noodle === "stir_fried"
+          ? "dry"
+          : undefined);
+    return (
+      <dialog
+        ref={dialogRef}
+        className="chat-pref"
+        aria-label="ความต้องการของฉัน"
+        onCancel={(e) => {
+          e.preventDefault();
+          if (!busy) onClose();
+        }}
+      >
+        <header>
+          <h2>มื้อนี้อยากกินอะไร?</h2>
+          <button
+            type="button"
+            aria-label="ปิดความต้องการของฉัน"
+            onClick={onClose}
+            disabled={busy}
+          >
+            ×
+          </button>
+        </header>
+        <form onSubmit={submit}>
+          <div className="chat-pref-body">
+            <fieldset>
+              <legend>อยากกินแบบไหน</legend>
+              <div className="chat-pref-chips">
+                {(
+                  [
+                    ["rice", "ข้าว"],
+                    ["noodles", "เส้น"],
+                  ] as const
+                ).map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    aria-pressed={foodBase === value}
+                    onClick={() =>
+                      setP({
+                        ...p,
+                        noodle: undefined,
+                        servingStyle,
+                        foodBase: foodBase === value ? undefined : value,
+                      })
+                    }
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>ชอบน้ำหรือแห้ง</legend>
+              <div className="chat-pref-chips">
+                {(
+                  [
+                    ["soup", "น้ำ"],
+                    ["dry", "แห้ง"],
+                  ] as const
+                ).map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    aria-pressed={servingStyle === value}
+                    onClick={() =>
+                      setP({
+                        ...p,
+                        foodBase,
+                        noodle: undefined,
+                        servingStyle:
+                          servingStyle === value ? undefined : value,
+                      })
+                    }
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+            <label>
+              งบสูงสุด (บาท)
+              <input
+                type="number"
+                min="0"
+                max="100000"
+                step="0.01"
+                inputMode="decimal"
+                placeholder="ไม่จำกัด"
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+              />
+            </label>
+            <div className="chat-pref-fields">
+              <label>
+                ของที่แพ้
+                <input
+                  placeholder="เช่น กุ้ง, ถั่วลิสง"
+                  value={allergies}
+                  onChange={(e) => setAllergies(e.target.value)}
+                />
+              </label>
+              <label>
+                ของที่ไม่กิน
+                <input
+                  placeholder="เช่น หมู"
+                  value={excluded}
+                  onChange={(e) => setExcluded(e.target.value)}
+                />
+              </label>
+            </div>
+            <label>
+              ของที่ไม่ชอบ
+              <input
+                placeholder="เช่น เห็ด, ไก่"
+                value={dislikes}
+                onChange={(e) => setDislikes(e.target.value)}
+              />
+            </label>
+            <details
+              open={
+                draft ||
+                diet ||
+                p.desiredDish ||
+                p.cuisinePreferences.length ||
+                p.textureTags.length ||
+                p.flavorTags.length
+                  ? true
+                  : undefined
+              }
+            >
+              <summary>รสชาติและข้อกำหนดเพิ่มเติม</summary>
+              <label>
+                ข้อกำหนดอาหาร
+                <input
+                  value={diet}
+                  onChange={(e) => setDiet(e.target.value)}
+                  placeholder="เช่น vegetarian"
+                />
+              </label>
+              {(
+                [
+                  ["flavorTags", "รสชาติ", flavorTags],
+                  ["textureTags", "สัมผัส", textureTags],
+                  ["cuisinePreferences", "แนวอาหาร", cuisineTags],
+                ] as const
+              ).map(([key, title, tags]) => (
+                <fieldset key={key}>
+                  <legend>{title}</legend>
+                  <div className="chat-pref-chips">
+                    {tags.map((t) => (
+                      <button
+                        type="button"
+                        key={t}
+                        aria-pressed={p[key].includes(t as never)}
+                        onClick={() => toggle(key, t)}
+                      >
+                        {names[t]}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+              ))}
+              {p.desiredDish && (
+                <button
+                  type="button"
+                  onClick={() => setP({ ...p, desiredDish: undefined })}
+                >
+                  ลบเมนูที่เลือก · {p.desiredDish}
+                </button>
+              )}
+            </details>
+            {draft?.questions.map((q) => (
+              <small key={q}>{q}</small>
+            ))}
+            {error && (
+              <p className="go-error" role="alert">
+                {error}
+              </p>
+            )}
+          </div>
+          <footer>
+            <button className="go-primary" disabled={busy}>
+              {busy ? "กำลังบันทึก…" : "ยืนยันความต้องการ"}
+            </button>
+          </footer>
+        </form>
+      </dialog>
+    );
   }
   return (
     <div

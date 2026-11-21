@@ -192,6 +192,50 @@
   font-size: 12px;
   color: #786d66;
 }
+.conversation-log .chat-tools {
+  align-items: flex-start;
+  flex-direction: column;
+  margin: 8px 0 0;
+  gap: 6px;
+}
+.chat-tools section {
+  background: #fff;
+  border: 1px solid #ece3da;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+.chat-tools ul { padding-left: 20px; margin: 6px 0; list-style: disc; }
+.chat-pref {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(370px, calc(100vw - 32px));
+  max-height: min(80dvh, 560px);
+  border: 0;
+  border-radius: 20px;
+  background: #fffdf9;
+  color: #392f29;
+  padding: 0;
+  box-shadow: 0 16px 64px #32201833;
+}
+.chat-pref[open], .chat-pref form { display: flex; flex-direction: column; overflow: hidden; }
+.chat-pref::backdrop { background: #30241e66; }
+.chat-pref header, .chat-pref footer { flex: none; padding: 12px 18px; }
+.chat-pref header { display: flex; justify-content: space-between; align-items: center; }
+.chat-pref h2 { font-size: 20px; margin: 0; }
+.chat-pref header button { width: 36px; height: 36px; border-radius: 50%; background: #f4eee7; font-size: 20px; }
+.chat-pref-body { overflow: auto; overscroll-behavior: contain; padding: 0 18px 8px; }
+.chat-pref fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.chat-pref label, .chat-pref legend, .chat-pref summary { display: block; font-size: 13px; font-weight: 600; margin: 8px 0 4px; }
+.chat-pref summary { display: list-item; cursor: pointer; }
+.chat-pref label input { width: 100%; min-width: 0; font-size: 16px; border: 1px solid #d6cdc4; border-radius: 9px; padding: 6px 10px; margin-top: 3px; background: white; }
+.chat-pref-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chat-pref-chips button { padding: 5px 14px; border-radius: 20px; border: 1px solid #ddd1c7; background: white; }
+.chat-pref-chips button[aria-pressed="true"] { background: #ffebdf; color: #91300e; border-color: #bc5228; }
+.chat-pref-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.chat-pref footer { border-top: 1px solid #ebe4dc; }
+.chat-pref footer button { width: 100%; }
 .chat-tools button,
 .chat-results button,
 .chat-roster button,

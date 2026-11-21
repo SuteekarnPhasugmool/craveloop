@@ -58,9 +58,10 @@ export default function MealChat({
               CraveLoop <small>ผู้ช่วยจำลอง</small>
             </b>
             <p>
-              ลองบอกเมนูที่อยากกินกับงบ เช่น “อยากกินกรอบ ๆ งบ 150 บาท”
-              แล้วตรวจร่างก่อนยืนยันได้เลย
+              สวัสดีทุกคน 👋 มื้อนี้อยากกินอะไรกันบ้าง? กดปุ่มด้านล่างเพื่อบอกของที่อยากกิน งบ และของที่แพ้
+              เมื่อทุกคนยืนยันแล้ว CraveLoop จะช่วยหาร้านให้เลย
             </p>
+            {tools}
           </article>
           {session.messages?.map((m) => (
             <article
@@ -83,7 +84,6 @@ export default function MealChat({
       </div>
       <footer className="conversation-dock">
         {error && <p role="alert">{error}</p>}
-        {tools}
         <form onSubmit={send}>
           <input
             maxLength={2000}
