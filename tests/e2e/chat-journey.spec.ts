@@ -51,14 +51,40 @@ test("shared chat, personal menu choices and checkout survive refresh", async ({
       await member.getByRole("button", { name: "ยอมรับร้านนี้" }).first().click();
     }
     await page.bringToFront();
+    const agreedName = await page
+      .locator(".chat-results article h3")
+      .first()
+      .innerText();
     await page.getByRole("button", { name: "สรุปร้านนี้" }).first().click();
-    const handoff = page.getByRole("button", { name: "ส่งต่อไปยังตะกร้าจำลอง" });
+    for (const member of [page, guest]) {
+      await member.bringToFront();
+      await expect(member).toHaveURL(/\/group\/[^/]+\/shop\/[^/]+$/);
+      await expect(
+        member.getByRole("heading", { level: 1, name: agreedName }),
+      ).toBeVisible();
+      await expect(member.getByRole("main", { name: "หน้าร้าน" })).toBeVisible();
+      await expect(member.getByLabel("ข้อความถึงกลุ่ม")).toHaveCount(0);
+    }
+    const shopPath = new URL(page.url()).pathname;
+    expect(new URL(guest.url()).pathname).toBe(shopPath);
+    await guest.goto(url);
+    await expect(guest).toHaveURL(new URL(shopPath, url).href);
+    await page.bringToFront();
+    await page.getByRole("button", { name: "ค้นหาเมนูในร้าน" }).click();
+    await page.getByRole("searchbox", { name: "ค้นหาเมนู" }).fill("no-such-menu");
+    await expect(page.getByText("ไม่พบเมนูที่ค้นหา")).toBeVisible();
+    await page.getByRole("button", { name: "ค้นหาเมนูในร้าน" }).click();
+    const handoff = page.getByRole("button", { name: "ดูตะกร้ากลุ่ม" });
     await expect(handoff).toBeDisabled();
     const dishes = [];
     for (const [i, member] of [page, guest].entries()) {
       await member.bringToFront();
-      const dish = member.locator(".meal-dishes button").nth(i);
-      dishes.push(await dish.locator("strong").innerText());
+      const row = member
+        .getByRole("region", { name: "รายการอาหาร" })
+        .getByRole("article")
+        .nth(i);
+      const dish = row.getByRole("button");
+      dishes.push(await row.getByRole("heading").innerText());
       await dish.click();
       await expect(dish).toHaveAttribute("aria-pressed", "true");
     }
@@ -70,6 +96,16 @@ test("shared chat, personal menu choices and checkout survive refresh", async ({
     await expect(page.getByTestId("group-checkout")).toBeVisible();
     await guest.reload();
     await expect(guest.getByTestId("group-checkout")).toBeVisible();
+
+    await page.bringToFront();
+    await page.getByRole("button", { name: "คำสั่งซื้อแบบกลุ่ม" }).click();
+    await page.getByRole("button", { name: "จัดการผู้ร่วมสั่ง" }).click();
+    await page.getByRole("button", { name: "ยืนยันผู้ร่วมสั่ง" }).click();
+    for (const member of [page, guest]) {
+      await member.bringToFront();
+      await expect(member).toHaveURL(/\/group\/[^/]+$/);
+      await expect(member.getByLabel("ข้อความถึงกลุ่ม")).toBeVisible();
+    }
   } finally {
     await guest.close();
   }

@@ -4,7 +4,8 @@ import type { Option, SessionView } from "@/contracts";
 import ChatShell from "./ChatShell";
 import ChatInvite, { roomInviteUrl } from "./ChatInvite";
 import MealChat from "./MealChat";
-import FoodPhoto from "./FoodPhoto";
+import { redirect } from "next/navigation";
+import RestaurantShop, { ShopFrame } from "./RestaurantShop";
 import type { ChatDraft } from "@/contracts/chat";
 import { api, requestId, RequestError } from "../api";
 import { baht, DeliveryBrand, ConceptNotice, CraveMark } from "./Shared";
@@ -39,7 +40,13 @@ function errorText(e: unknown) {
   }
   return "เชื่อมต่อไม่สำเร็จ เราเก็บข้อมูลที่ยืนยันแล้วไว้ ลองอีกครั้งได้เลย";
 }
-export default function GroupRoom({ sessionId }: { sessionId: string }) {
+export default function GroupRoom({
+  sessionId,
+  shopId,
+}: {
+  sessionId: string;
+  shopId?: string;
+}) {
   const [s, setS] = useState<SessionView | null>(null);
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
@@ -174,6 +181,28 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
         50,
       );
   }
+  if (shopId && !s)
+    return (
+      <ShopFrame>
+        <div className="chat-empty" role="status">
+          {error || "กำลังเปิดหน้าร้าน…"}
+          {error && (
+            <button className="go-outline" onClick={() => void refresh()}>
+              ลองอีกครั้ง
+            </button>
+          )}
+        </div>
+      </ShopFrame>
+    );
+  const groupUrl = `/group/${encodeURIComponent(sessionId)}`;
+  // Use the shared decision for redirects after finalize, refresh or a host reopening the meal.
+  const chosenShop =
+    s?.chatJourney && s.me && s.status === "finalized"
+      ? s.finalizedOptionId
+      : null;
+  if (chosenShop && shopId !== chosenShop)
+    redirect(`${groupUrl}/shop/${encodeURIComponent(chosenShop)}`);
+  if (shopId && !chosenShop) redirect(groupUrl);
   if (!s)
     return (
       <ChatShell title="Group Order" subtitle="ShopeeFood">
@@ -342,69 +371,17 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
   );
   const orderPanels = (
     <>
-      {" "}
-      {final && (
+      {final && !s.chatJourney && (
         <section className="go-card go-handoff">
           <p className="go-eyebrow">GROUP DECISION CONFIRMED</p>
           <h2>ตกลงร้านเดียวกันแล้ว ✓</h2>
           <p className="go-muted">
             {final.restaurantName} · สมาชิกทุกคนยอมรับผลล่าสุด การตกลงนี้ไม่ใช่คำสั่งซื้อ
           </p>
-          {s.chatJourney && s.isHost && (
-            <button
-              className="go-text-button"
-              onClick={() => setConfigure(true)}
-            >
-              จัดการผู้ร่วมสั่ง
-            </button>
-          )}
-          {s.chatJourney && !currentCart && mine && (
-            <>
-              <h3>เลือกเมนูของคุณ</h3>
-              <p>
-                เลือกแล้ว {Object.keys(s.menuChoices ?? {}).length}/
-                {selected.length} คน · ราคาอาหารก่อนแบ่งค่าส่ง
-              </p>
-              {!s.dishes?.length && (
-                <p className="go-info-note">
-                  ยังไม่มีเมนูที่ยืนยันราคาได้สำหรับคุณ ให้ผู้จัดเปิดมื้ออีกครั้งเพื่อเลือกร้านใหม่
-                </p>
-              )}
-              <div className="meal-dishes">
-                {s.dishes?.map((d) => (
-                  <button
-                    key={d.menuId}
-                    disabled={!!busy}
-                    aria-pressed={s.menuChoices?.[s.me!.id] === d.menuId}
-                    onClick={() =>
-                      void mutate(
-                        "/dish",
-                        "PUT",
-                        { ...choice(final), menuId: d.menuId },
-                        "dish",
-                      )
-                    }
-                  >
-                    <FoodPhoto menuId={d.menuId} menuName={d.menuName} />
-                    <span>
-                      <strong>{d.menuName}</strong>
-                      <small>{baht(d.itemCostSatang)}</small>
-                    </span>
-                    <b>{s.menuChoices?.[s.me!.id] === d.menuId ? "✓" : "+"}</b>
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
           {s.isHost && !currentCart && (
             <button
               className="go-primary"
-              disabled={
-                !!busy ||
-                (s.chatJourney
-                  ? selected.some((m) => !s.menuChoices?.[m.id])
-                  : !cartFinite)
-              }
+              disabled={!!busy || !cartFinite}
               onClick={() =>
                 void mutate("/handoff", "POST", choice(final), "handoff")
               }
@@ -522,11 +499,41 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
       )}
     </>
   );
+  if (shopId && final && s.me) {
+    return (
+      <RestaurantShop
+        session={s}
+        restaurant={final}
+        busy={!!busy}
+        onSelect={(menuId) =>
+          void mutate("/dish", "PUT", { ...choice(final), menuId }, "dish")
+        }
+        onBasket={() =>
+          void mutate("/handoff", "POST", choice(final), "handoff")
+        }
+        onManage={() => setConfigure(true)}
+        basket={currentCart ? orderPanels : undefined}
+        notice={
+          <>
+            {!connected && (
+              <p className="chat-notice" role="status">
+                กำลังเชื่อมต่ออีกครั้ง…
+              </p>
+            )}
+            {error && (
+              <p className="chat-notice" role="alert">
+                {error}
+              </p>
+            )}
+          </>
+        }
+      >
+        {drawers}
+      </RestaurantShop>
+    );
+  }
   if (s.chatJourney) {
-    const title = currentCart
-      ? "ตะกร้ากลุ่ม"
-      : (final?.restaurantName ??
-        `มื้อของ ${s.members[0]?.displayName ?? "กลุ่ม"}`);
+    const title = `มื้อของ ${s.members[0]?.displayName ?? "กลุ่ม"}`;
     return (
       <ChatShell
         title={title}
@@ -576,8 +583,6 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
         )}
         {!s.me ? (
           <main className="chat-order">{joinPanel}</main>
-        ) : final ? (
-          <main className="chat-order">{orderPanels}</main>
         ) : (
           <MealChat
             session={s}

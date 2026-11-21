@@ -1,0 +1,329 @@
+.go-app.dh-app.restaurant-shop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #fff;
+  color: #282623;
+}
+@media (min-width: 650px) {
+  .go-app.dh-app.restaurant-shop {
+    height: calc(100dvh - 18px);
+  }
+}
+.restaurant-shop svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+.shop-nav,
+.shop-nav-actions,
+.shop-identity,
+.shop-identity p,
+.shop-delivery,
+.shop-delivery span,
+.shop-list header,
+.shop-price,
+.shop-bottom,
+.shop-bottom button,
+.shop-search {
+  display: flex;
+  align-items: center;
+}
+.shop-nav {
+  justify-content: space-between;
+  padding: 8px 14px;
+  min-height: 52px;
+  border-bottom: 1px solid #f1efec;
+  background: white;
+  flex: none;
+}
+.shop-nav a,
+.shop-nav button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: #302d29;
+  min-width: 36px;
+  min-height: 36px;
+}
+.shop-nav-actions {
+  gap: 8px;
+  margin-left: auto;
+}
+.shop-nav .shop-group-pill {
+  gap: 6px;
+  background: #f5f4f2;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 12px;
+}
+.shop-members {
+  position: absolute;
+  z-index: 5;
+  top: 50px;
+  right: 12px;
+  left: 12px;
+  border: 1px solid #e8e4df;
+  border-radius: 12px;
+  background: white;
+  padding: 15px;
+  box-shadow: 0 8px 26px #48351c20;
+}
+.shop-members p {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+  font-size: 13px;
+}
+.shop-members span,
+.shop-info p,
+.shop-list > p {
+  color: #736d67;
+}
+.shop-members button {
+  padding: 6px 10px;
+  color: #ab381e;
+  background: #fff0e8;
+  border-radius: 6px;
+}
+.restaurant-shop main.shop-scroll,
+.restaurant-shop main.shop-basket {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 0;
+}
+.restaurant-shop main.shop-scroll {
+  display: flex;
+  flex-direction: column;
+}
+.restaurant-shop main.shop-basket {
+  padding: 14px;
+  background: #f7f6f3;
+}
+.shop-profile {
+  padding: 0 14px 12px;
+}
+.shop-cover {
+  height: clamp(104px, 28vw, 155px);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f3ede4;
+}
+.shop-cover img,
+.shop-identity > img,
+.shop-list article > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.shop-identity {
+  gap: 10px;
+  margin: 15px 0 12px;
+}
+.shop-identity > img {
+  width: 46px;
+  height: 46px;
+  border-radius: 8px;
+}
+.shop-identity h1 {
+  font-size: 21px;
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+}
+.shop-identity p {
+  font-size: 12px;
+  color: #746b62;
+  gap: 4px;
+  margin: 3px 0 0;
+}
+.shop-identity svg,
+.shop-delivery svg,
+.shop-group-pill svg {
+  width: 15px;
+  height: 15px;
+}
+.shop-delivery {
+  background: #f4f3f1;
+  padding: 3px;
+  border-radius: 6px;
+  justify-content: space-between;
+  color: #655d56;
+  gap: 6px;
+  font-size: 12px;
+}
+.shop-delivery span {
+  gap: 6px;
+  padding: 5px 9px;
+}
+.shop-delivery span:first-child {
+  border-radius: 5px;
+  background: white;
+  font-weight: 700;
+  color: #3d3531;
+}
+.shop-tabs {
+  display: flex;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-top: 6px solid #f5f4f2;
+  border-bottom: 1px solid #eae7e4;
+  background: white;
+}
+.shop-tabs button {
+  background: white;
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  color: #6e6964;
+  border-bottom: 2px solid transparent;
+}
+.shop-tabs button[aria-pressed="true"] {
+  border-color: #e65530;
+  color: #c14727;
+  font-weight: 700;
+}
+.shop-menu {
+  display: grid;
+  grid-template-columns: clamp(72px, 19vw, 94px) minmax(0, 1fr);
+  flex: 1;
+}
+.shop-menu nav {
+  background: #f6f5f4;
+}
+.shop-menu nav button {
+  display: block;
+  width: 100%;
+  background: transparent;
+  padding: 15px 5px;
+  color: #68635e;
+  font-size: 12px;
+  border-left: 3px solid transparent;
+}
+.shop-menu nav button[aria-pressed="true"] {
+  border-color: #ed5932;
+  background: white;
+  color: #be4325;
+  font-weight: 700;
+}
+.shop-list {
+  padding: 12px;
+}
+.shop-list header,
+.shop-price,
+.shop-bottom {
+  justify-content: space-between;
+  gap: 6px;
+}
+.shop-list h2,
+.shop-info h2 {
+  font-size: 17px;
+  letter-spacing: 0;
+}
+.shop-list header small {
+  color: #7f7973;
+  font-size: 11px;
+}
+.shop-list article {
+  display: flex;
+  gap: 10px;
+  padding: 14px 0;
+  border-bottom: 1px solid #efecea;
+  align-items: flex-start;
+}
+.shop-list article > img {
+  flex: none;
+  width: clamp(64px, 18vw, 86px);
+  height: clamp(68px, 19vw, 90px);
+  border-radius: 7px;
+  background: #f4f2ed;
+}
+.shop-list article > div {
+  flex: 1;
+  min-width: 0;
+}
+.shop-list h3 {
+  font-size: 15px;
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+.shop-list article small {
+  font-size: 11px;
+  color: #a24d21;
+}
+.shop-price {
+  margin-top: 6px;
+  color: #c44926;
+  font-size: 15px;
+}
+.shop-price button {
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border-radius: 6px;
+  color: white;
+  background: #e85933;
+  font-size: 20px;
+  line-height: 1;
+}
+.shop-price button[aria-pressed="true"] {
+  background: #fff0e8;
+  color: #c04423;
+  box-shadow: inset 0 0 0 1px #ea8766;
+}
+.shop-search {
+  padding: 10px 14px;
+  gap: 8px;
+}
+.shop-search input {
+  flex: 1;
+  min-width: 0;
+}
+.shop-info {
+  padding: 18px;
+}
+.shop-info p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+.shop-bottom {
+  flex: none;
+  border-top: 1px solid #ece8e4;
+  box-shadow: 0 -3px 14px #321e1008;
+  background: white;
+  padding: 10px 14px max(10px, env(safe-area-inset-bottom));
+}
+.shop-bottom > div {
+  min-width: 0;
+}
+.shop-bottom strong,
+.shop-bottom small {
+  display: block;
+}
+.shop-bottom strong {
+  font-size: 14px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.shop-bottom small {
+  font-size: 12px;
+  color: #706962;
+}
+.shop-bottom button {
+  gap: 7px;
+  flex: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  background: #d9502b;
+  color: white;
+  font-weight: 700;
+}
