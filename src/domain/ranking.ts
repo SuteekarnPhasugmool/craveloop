@@ -11,7 +11,7 @@ import {
 import { allocateFee, deliveryFee } from "./costs";
 import { checkMenu } from "./feasibility";
 
-export const ALGORITHM_VERSION = "fit-60-40-v1";
+export const ALGORITHM_VERSION = "fit-60-40-v3";
 export function groupScores(scores: number[]) {
   if (
     scores.length === 0 ||
@@ -36,6 +36,18 @@ export function menuFit(
     [preference.flavorTags, menu.flavorTags, 0.3],
     [preference.textureTags, menu.textureTags, 0.2],
   ];
+  if (preference.noodle) {
+    const requested =
+      preference.noodle === "any" ? ["noodle"] : ["noodle", preference.noodle];
+    families.push([
+      requested,
+      menu.noodleStyle ? ["noodle", menu.noodleStyle] : [],
+      0.5,
+    ]);
+  }
+  if (preference.desiredDish) {
+    families.push([[preference.desiredDish], [menu.name], 0.5]);
+  }
   let weighted = 0,
     weight = 0;
   const matched = new Set<string>();

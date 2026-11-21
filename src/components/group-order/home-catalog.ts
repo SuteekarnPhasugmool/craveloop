@@ -1,5 +1,6 @@
 import seed from "../../../data/catalog.seed.json";
 import type { Restaurant } from "@/contracts";
+import { shopeeFoodListings } from "@/adapters/shopeefood-catalog";
 
 /** Public fictional fixture facts only; no discounts, reviews or sales are inferred. */
 export type HomeCatalogItem = {
@@ -7,6 +8,7 @@ export type HomeCatalogItem = {
   restaurantName: string;
   menuId: string;
   menuName: string;
+  categoryTh?: string;
   priceSatang: number;
   feeSatang: number | null;
   cuisineTags: string[];
@@ -15,8 +17,12 @@ export type HomeCatalogItem = {
   dietaryTags: string[];
 };
 
-export const homeCatalog: HomeCatalogItem[] = (seed as Restaurant[]).flatMap(
-  (restaurant) => {
+const listings: { restaurant: Restaurant; nameTh?: string }[] = [
+  ...(seed as Restaurant[]).map((restaurant) => ({ restaurant })),
+  ...shopeeFoodListings,
+];
+export const homeCatalog: HomeCatalogItem[] = listings.flatMap(
+  ({ restaurant, nameTh }) => {
     if (!restaurant.available || !restaurant.channels.includes("delivery"))
       return [];
     const quote = restaurant.feeQuote;
@@ -37,6 +43,7 @@ export const homeCatalog: HomeCatalogItem[] = (seed as Restaurant[]).flatMap(
           restaurantName: restaurant.name,
           menuId: menu.id,
           menuName: menu.name,
+          ...(nameTh ? { categoryTh: nameTh } : {}),
           priceSatang: price,
           feeSatang,
           cuisineTags: menu.cuisineTags,

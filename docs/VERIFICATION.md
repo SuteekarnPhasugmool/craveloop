@@ -1,5 +1,35 @@
 # Verification — actual local results
 
+## Live extraction check — 21 November 2026
+
+With the CraveLoop project key and `OPENAI_MODEL=gpt-6.2-sol`, `npm run ai:smoke` passed on the Thai text and bundled illustration in 4.95 seconds. A separate synthetic text input passed through the session input and extraction HTTP handlers using an in-memory SQLite room. Both returned a draft requiring confirmation with a ฿150 budget and pork excluded. These checks cover preference extraction. The private text router still has mocked-provider coverage.
+
+## Group Order ingredient graph and guided preferences — 21 November 2026
+
+The starting workspace passed typecheck, 98 unit tests and 61 SQLite integration tests. It already contained the ingredient graph, hard-filter traversal, noodle catalog tags and some snapshot checks. This workspace has no project .git directory, so its source branch and commit could not be verified against the reference commit.
+
+The new tests exercise the Group Order form, preview route, authoritative ranking and simulated cart. A three-context browser case selects a broad noodle craving, skips, inspects a private hidden-shrimp path, accepts a restaurant, confirms a broth draft, and reaches a three-item cart after a fresh unanimous vote. Separate tests cover unchanged outcomes despite score changes, incomplete allergy evidence, per-person budgets, peer submissions, obsolete ranking/graph tokens and idempotent cart handoff.
+
+| Command | Local evidence |
+| --- | --- |
+| `npm run typecheck` | Passed |
+| `npm test` | 105 passed, including hidden ingredients, both noodle scenarios, graph source conflicts and mock-provider routing |
+| `npm run test:integration` | 64 passed with temporary SQLite, including router failure/replay and stale graph checks |
+| `npm run build` | Final production build passed |
+| `npm run test:e2e` | All nine cases passed against production. On the final build eight passed on the first run. Chrome reported `ERR_NETWORK_CHANGED` during local navigation in the remaining case, which passed on `npm run test:e2e -- --last-failed` in 17.2 seconds of test time. |
+| `npm run eval` | 34 existing fixtures, 52 valid assignments in the assignment coverage check, plus the two three-person synthetic policy scenarios below |
+| `npm run kg:draft` | Three proposed edges from recipe and label sources for formula Y, three corroborated edges for formula X, zero fixture conflicts. Output awaits human review. |
+
+| Policy on the same two scenarios | Optional questions | Required budget clarifications | Winning restaurants | Hard violations |
+| --- | ---: | ---: | --- | ---: |
+| Recommend immediately | 0 | 2 | r02, r01 | 0 |
+| Ask whenever both styles are available | 2 | 2 | r01, r01 | 0 |
+| Ask when the simulated result changes | 1 | 2 | r01, r01 | 0 |
+
+The simulated answer when asked was broth. No real groups participated. Acceptance rates and time to consensus remain unmeasured. The optional router used a mocked provider in tests. A server model was not configured for live verification. The ingredient worker read local fixture documents and the explainer used versioned templates.
+
+The earlier development-server run passed both Group Order cases and timed out in two unrelated legacy chat/home interactions. Those two cases passed on the production server. Browser runs used installed Chrome, temporary SQLite and three separate contexts for the guided demo. The local tsx runner required Windows profile access for the evaluation, graph worker and browser bootstrap.
+
 ## Screenshot-reference delivery home — 20 November 2026
 
 The user supplied a real ShopeeFood mobile screenshot. The primary home now follows its orange location/search header, rounded two-row scrolling shortcuts, horizontal orange/cream catalog rail, concept banners and fixed four-item navigation. Group Order/CraveLoop remains the entry to the existing decision layer. All food art is labeled native SVG illustration; card names and prices come from existing synthetic delivery fixtures. No personal screenshot address, real merchant promotion, discount, review, sales count or provider API was added.

@@ -27,6 +27,8 @@ const strings = z
   .transform((v) => [...new Set(v.map((s) => s.toLowerCase()))]);
 export const PreferenceSchema = z
   .object({
+    noodle: z.enum(["any", "broth", "stir_fried"]).optional(),
+    desiredDish: z.string().trim().min(1).max(120).optional(),
     cuisinePreferences: z.array(z.enum(cuisineTags)).max(7),
     flavorTags: z.array(z.enum(flavorTags)).max(5),
     textureTags: z.array(z.enum(textureTags)).max(6),
@@ -83,6 +85,9 @@ export const JoinSchema = z
 export const ConfirmSchema = VersionSchema.extend({
   confirmedPreference: PreferenceSchema,
   expectedMemberRevision: z.number().int().min(0),
+  noodleDraft: z.string().length(64).optional(),
+  routerDraftId: z.string().uuid().optional(),
+  reviewedQuestions: z.literal(true).optional(),
   draftId: z.string().uuid().optional(),
 }).strict();
 export const PatchSchema = VersionSchema.extend({
@@ -113,6 +118,7 @@ export type Menu = {
   crossContactEvidence: Record<string, CatalogEvidence>;
   cuisineTags: string[];
   flavorTags: string[];
+  noodleStyle?: "broth" | "stir_fried";
   textureTags: string[];
   available: boolean;
   priceIncludesFees: boolean;
@@ -171,6 +177,7 @@ export type Rejection = {
   memberId?: string;
   restaurantId: string;
   menuId?: string;
+  graphFacts?: string[];
 };
 export type RankResult = {
   status: "ok" | "no_match";
@@ -186,6 +193,7 @@ export type Ranking = RankResult &
     id: string;
     catalogVersion: string;
     update?: RankingUpdate;
+    graphVersion?: string;
     algorithmVersion: string;
     createdAt: string;
   };
@@ -202,6 +210,7 @@ export type MemberView = {
   revision: number;
 };
 export type SessionView = Versions & {
+  ingredientProofs?: string[];
   experience?: "group_order";
   handoff?: CartHandoff;
   meal?: MealState;

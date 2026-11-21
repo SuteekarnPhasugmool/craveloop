@@ -229,6 +229,8 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
     handoff.catalogVersion === s.catalogVersion &&
     handoff.catalogVersion === s.ranking?.catalogVersion &&
     handoff.algorithmVersion === s.ranking?.algorithmVersion &&
+    !!handoff.graphVersion &&
+    handoff.graphVersion === s.ranking?.graphVersion &&
     handoff.preferenceVersion === s.preferenceVersion &&
     handoff.rosterVersion === s.rosterVersion &&
     handoff.restaurantId === s.finalizedOptionId;
@@ -503,6 +505,19 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
                       ? "แก้ความต้องการของฉัน"
                       : "กรอกความต้องการของฉัน"}
                   </button>
+                  {!!s.ingredientProofs?.length && (
+                    <details className="go-advanced">
+                      <summary>ทำไมบางเมนูจึงถูกตัดออกสำหรับฉัน</summary>
+                      <p className="go-fine">
+                        หลักฐานสูตรและฉลากจำลอง · {s.ranking?.graphVersion}
+                      </p>
+                      <ul>
+                        {s.ingredientProofs.map((proof) => (
+                          <li key={proof}>{proof}</li>
+                        ))}
+                      </ul>
+                    </details>
+                  )}
                   {s.status === "finalized" && (
                     <p className="go-fine">
                       ตกลงร้านแล้ว
@@ -743,7 +758,11 @@ export default function GroupRoom({ sessionId }: { sessionId: string }) {
                     เมื่อผู้ร่วมที่เลือกเข้าร่วมและยืนยันครบ ผู้ดูแลจะค้นหาได้สูงสุด 3
                     ร้านที่มีเมนูผ่านเงื่อนไขให้ทุกคน
                   </p>
-                  <span>Manual mode · ไม่มีการเรียก AI หรือบริการสด</span>
+                  <span>
+                    {s.ai.available
+                      ? "กรอกเองหรือขอร่างจาก AI ในฟอร์มส่วนตัว"
+                      : "Manual mode · ไม่มีการเรียก AI หรือบริการสด"}
+                  </span>
                 </section>
               )}
               {final && (

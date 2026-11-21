@@ -1,4 +1,6 @@
-import { beforeAll, afterAll, describe, it, expect } from "vitest";
+import { beforeAll, afterAll, describe, it, expect, vi } from "vitest";
+import * as routerAdapter from "@/adapters/preference-router";
+import { routePrivateTurn } from "@/server/preference-router";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -9,13 +11,20 @@ import {
   type Preference,
   type SessionView,
 } from "@/contracts";
-import { migrate, closeDatabase, sqlite, transact } from "@/server/database";
+import {
+  migrate,
+  closeDatabase,
+  sqlite,
+  transact,
+  readSession,
+} from "@/server/database";
 import { seedCatalog } from "@/server/seed";
 import {
   createRoom,
   joinRoom,
   getRoom,
   mutateRoom,
+  previewNoodles,
   type Context,
 } from "@/server/session-service";
 import {
@@ -125,6 +134,186 @@ async function finalized() {
 }
 
 describe("synthetic Group Order handoff and checkout lifecycle", () => {
+  it("reuses one provider turn per key and requires its owner to review the latest draft", async () => {
+    const r = await ready(),
+      [owner, peer] = r.tokens;
+    const s = await getRoom(r.id, owner);
+    const request = {
+      ...versions(s),
+      expectedMemberRevision: s.me!.revision,
+      confirmedPreference: s.me!.preference!,
+      text: "งบ 100 หรือ 150",
+    };
+    vi.stubEnv("OPENAI_API_KEY", "mock-only");
+    vi.stubEnv("OPENAI_MODEL", "fixture-model");
+    const adapter = vi
+      .spyOn(routerAdapter, "routePreference")
+      .mockResolvedValue({
+        intent: "change_preference",
+        preference: request.confirmedPreference,
+        evidence: [],
+        questions: ["ยืนยันงบในฟอร์ม"],
+      });
+    try {
+      const context = ctx(owner);
+      const draft = await routePrivateTurn(r.id, request, context);
+      expect(await routePrivateTurn(r.id, request, context)).toEqual(draft);
+      expect(adapter).toHaveBeenCalledTimes(1);
+      const confirmation = {
+        ...versions(s),
+        expectedMemberRevision: s.me!.revision,
+        confirmedPreference: draft.preference,
+        routerDraftId: draft.id,
+      };
+      await expect(
+        mutateRoom(r.id, "confirm", confirmation, ctx(peer)),
+      ).rejects.toMatchObject({ code: "STALE_DRAFT" });
+      await expect(
+        mutateRoom(r.id, "confirm", confirmation, ctx(owner)),
+      ).rejects.toMatchObject({ code: "REVIEW_QUESTIONS" });
+      const latest = await routePrivateTurn(r.id, request, ctx(owner));
+      await expect(
+        mutateRoom(
+          r.id,
+          "confirm",
+          { ...confirmation, reviewedQuestions: true },
+          ctx(owner),
+        ),
+      ).rejects.toMatchObject({ code: "STALE_DRAFT" });
+      expect(JSON.stringify(await getRoom(r.id, peer))).not.toContain(
+        latest.id,
+      );
+      const saved = await mutateRoom(
+        r.id,
+        "confirm",
+        { ...confirmation, routerDraftId: latest.id, reviewedQuestions: true },
+        ctx(owner),
+      );
+      expect(saved.me!.revision).toBe(s.me!.revision + 1);
+      const failedTurn = {
+        ...request,
+        ...versions(saved),
+        expectedMemberRevision: saved.me!.revision,
+      };
+      const failedContext = ctx(owner);
+      adapter.mockRejectedValueOnce(new Error("unavailable"));
+      await expect(
+        routePrivateTurn(r.id, failedTurn, failedContext),
+      ).rejects.toThrow("unavailable");
+      await expect(
+        routePrivateTurn(r.id, failedTurn, failedContext),
+      ).rejects.toMatchObject({ code: "AI_ROUTER_FAILED" });
+      expect(adapter).toHaveBeenCalledTimes(3);
+    } finally {
+      adapter.mockRestore();
+      vi.unstubAllEnvs();
+    }
+  });
+  it("keeps simulations private and read-only, verifies the signed choice, and replans after confirmation", async () => {
+    const broad: Preference = {
+      ...emptyPreference,
+      noodle: "any",
+      excludedIngredients: ["shrimp"],
+      budgetMaxSatang: 12000,
+    };
+    const r = await ready([broad, emptyPreference, emptyPreference]);
+    const [owner, peer] = r.tokens;
+    const s = await ranked(r);
+    await mutateRoom(r.id, "accept", choice(s), ctx(peer));
+    const before = await readSession(r.id);
+    const body = {
+      ...versions(s),
+      expectedMemberRevision: s.me!.revision,
+      confirmedPreference: broad,
+    };
+    const preview = await previewNoodles(r.id, body, ctx(owner));
+    expect(await readSession(r.id)).toEqual(before);
+    expect(preview.choices.map((c) => c.style)).toEqual([
+      "broth",
+      "stir_fried",
+    ]);
+    const picked = {
+      ...body,
+      confirmedPreference: { ...broad, noodle: "broth" },
+      noodleDraft: preview.choices[0].draft,
+    };
+    await expect(
+      mutateRoom(r.id, "confirm", picked, ctx(peer)),
+    ).rejects.toMatchObject({ code: "STALE_NOODLE_DRAFT" });
+    await expect(
+      mutateRoom(
+        r.id,
+        "confirm",
+        { ...picked, confirmedPreference: { ...broad, noodle: "stir_fried" } },
+        ctx(owner),
+      ),
+    ).rejects.toMatchObject({ code: "STALE_NOODLE_DRAFT" });
+    expect(s.ingredientProofs?.join(" ")).toContain(
+      "r03-m03 → paste-x → shrimp",
+    );
+    expect((await getRoom(r.id, peer)).ingredientProofs).toEqual([]);
+    expect(JSON.stringify(await getRoom(r.id))).not.toContain("recipe-03-03");
+    const reranked = await ranked(r);
+    await expect(
+      mutateRoom(r.id, "confirm", picked, ctx(owner)),
+    ).rejects.toMatchObject({ code: "STALE_NOODLE_DRAFT" });
+    const next = await previewNoodles(r.id, body, ctx(owner));
+    await mutateRoom(r.id, "accept", choice(reranked), ctx(peer));
+    const saved = await mutateRoom(
+      r.id,
+      "confirm",
+      { ...picked, noodleDraft: next.choices[0].draft },
+      ctx(owner),
+    );
+    expect(saved.ranking!.options[0].restaurantId).not.toBe(
+      reranked.ranking!.options[0].restaurantId,
+    );
+    expect(saved.me!.preference).toEqual(picked.confirmedPreference);
+    expect(saved.acceptances).toEqual([]);
+    await expect(
+      mutateRoom(r.id, "confirm", picked, ctx(owner)),
+    ).rejects.toMatchObject({ status: 409 });
+  });
+  it("requires current graph evidence at acceptance, finalization, handoff and checkout", async () => {
+    const r = await ready();
+    const rankedRoom = await ranked(r);
+    const current = choice(rankedRoom);
+    for (const token of r.tokens)
+      await mutateRoom(r.id, "accept", current, ctx(token));
+    await transact(r.id, (s) => {
+      delete s!.rankings.at(-1)!.graphVersion; // legacy snapshot
+      return { session: s!, result: null };
+    });
+    for (const action of ["accept", "finalize"] as const)
+      await expect(
+        mutateRoom(r.id, action, current, ctx(r.tokens[0])),
+      ).rejects.toMatchObject({ code: "STALE_RANKING" });
+    const fresh = await ranked(r);
+    expect(fresh.acceptances).toEqual([]);
+    const c = choice(fresh);
+    for (const token of r.tokens)
+      await mutateRoom(r.id, "accept", c, ctx(token));
+    await mutateRoom(r.id, "finalize", c, ctx(r.tokens[0]));
+    const cart = await postHandoff(r.id, c, ctx(r.tokens[0]));
+    await transact(r.id, (s) => {
+      s!.handoff!.graphVersion = "obsolete";
+      return { session: s!, result: null };
+    });
+    await expect(
+      postCheckout(
+        r.id,
+        { ...c, handoffId: cart.handoff!.id },
+        ctx(r.tokens[0]),
+      ),
+    ).rejects.toMatchObject({ code: "STALE_HANDOFF" });
+    await transact(r.id, (s) => {
+      s!.rankings.at(-1)!.graphVersion = "obsolete";
+      return { session: s!, result: null };
+    });
+    await expect(postHandoff(r.id, c, ctx(r.tokens[0]))).rejects.toMatchObject({
+      code: "STALE_RANKING",
+    });
+  });
   it("creates delivery group with automatic selection but never automatic personal consent", async () => {
     const r = await group(),
       s = await getRoom(r.id, r.tokens[0]);

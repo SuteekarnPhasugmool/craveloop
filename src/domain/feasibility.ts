@@ -5,6 +5,7 @@ import type {
   Rejection,
   Restaurant,
 } from "../contracts";
+import { ingredientPath, GRAPH_CATALOG_VERSION } from "./ingredient-graph";
 import { menuCost } from "./costs";
 
 // Canonical ingredient identifiers. An unsupported freeform restriction cannot prove absence.
@@ -159,6 +160,23 @@ export function checkMenu(
     ),
   ]);
   for (const ingredient of exclusions) {
+    const allergy = preference.allergies.some(
+      (a) => normalizeIngredientId(a) === ingredient,
+    );
+    const path =
+      restaurant.catalogVersion === GRAPH_CATALOG_VERSION
+        ? (ingredientFamilies[ingredient] ?? [ingredient])
+            .map((id) => ingredientPath(menu.id, id, allergy))
+            .find(Boolean)
+        : undefined;
+    if (path)
+      reasons.push({
+        code: "INGREDIENT_GRAPH_CONFLICT",
+        graphFacts: path,
+        restaurantId: restaurant.id,
+        menuId: menu.id,
+        memberId,
+      });
     if (!knownIngredients.has(ingredient)) reject("UNKNOWN_RESTRICTION");
     else if (
       menu.ingredients

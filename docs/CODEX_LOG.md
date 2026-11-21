@@ -1,5 +1,11 @@
 # Actual Codex development log
 
+## Group Order rehearsal evidence, 21 November 2026
+
+The existing SKU graph and seed noodle tags supplied the starting data. Changes connected private evidence and simulated noodle choices to the Group Order form, bound confirmations to the owner and current snapshot, and retained the established consensus and cart route. The optional private text router and local document-to-graph review command were added after the three-person guided flow passed in the browser.
+
+The reproducible Playwright case is **three people skip, review private ingredient evidence, then refine noodles and agree on the new cart** in `tests/e2e/group-order.spec.ts`. The two policy scenarios live in `tests/fixtures/noodle-policy.ts`. The rehearsal used local browser contexts and synthetic records. [Demo steps](DEMO_GROUP_ORDER.md) · [Command results](VERIFICATION.md)
+
 Date:18November2026, Asia/Bangkok. Starting directory contained only CRAVELOOP_MASTER_SPEC.md; no repository, package files or applicable AGENTS.md. No existing app code was overwritten. No Git commit, deployment or event submission created. No human review has been performed in this session; reviews below are agent/tool checks.
 
 | Approx. Bangkok time | Bounded request / owner                                                                             | Actual change and evidence                                                                                                                                                                                                                                                     |

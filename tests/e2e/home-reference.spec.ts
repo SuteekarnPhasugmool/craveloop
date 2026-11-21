@@ -17,6 +17,13 @@ test("delivery home searches synthetic catalog facts and recovers from an empty 
   await expect(page.getByTestId("delivery-shortcuts")).toBeVisible();
   await expect(page.getByTestId("delivery-bottom-nav")).toBeVisible();
   const search = page.getByRole("searchbox", { name: "ค้นหาร้านหรือเมนู" });
+  await search.fill("นมและชานมไข่มุก");
+  const bubbleTea = page.getByTestId("home-menu-sf-demo-30970-m01");
+  await expect(bubbleTea).toContainText("ชานมไข่มุกน้ำตาลทรายแดง");
+  await bubbleTea.click();
+  const teaDetail = page.getByRole("dialog", { name: "ชานมไข่มุกน้ำตาลทรายแดง" });
+  await expect(teaDetail).toContainText("นมและชานมไข่มุก");
+  await teaDetail.getByRole("button", { name: "ปิดรายละเอียดเมนู" }).click();
   await search.fill("Demo Mixed Kitchen");
   const catalog = page.getByTestId("delivery-catalog");
   const cards = catalog.getByTestId(/^home-menu-r\d+-m\d+$/);

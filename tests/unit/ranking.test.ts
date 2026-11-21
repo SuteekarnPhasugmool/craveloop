@@ -74,7 +74,7 @@ describe("catalog provenance and reproducibility", () => {
         (r) =>
           r.name.startsWith("Demo ") &&
           r.dataOrigin === "synthetic" &&
-          r.catalogVersion === "seed-v1",
+          r.catalogVersion === "seed-v2",
       ),
     ).toBe(true);
     expect(JSON.stringify(catalog)).not.toMatch(/https?:/);

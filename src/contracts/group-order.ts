@@ -1,5 +1,20 @@
 import { z } from "zod";
-import { ChoiceSchema, VersionSchema, type Versions } from "./index";
+import {
+  ChoiceSchema,
+  ConfirmSchema,
+  VersionSchema,
+  type Versions,
+} from "./index";
+
+export const NoodlePreviewSchema = ConfirmSchema.pick({
+  confirmedPreference: true,
+  expectedPreferenceVersion: true,
+  expectedRosterVersion: true,
+  expectedMemberRevision: true,
+}).strict();
+export type NoodlePreview = {
+  choices: { style: "broth" | "stir_fried"; draft: string }[];
+};
 
 export const MealActionSchema = z.discriminatedUnion("action", [
   VersionSchema.extend({ action: z.literal("join") }).strict(),
@@ -36,6 +51,7 @@ export type CartHandoff = Versions & {
   restaurantId: string;
   restaurantName: string;
   catalogVersion: string;
+  graphVersion?: string;
   algorithmVersion: string;
   areaId: "bangkok_demo";
   items: CartItem[];

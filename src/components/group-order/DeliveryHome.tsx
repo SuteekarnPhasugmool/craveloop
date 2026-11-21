@@ -135,6 +135,7 @@ export default function DeliveryHome({
         const haystack = [
           item.restaurantName,
           item.menuName,
+          item.categoryTh,
           ...tags,
           ...tags.map((t) => tagWords[t] ?? ""),
         ]
@@ -643,8 +644,8 @@ export default function DeliveryHome({
                     4. ทุกคนยอมรับ แล้วจึงสรุปตะกร้าจำลอง
                   </div>
                   <p className="go-fine">
-                    Catalog จำลอง 12 ร้าน / 60 เมนู ·
-                    หน้าหลักแสดงเฉพาะเมนูที่พร้อมส่งและมีราคา · ไม่มีการเรียก AI ใน flow นี้
+                    Group Order จัดอันดับจาก 12 ร้าน / 60 เมนูจำลอง ·
+                    หน้าหลักมีเมนูตัวอย่างเพิ่มเติมตามหมวด ShopeeFood
                   </p>
                   <a className="go-outline" href="/web">
                     เปิด prototype เว็บเดิม
@@ -687,6 +688,9 @@ export default function DeliveryHome({
               </div>
               <p className="go-eyebrow">{detail.restaurantName}</p>
               <h2 id="dh-detail-title">{detail.menuName}</h2>
+              {detail.categoryTh && (
+                <p className="go-fine">{detail.categoryTh}</p>
+              )}
               <p className="dh-detail-price">{baht(detail.priceSatang)}</p>
               <div className="go-summary-row">
                 <span>ค่าจัดส่ง/บริการรวมต่อร้าน (สมมติ)</span>

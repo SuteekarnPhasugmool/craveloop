@@ -22,6 +22,7 @@ async function preferences(
     diet?: string;
     tags?: string[];
     editing?: boolean;
+    noodle?: "ข้าม" | "เส้นน้ำ" | "ได้ทั้งคู่";
   } = {},
 ) {
   await fresh(page);
@@ -43,6 +44,22 @@ async function preferences(
     const button = dialog.getByRole("button", { name: tag, exact: true });
     if ((await button.getAttribute("aria-pressed")) !== "true")
       await button.click();
+  }
+  if (options.noodle) {
+    const broad = dialog.getByRole("button", {
+      name: "อยากกินเส้น",
+      exact: true,
+    });
+    if ((await broad.getAttribute("aria-pressed")) !== "true")
+      await broad.click();
+    const before = await state(page);
+    await dialog
+      .getByRole("button", { name: options.noodle, exact: true })
+      .click();
+    const draft = await state(page);
+    expect(draft.me).toEqual(before.me);
+    expect(draft.ranking?.id).toBe(before.ranking?.id);
+    expect(draft.acceptances).toEqual(before.acceptances);
   }
   await dialog
     .getByRole("checkbox", { name: "ตรวจสอบและยืนยันข้อมูลของฉัน" })
@@ -318,5 +335,90 @@ test("three independent Group Order members recover no-match, agree on catalog m
     });
   } finally {
     for (const context of contexts) await context.close();
+  }
+});
+
+test("three people skip, review private ingredient evidence, then refine noodles and agree on the new cart", async ({
+  browser,
+  baseURL,
+}) => {
+  const contexts: BrowserContext[] = [];
+  try {
+    for (let index = 0; index < 3; index++)
+      contexts.push(await browser.newContext({ baseURL }));
+    const pages = await Promise.all(contexts.map((c) => c.newPage()));
+    const [host, nat, ploy] = pages;
+    const post = async (page: Page, url: string, data: unknown) => {
+      const response = await page.request.post(url, {
+        data,
+        headers: { "Idempotency-Key": crypto.randomUUID() },
+      });
+      expect(response.ok()).toBe(true);
+      return (await response.json()).data;
+    };
+    const { sessionId } = await post(host, "/api/sessions", {
+      experience: "group_order",
+      mode: "delivery",
+      expectedSize: 4,
+      hostName: "May",
+      areaId: "bangkok_demo",
+    });
+    const url = `/api/sessions/${sessionId}`;
+    for (const [page, name] of [
+      [nat, "Nat"],
+      [ploy, "Ploy"],
+    ] as const)
+      await post(page, url + "/join", {
+        displayName: name,
+        clientJoinId: crypto.randomUUID(),
+      });
+    for (const page of pages) {
+      const s = (await (await page.request.get(url)).json())
+        .data as SessionView;
+      await post(page, url + "/meal", {
+        action: "join",
+        expectedRosterVersion: s.rosterVersion,
+        expectedPreferenceVersion: s.preferenceVersion,
+      });
+      await page.goto(`/group/${sessionId}`);
+    }
+    for (const peer of [nat, ploy]) await preferences(peer, "120");
+    await preferences(host, "120", { exclude: "shrimp", noodle: "ข้าม" });
+    expect((await state(host)).me!.preference!.noodle).toBe("any");
+    await host
+      .getByRole("button", { name: "ค้นหาร้านสำหรับกลุ่ม", exact: true })
+      .click();
+    await host.getByText("ทำไมบางเมนูจึงถูกตัดออกสำหรับฉัน").click();
+    await expect(host.getByText(/r03-m03 → paste-x → shrimp/)).toBeVisible();
+    const first = (await state(host)).ranking!.options[0].restaurantId;
+    await host
+      .getByTestId(`group-option-${first}`)
+      .getByRole("button", { name: "ยอมรับร้านนี้" })
+      .click();
+    await expect
+      .poll(async () => (await state(host)).acceptances.length)
+      .toBe(1);
+    await preferences(host, "120", { noodle: "เส้นน้ำ", editing: true });
+    const changed = await state(host);
+    const winner = changed.ranking!.options[0].restaurantId;
+    expect(winner).not.toBe(first);
+    expect(changed.acceptances).toEqual([]);
+    for (const page of pages) {
+      await fresh(page);
+      await page
+        .getByTestId(`group-option-${winner}`)
+        .getByRole("button", { name: "ยอมรับร้านนี้" })
+        .click();
+    }
+    await fresh(host);
+    await host
+      .getByTestId(`group-option-${winner}`)
+      .getByRole("button", { name: "สรุปร้านนี้" })
+      .click();
+    await host.getByRole("button", { name: /ส่งต่อไปยังตะกร้าจำลอง/ }).click();
+    await expect(host.getByTestId("group-cart")).toBeVisible();
+    expect((await state(host)).handoff?.items).toHaveLength(3);
+  } finally {
+    await Promise.all(contexts.map((c) => c.close()));
   }
 });

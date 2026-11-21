@@ -1,4 +1,5 @@
 import type { ChatState } from "@/contracts/chat";
+import type { RoutedDraft } from "@/contracts/router";
 import type { CartHandoff } from "@/contracts/group-order";
 import type {
   Preference,
@@ -8,6 +9,14 @@ import type {
   Mode,
 } from "@/contracts";
 export type StoredMember = {
+  router?: {
+    id: string;
+    revision: number;
+    preferenceVersion: number;
+    rosterVersion: number;
+    failed?: boolean;
+    result?: RoutedDraft;
+  };
   id: string;
   displayName: string;
   tokenHash: string;

@@ -184,7 +184,9 @@ export function generateCatalog(): Restaurant[] {
         };
       });
     }
+    if (n === 2) menus[3].name = "Vegetable stir-fried noodles";
     for (const menu of menus) {
+      if (/noodle/i.test(menu.name)) menu.noodleStyle = n === 2 ? "stir_fried" : "broth";
       const vegetarian =
         menu.ingredientsComplete &&
         !menu.ingredients.some((i) =>
@@ -212,7 +214,7 @@ export function generateCatalog(): Restaurant[] {
       name: `Demo ${name}`,
       areaId: "bangkok_demo",
       dataOrigin: "synthetic",
-      catalogVersion: "seed-v1",
+      catalogVersion: "seed-v2",
       channels:
         n === 6
           ? ["delivery"]
@@ -242,6 +244,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     JSON.stringify(catalog, null, 2) + "\n",
   );
   console.log(
-    `Generated ${catalog.length} synthetic restaurants / ${catalog.reduce((n, r) => n + r.menus.length, 0)} menus, seed-v1`,
+    `Generated ${catalog.length} synthetic restaurants / ${catalog.reduce((n, r) => n + r.menus.length, 0)} menus, seed-v2`,
   );
 }

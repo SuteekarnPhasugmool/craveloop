@@ -1,0 +1,424 @@
+{
+  "sourcePage": "https://shopee.co.th/m/ShopeeFoodCategories",
+  "catalogVersion": "shopeefood-demo-v1",
+  "categories": [
+    {
+      "listingId": "30969",
+      "sectionTh": "ของหวานและเครื่องดื่ม",
+      "nameTh": "กาแฟและชา",
+      "restaurantTh": "กาแฟริมคลอง",
+      "cuisineTag": "other",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "อเมริกาโน่เย็น",
+          "deliveryPriceSatang": 5500
+        },
+        {
+          "sku": "m02",
+          "nameTh": "ชาไทยเย็น",
+          "deliveryPriceSatang": 4500
+        }
+      ]
+    },
+    {
+      "listingId": "30970",
+      "sectionTh": "ของหวานและเครื่องดื่ม",
+      "nameTh": "นมและชานมไข่มุก",
+      "restaurantTh": "มุกแก้วกลม",
+      "cuisineTag": "other",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "ชานมไข่มุกน้ำตาลทรายแดง",
+          "deliveryPriceSatang": 5500
+        },
+        {
+          "sku": "m02",
+          "nameTh": "นมสดเฉาก๊วย",
+          "deliveryPriceSatang": 5000
+        }
+      ]
+    },
+    {
+      "listingId": "30971",
+      "sectionTh": "ของหวานและเครื่องดื่ม",
+      "nameTh": "เค้กและเบเกอรี่",
+      "restaurantTh": "เตาอบปลายซอย",
+      "cuisineTag": "other",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "เค้กมะพร้าวอ่อน",
+          "deliveryPriceSatang": 8500
+        },
+        {
+          "sku": "m02",
+          "nameTh": "ครัวซองต์เนยสด",
+          "deliveryPriceSatang": 6500
+        }
+      ]
+    },
+    {
+      "listingId": "30972",
+      "sectionTh": "ของหวานและเครื่องดื่ม",
+      "nameTh": "ไอศกรีม",
+      "restaurantTh": "ไอติมช้อนเล็ก",
+      "cuisineTag": "other",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "ไอศกรีมกะทิ",
+          "deliveryPriceSatang": 4500
+        },
+        {
+          "sku": "m02",
+          "nameTh": "ไอศกรีมชาไทย",
+          "deliveryPriceSatang": 5500
+        }
+      ]
+    },
+    {
+      "listingId": "30964",
+      "sectionTh": "อาหารจานด่วน",
+      "nameTh": "อาหารตามสั่ง",
+      "restaurantTh": "ครัวกระทะหอม",
+      "cuisineTag": "thai",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "ข้าวกะเพราไก่ไข่ดาว",
+          "deliveryPriceSatang": 7500
+        },
+        {
+          "sku": "m02",
+          "nameTh": "ข้าวผัดหมู",
+          "deliveryPriceSatang": 6500
+        }
+      ]
+    },
+    {
+      "listingId": "30965",
+      "sectionTh": "อาหารจานด่วน",
+      "nameTh": "ก๋วยเตี๋ยว",
+      "restaurantTh": "เส้นร้อนชามโปรด",
+      "cuisineTag": "thai",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "เส้นเล็กหมูน้ำใส",
+          "deliveryPriceSatang": 6500
+        },
+        {
+          "sku": "m02",
+          "nameTh": "บะหมี่แห้งหมูแดง",
+          "deliveryPriceSatang": 7000
+        }
+      ]
+    },
+    {
+      "listingId": "30966",
+      "sectionTh": "อาหารจานด่วน",
+      "nameTh": "สตรีทฟู้ด",
+      "restaurantTh": "แผงอร่อยยามเย็น",
+      "cuisineTag": "thai",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "หมูปิ้งข้าวเหนียว",
+          "deliveryPriceSatang": 5500
+        },
+        {
+          "sku": "m02",
+          "nameTh": "ลูกชิ้นปลาปิ้ง",
+          "deliveryPriceSatang": 4500
+        }
+      ]
+    },
+    {
+      "listingId": "30967",
+      "sectionTh": "อาหารจานด่วน",
+      "nameTh": "ข้าวมันไก่",
+      "restaurantTh": "ข้าวมันไก่ท้ายตลาด",
+      "cuisineTag": "thai",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "ข้าวมันไก่ต้ม",
+          "deliveryPriceSatang": 6500
+        },
+        {
+          "sku": "m02",
+          "nameTh": "ข้าวมันไก่ผสม",
+          "deliveryPriceSatang": 8000
+        }
+      ]
+    },
+    {
+      "listingId": "30968",
+      "sectionTh": "อาหารจานด่วน",
+      "nameTh": "โจ๊ก",
+      "restaurantTh": "ชามโจ๊กยามเช้า",
+      "cuisineTag": "thai",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "โจ๊กหมูใส่ไข่",
+          "deliveryPriceSatang": 5500
+        },
+        {
+          "sku": "m02",
+          "nameTh": "โจ๊กเห็ดหอม",
+          "deliveryPriceSatang": 5000
+        }
+      ]
+    },
+    {
+      "listingId": "30973",
+      "sectionTh": "ของทอดและฟาสต์ฟู้ด",
+      "nameTh": "ไก่ทอด ของทอด",
+      "restaurantTh": "ไก่ทอดกรอบทอง",
+      "cuisineTag": "thai",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "ไก่ทอดข้าวเหนียว",
+          "deliveryPriceSatang": 7500
+        },
+        {
+          "sku": "m02",
+          "nameTh": "ปีกไก่ทอดน้ำปลา",
+          "deliveryPriceSatang": 8500
+        }
+      ]
+    },
+    {
+      "listingId": "30974",
+      "sectionTh": "ของทอดและฟาสต์ฟู้ด",
+      "nameTh": "เบอร์เกอร์",
+      "restaurantTh": "เบอร์เกอร์เตาเล็ก",
+      "cuisineTag": "western",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "เบอร์เกอร์เนื้อชีส",
+          "deliveryPriceSatang": 12900
+        },
+        {
+          "sku": "m02",
+          "nameTh": "เบอร์เกอร์ไก่กรอบ",
+          "deliveryPriceSatang": 9900
+        }
+      ]
+    },
+    {
+      "listingId": "30975",
+      "sectionTh": "ของทอดและฟาสต์ฟู้ด",
+      "nameTh": "พิซซ่า",
+      "restaurantTh": "พิซซ่าหน้าบ้าน",
+      "cuisineTag": "western",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "พิซซ่าเห็ดชีส",
+          "deliveryPriceSatang": 14900
+        },
+        {
+          "sku": "m02",
+          "nameTh": "พิซซ่ามาร์เกริตา",
+          "deliveryPriceSatang": 13900
+        }
+      ]
+    },
+    {
+      "listingId": "30976",
+      "sectionTh": "อาหารรสจัด",
+      "nameTh": "ส้มตำ",
+      "restaurantTh": "ครกมะละกอ",
+      "cuisineTag": "thai",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "ส้มตำไทย",
+          "deliveryPriceSatang": 6500
+        },
+        {
+          "sku": "m02",
+          "nameTh": "ตำข้าวโพดไข่เค็ม",
+          "deliveryPriceSatang": 8000
+        }
+      ]
+    },
+    {
+      "listingId": "30977",
+      "sectionTh": "อาหารรสจัด",
+      "nameTh": "ยำและซีฟู้ด",
+      "restaurantTh": "ยำรสริมเล",
+      "cuisineTag": "thai",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "ยำวุ้นเส้นทะเล",
+          "deliveryPriceSatang": 9500
+        },
+        {
+          "sku": "m02",
+          "nameTh": "ยำกุ้งสุก",
+          "deliveryPriceSatang": 10900
+        }
+      ]
+    },
+    {
+      "listingId": "30978",
+      "sectionTh": "อาหารรสจัด",
+      "nameTh": "หมาล่า",
+      "restaurantTh": "หมาล่าไม้แดง",
+      "cuisineTag": "chinese",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "หมาล่าหมูสามชั้นชุดเล็ก",
+          "deliveryPriceSatang": 7900
+        },
+        {
+          "sku": "m02",
+          "nameTh": "หมาล่าเต้าหู้เห็ดรวม",
+          "deliveryPriceSatang": 6900
+        }
+      ]
+    },
+    {
+      "listingId": "30979",
+      "sectionTh": "อาหารนานาชาติ",
+      "nameTh": "ซูชิและราเมน",
+      "restaurantTh": "ซูชิชามไม้",
+      "cuisineTag": "japanese",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "ราเมนน้ำซุปโชยุ",
+          "deliveryPriceSatang": 12900
+        },
+        {
+          "sku": "m02",
+          "nameTh": "ซูชิปลาแซลมอนชุดเล็ก",
+          "deliveryPriceSatang": 11900
+        }
+      ]
+    },
+    {
+      "listingId": "30980",
+      "sectionTh": "อาหารนานาชาติ",
+      "nameTh": "อาหารเกาหลี",
+      "restaurantTh": "ครัวเกาหลีสองตะเกียบ",
+      "cuisineTag": "korean",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "ข้าวยำเกาหลี",
+          "deliveryPriceSatang": 11900
+        },
+        {
+          "sku": "m02",
+          "nameTh": "ต๊อกบกกี",
+          "deliveryPriceSatang": 9900
+        }
+      ]
+    },
+    {
+      "listingId": "30981",
+      "sectionTh": "อาหารนานาชาติ",
+      "nameTh": "สเต๊กและพาสต้า",
+      "restaurantTh": "พาสต้าโต๊ะมุม",
+      "cuisineTag": "western",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "สปาเกตตีซอสมะเขือเทศ",
+          "deliveryPriceSatang": 9900
+        },
+        {
+          "sku": "m02",
+          "nameTh": "สเต๊กไก่พริกไทยดำ",
+          "deliveryPriceSatang": 13900
+        }
+      ]
+    },
+    {
+      "listingId": "30982",
+      "sectionTh": "อาหารนานาชาติ",
+      "nameTh": "ชาบูและปิ้งย่าง",
+      "restaurantTh": "ชาบูหม้ออุ่น",
+      "cuisineTag": "japanese",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "ชาบูหมูชุดเดี่ยว",
+          "deliveryPriceSatang": 14900
+        },
+        {
+          "sku": "m02",
+          "nameTh": "ข้าวหน้าเนื้อย่าง",
+          "deliveryPriceSatang": 12900
+        }
+      ]
+    },
+    {
+      "listingId": "30983",
+      "sectionTh": "อาหารนานาชาติ",
+      "nameTh": "อาหารจีน",
+      "restaurantTh": "ติ่มซำเข่งน้อย",
+      "cuisineTag": "chinese",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "ขนมจีบหมู",
+          "deliveryPriceSatang": 6500
+        },
+        {
+          "sku": "m02",
+          "nameTh": "ข้าวเต้าหู้ทรงเครื่อง",
+          "deliveryPriceSatang": 8900
+        }
+      ]
+    },
+    {
+      "listingId": "30984",
+      "sectionTh": "อาหารและเครื่องดื่มเพื่อสุขภาพ",
+      "nameTh": "น้ำผลไม้ และผลไม้สด",
+      "restaurantTh": "ผลไม้ปั่นใบเขียว",
+      "cuisineTag": "other",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "น้ำส้มคั้น",
+          "deliveryPriceSatang": 5500
+        },
+        {
+          "sku": "m02",
+          "nameTh": "ผลไม้สดรวมถ้วย",
+          "deliveryPriceSatang": 5900
+        }
+      ]
+    },
+    {
+      "listingId": "30985",
+      "sectionTh": "อาหารและเครื่องดื่มเพื่อสุขภาพ",
+      "nameTh": "สลัด และอาหารคลีน",
+      "restaurantTh": "สลัดสวนเล็ก",
+      "cuisineTag": "other",
+      "menus": [
+        {
+          "sku": "m01",
+          "nameTh": "สลัดอกไก่ย่าง",
+          "deliveryPriceSatang": 9900
+        },
+        {
+          "sku": "m02",
+          "nameTh": "ข้าวกล้องปลาอบ",
+          "deliveryPriceSatang": 11500
+        }
+      ]
+    }
+  ]
+}
