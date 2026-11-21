@@ -1,0 +1,2112 @@
+[
+  {
+    "id": "r01",
+    "name": "Demo Mixed Kitchen",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v1",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": 400,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4000,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "Crispy tofu rice",
+        "prices": {
+          "dine_in": 8000,
+          "delivery": 9000
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "soy",
+          "oil"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r01-m01:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "crispy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r01-m01"
+      },
+      {
+        "name": "Mild chicken rice",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [
+          "chicken",
+          "rice",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r01-m02"
+      },
+      {
+        "name": "Spicy tofu bowl",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "chili",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r01-m03:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "fresh"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r01-m03"
+      },
+      {
+        "name": "Vegetable broth noodles",
+        "prices": {
+          "dine_in": 7500,
+          "delivery": 8500
+        },
+        "ingredients": [
+          "wheat",
+          "vegetable",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r01-m04:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "chinese"
+        ],
+        "flavorTags": [
+          "mild",
+          "savory"
+        ],
+        "textureTags": [
+          "brothy",
+          "chewy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r01-m04"
+      },
+      {
+        "name": "Grilled chicken salad",
+        "prices": {
+          "dine_in": 9000,
+          "delivery": 10000
+        },
+        "ingredients": [
+          "chicken",
+          "lettuce",
+          "lime"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "western"
+        ],
+        "flavorTags": [
+          "sour",
+          "mild"
+        ],
+        "textureTags": [
+          "fresh",
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r01-m05"
+      }
+    ]
+  },
+  {
+    "id": "r02",
+    "name": "Demo Vegetarian Comfort",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v1",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": 500,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4000,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "Crispy tofu rice",
+        "prices": {
+          "dine_in": 7500,
+          "delivery": 8500
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "soy",
+          "oil"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r02-m01:veg"
+          },
+          "absence:peanut": {
+            "verified": true,
+            "evidenceId": "seed:r02-m01:peanut-absence"
+          }
+        },
+        "crossContactEvidence": {
+          "peanut": {
+            "verified": true,
+            "evidenceId": "seed:r02-m01:peanut-cross-contact"
+          }
+        },
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "crispy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r02-m01"
+      },
+      {
+        "name": "Mild mushroom rice",
+        "prices": {
+          "dine_in": 8000,
+          "delivery": 9000
+        },
+        "ingredients": [
+          "mushroom",
+          "rice",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r02-m02:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r02-m02"
+      },
+      {
+        "name": "Spicy tofu bowl",
+        "prices": {
+          "dine_in": 8000,
+          "delivery": 9000
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "chili",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r02-m03:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "fresh"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r02-m03"
+      },
+      {
+        "name": "Vegetable broth noodles",
+        "prices": {
+          "dine_in": 7000,
+          "delivery": 8000
+        },
+        "ingredients": [
+          "wheat",
+          "vegetable",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r02-m04:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "chinese"
+        ],
+        "flavorTags": [
+          "mild",
+          "savory"
+        ],
+        "textureTags": [
+          "chewy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r02-m04"
+      },
+      {
+        "name": "Grilled mushroom salad",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [
+          "mushroom",
+          "lettuce",
+          "lime"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r02-m05:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "western"
+        ],
+        "flavorTags": [
+          "sour",
+          "mild"
+        ],
+        "textureTags": [
+          "fresh",
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r02-m05"
+      }
+    ]
+  },
+  {
+    "id": "r03",
+    "name": "Demo Rice & Grill",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v1",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": 600,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4000,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "Crispy mushroom rice",
+        "prices": {
+          "dine_in": 8000,
+          "delivery": 9000
+        },
+        "ingredients": [
+          "mushroom",
+          "rice",
+          "soy",
+          "oil"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r03-m01:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "crispy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r03-m01"
+      },
+      {
+        "name": "Mild chicken rice",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [
+          "chicken",
+          "rice",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r03-m02"
+      },
+      {
+        "name": "Spicy grilled chicken",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [
+          "chicken",
+          "rice",
+          "chili",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r03-m03"
+      },
+      {
+        "name": "Vegetable broth noodles",
+        "prices": {
+          "dine_in": 7500,
+          "delivery": 8500
+        },
+        "ingredients": [
+          "wheat",
+          "vegetable",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r03-m04:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "chinese"
+        ],
+        "flavorTags": [
+          "mild",
+          "savory"
+        ],
+        "textureTags": [
+          "brothy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r03-m04"
+      },
+      {
+        "name": "Grilled tofu salad",
+        "prices": {
+          "dine_in": 9000,
+          "delivery": 10000
+        },
+        "ingredients": [
+          "tofu",
+          "lettuce",
+          "lime"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r03-m05:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "western"
+        ],
+        "flavorTags": [
+          "sour",
+          "mild"
+        ],
+        "textureTags": [
+          "fresh",
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r03-m05"
+      }
+    ]
+  },
+  {
+    "id": "r04",
+    "name": "Demo Premium Bowls",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v1",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": 700,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4000,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "Crispy tofu with spicy noodle broth",
+        "prices": {
+          "dine_in": 13000,
+          "delivery": 14000
+        },
+        "ingredients": [
+          "tofu",
+          "wheat",
+          "vegetable",
+          "chili",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r04-m01:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild",
+          "spicy"
+        ],
+        "textureTags": [
+          "crispy",
+          "brothy",
+          "chewy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r04-m01"
+      },
+      {
+        "name": "Mild chicken rice",
+        "prices": {
+          "dine_in": 13000,
+          "delivery": 14000
+        },
+        "ingredients": [
+          "chicken",
+          "rice",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r04-m02"
+      },
+      {
+        "name": "Spicy tofu bowl",
+        "prices": {
+          "dine_in": 13000,
+          "delivery": 14000
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "chili",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r04-m03:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "fresh"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r04-m03"
+      },
+      {
+        "name": "Vegetable broth noodles",
+        "prices": {
+          "dine_in": 13000,
+          "delivery": 14000
+        },
+        "ingredients": [
+          "wheat",
+          "vegetable",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r04-m04:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "chinese"
+        ],
+        "flavorTags": [
+          "mild",
+          "savory"
+        ],
+        "textureTags": [
+          "brothy",
+          "chewy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r04-m04"
+      },
+      {
+        "name": "Grilled chicken salad",
+        "prices": {
+          "dine_in": 13000,
+          "delivery": 14000
+        },
+        "ingredients": [
+          "chicken",
+          "lettuce",
+          "lime"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "western"
+        ],
+        "flavorTags": [
+          "sour",
+          "mild"
+        ],
+        "textureTags": [
+          "fresh",
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r04-m05"
+      }
+    ]
+  },
+  {
+    "id": "r05",
+    "name": "Demo Spicy Pork",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v1",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": 800,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4001,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "Spicy pork rice",
+        "prices": {
+          "dine_in": 8000,
+          "delivery": 9000
+        },
+        "ingredients": [
+          "rice",
+          "soy",
+          "oil",
+          "pork"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "crispy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r05-m01"
+      },
+      {
+        "name": "Mild pork bowl",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [
+          "rice",
+          "soy",
+          "pork"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r05-m02"
+      },
+      {
+        "name": "Pork chili bowl",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [
+          "rice",
+          "chili",
+          "soy",
+          "pork"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "fresh"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r05-m03"
+      },
+      {
+        "name": "Pork broth noodles",
+        "prices": {
+          "dine_in": 7500,
+          "delivery": 8500
+        },
+        "ingredients": [
+          "wheat",
+          "vegetable",
+          "soy",
+          "pork"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "chinese"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "brothy",
+          "chewy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r05-m04"
+      },
+      {
+        "name": "Grilled pork salad",
+        "prices": {
+          "dine_in": 9000,
+          "delivery": 10000
+        },
+        "ingredients": [
+          "lettuce",
+          "lime",
+          "pork"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "western"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "fresh",
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r05-m05"
+      }
+    ]
+  },
+  {
+    "id": "r06",
+    "name": "Demo Delivery Kitchen",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v1",
+    "channels": [
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": 900,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4001,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "Creamy crispy tofu rice",
+        "prices": {
+          "dine_in": 8000,
+          "delivery": 9000
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "soy",
+          "oil"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r06-m01:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "indian"
+        ],
+        "flavorTags": [
+          "savory"
+        ],
+        "textureTags": [
+          "creamy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r06-m01"
+      },
+      {
+        "name": "Creamy mild chicken rice",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [
+          "chicken",
+          "rice",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "indian"
+        ],
+        "flavorTags": [
+          "savory"
+        ],
+        "textureTags": [
+          "creamy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r06-m02"
+      },
+      {
+        "name": "Creamy spicy tofu bowl",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "chili",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r06-m03:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "indian"
+        ],
+        "flavorTags": [
+          "savory"
+        ],
+        "textureTags": [
+          "creamy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r06-m03"
+      },
+      {
+        "name": "Creamy vegetable broth noodles",
+        "prices": {
+          "dine_in": 7500,
+          "delivery": 8500
+        },
+        "ingredients": [
+          "wheat",
+          "vegetable",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r06-m04:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "indian"
+        ],
+        "flavorTags": [
+          "savory"
+        ],
+        "textureTags": [
+          "creamy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r06-m04"
+      },
+      {
+        "name": "Creamy grilled chicken salad",
+        "prices": {
+          "dine_in": 9000,
+          "delivery": 10000
+        },
+        "ingredients": [
+          "chicken",
+          "lettuce",
+          "lime"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "indian"
+        ],
+        "flavorTags": [
+          "savory"
+        ],
+        "textureTags": [
+          "creamy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r06-m05"
+      }
+    ]
+  },
+  {
+    "id": "r07",
+    "name": "Demo Dine-in Plates",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v1",
+    "channels": [
+      "dine_in"
+    ],
+    "available": true,
+    "distanceM": 1000,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4001,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "Grilled crispy tofu rice",
+        "prices": {
+          "dine_in": 8000,
+          "delivery": 9000
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "soy",
+          "oil"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r07-m01:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "western"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r07-m01"
+      },
+      {
+        "name": "Grilled mild chicken rice",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [
+          "chicken",
+          "rice",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "western"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r07-m02"
+      },
+      {
+        "name": "Grilled spicy tofu bowl",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "chili",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r07-m03:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "western"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r07-m03"
+      },
+      {
+        "name": "Grilled vegetable broth noodles",
+        "prices": {
+          "dine_in": 7500,
+          "delivery": 8500
+        },
+        "ingredients": [
+          "wheat",
+          "vegetable",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r07-m04:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "western"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r07-m04"
+      },
+      {
+        "name": "Grilled grilled chicken salad",
+        "prices": {
+          "dine_in": 9000,
+          "delivery": 10000
+        },
+        "ingredients": [
+          "chicken",
+          "lettuce",
+          "lime"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "western"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r07-m05"
+      }
+    ]
+  },
+  {
+    "id": "r08",
+    "name": "Demo Closed Hotpot",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v1",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": false,
+    "distanceM": 1100,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4001,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "Crispy tofu rice",
+        "prices": {
+          "dine_in": 8000,
+          "delivery": 9000
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "soy",
+          "oil"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r08-m01:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "crispy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r08-m01"
+      },
+      {
+        "name": "Mild chicken rice",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [
+          "chicken",
+          "rice",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r08-m02"
+      },
+      {
+        "name": "Spicy tofu bowl",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "chili",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r08-m03:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "fresh"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r08-m03"
+      },
+      {
+        "name": "Vegetable broth noodles",
+        "prices": {
+          "dine_in": 7500,
+          "delivery": 8500
+        },
+        "ingredients": [
+          "wheat",
+          "vegetable",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r08-m04:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "chinese"
+        ],
+        "flavorTags": [
+          "mild",
+          "savory"
+        ],
+        "textureTags": [
+          "brothy",
+          "chewy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r08-m04"
+      },
+      {
+        "name": "Grilled chicken salad",
+        "prices": {
+          "dine_in": 9000,
+          "delivery": 10000
+        },
+        "ingredients": [
+          "chicken",
+          "lettuce",
+          "lime"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "western"
+        ],
+        "flavorTags": [
+          "sour",
+          "mild"
+        ],
+        "textureTags": [
+          "fresh",
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r08-m05"
+      }
+    ]
+  },
+  {
+    "id": "r09",
+    "name": "Demo Unknown Prices",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v1",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": null,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4001,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "Crispy tofu rice",
+        "prices": {
+          "dine_in": null,
+          "delivery": null
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "soy",
+          "oil"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r09-m01:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "crispy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r09-m01"
+      },
+      {
+        "name": "Mild chicken rice",
+        "prices": {
+          "dine_in": null,
+          "delivery": null
+        },
+        "ingredients": [
+          "chicken",
+          "rice",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r09-m02"
+      },
+      {
+        "name": "Spicy tofu bowl",
+        "prices": {
+          "dine_in": null,
+          "delivery": null
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "chili",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r09-m03:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "fresh"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r09-m03"
+      },
+      {
+        "name": "Vegetable broth noodles",
+        "prices": {
+          "dine_in": null,
+          "delivery": null
+        },
+        "ingredients": [
+          "wheat",
+          "vegetable",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r09-m04:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "chinese"
+        ],
+        "flavorTags": [
+          "mild",
+          "savory"
+        ],
+        "textureTags": [
+          "brothy",
+          "chewy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r09-m04"
+      },
+      {
+        "name": "Grilled chicken salad",
+        "prices": {
+          "dine_in": null,
+          "delivery": null
+        },
+        "ingredients": [
+          "chicken",
+          "lettuce",
+          "lime"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "western"
+        ],
+        "flavorTags": [
+          "sour",
+          "mild"
+        ],
+        "textureTags": [
+          "fresh",
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r09-m05"
+      }
+    ]
+  },
+  {
+    "id": "r10",
+    "name": "Demo Incomplete Ingredients",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v1",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": 1300,
+    "feeQuote": null,
+    "menus": [
+      {
+        "name": "Crispy tofu rice",
+        "prices": {
+          "dine_in": 8000,
+          "delivery": 9000
+        },
+        "ingredients": [],
+        "ingredientsComplete": false,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "crispy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r10-m01"
+      },
+      {
+        "name": "Mild chicken rice",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [],
+        "ingredientsComplete": false,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "savory",
+          "mild"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r10-m02"
+      },
+      {
+        "name": "Spicy tofu bowl",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [],
+        "ingredientsComplete": false,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "fresh"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r10-m03"
+      },
+      {
+        "name": "Vegetable broth noodles",
+        "prices": {
+          "dine_in": 7500,
+          "delivery": 8500
+        },
+        "ingredients": [],
+        "ingredientsComplete": false,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "chinese"
+        ],
+        "flavorTags": [
+          "mild",
+          "savory"
+        ],
+        "textureTags": [
+          "brothy",
+          "chewy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r10-m04"
+      },
+      {
+        "name": "Grilled chicken salad",
+        "prices": {
+          "dine_in": 9000,
+          "delivery": 10000
+        },
+        "ingredients": [],
+        "ingredientsComplete": false,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "western"
+        ],
+        "flavorTags": [
+          "sour",
+          "mild"
+        ],
+        "textureTags": [
+          "fresh",
+          "grilled"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r10-m05"
+      }
+    ]
+  },
+  {
+    "id": "r11",
+    "name": "Demo Mild Noodle Bar",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v1",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": 1400,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4001,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "Mild noodle bowl 01",
+        "prices": {
+          "dine_in": 8000,
+          "delivery": 9000
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "soy",
+          "oil"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r11-m01:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "japanese"
+        ],
+        "flavorTags": [
+          "mild"
+        ],
+        "textureTags": [
+          "brothy",
+          "chewy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r11-m01"
+      },
+      {
+        "name": "Mild noodle bowl 02",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [
+          "chicken",
+          "rice",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "japanese"
+        ],
+        "flavorTags": [
+          "mild"
+        ],
+        "textureTags": [
+          "brothy",
+          "chewy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r11-m02"
+      },
+      {
+        "name": "Mild noodle bowl 03",
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "chili",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r11-m03:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "japanese"
+        ],
+        "flavorTags": [
+          "mild"
+        ],
+        "textureTags": [
+          "brothy",
+          "chewy"
+        ],
+        "available": false,
+        "priceIncludesFees": true,
+        "id": "r11-m03"
+      },
+      {
+        "name": "Mild noodle bowl 04",
+        "prices": {
+          "dine_in": 7500,
+          "delivery": 8500
+        },
+        "ingredients": [
+          "wheat",
+          "vegetable",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r11-m04:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "japanese"
+        ],
+        "flavorTags": [
+          "mild"
+        ],
+        "textureTags": [
+          "brothy",
+          "chewy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r11-m04"
+      },
+      {
+        "name": "Mild noodle bowl 05",
+        "prices": {
+          "dine_in": 9000,
+          "delivery": 10000
+        },
+        "ingredients": [
+          "chicken",
+          "lettuce",
+          "lime"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "japanese"
+        ],
+        "flavorTags": [
+          "mild"
+        ],
+        "textureTags": [
+          "brothy",
+          "chewy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r11-m05"
+      }
+    ]
+  },
+  {
+    "id": "r12",
+    "name": "Demo Mixed Curry",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v1",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": 1500,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4001,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "Curry crispy tofu rice",
+        "prices": {
+          "dine_in": 9500,
+          "delivery": 10500
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "soy",
+          "oil"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r12-m01:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "indian"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "creamy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r12-m01"
+      },
+      {
+        "name": "Curry mild chicken rice",
+        "prices": {
+          "dine_in": 10000,
+          "delivery": 11000
+        },
+        "ingredients": [
+          "chicken",
+          "rice",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "indian"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "creamy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r12-m02"
+      },
+      {
+        "name": "Curry spicy tofu bowl",
+        "prices": {
+          "dine_in": 10000,
+          "delivery": 11000
+        },
+        "ingredients": [
+          "tofu",
+          "rice",
+          "chili",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r12-m03:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "indian"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "creamy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r12-m03"
+      },
+      {
+        "name": "Curry vegetable broth noodles",
+        "prices": {
+          "dine_in": 9000,
+          "delivery": 10000
+        },
+        "ingredients": [
+          "wheat",
+          "vegetable",
+          "soy"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r12-m04:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "indian"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "creamy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r12-m04"
+      },
+      {
+        "name": "Curry grilled chicken salad",
+        "prices": {
+          "dine_in": 10500,
+          "delivery": 11500
+        },
+        "ingredients": [
+          "chicken",
+          "lettuce",
+          "lime"
+        ],
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "indian"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [
+          "creamy"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r12-m05"
+      }
+    ]
+  }
+]

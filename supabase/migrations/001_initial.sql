@@ -1,0 +1,20 @@
+-- PostgreSQL/Supabase schema source. No anonymous/public browser access.
+CREATE TABLE IF NOT EXISTS sessions (
+ id uuid PRIMARY KEY, area_id text NOT NULL, mode text NOT NULL CHECK(mode IN ('dine_in','delivery')),
+ status text NOT NULL CHECK(status IN ('collecting','ranking','voting','finalized')), host_token_hash text NOT NULL,
+ preference_version integer NOT NULL, roster_version integer NOT NULL, current_ranking_id uuid,
+ finalized_option_id text, expires_at timestamptz NOT NULL, created_at timestamptz NOT NULL,
+ document jsonb NOT NULL
+);
+CREATE TABLE IF NOT EXISTS members(id uuid PRIMARY KEY,session_id uuid REFERENCES sessions ON DELETE CASCADE,display_name text NOT NULL CHECK(length(display_name) BETWEEN 1 AND 40),member_token_hash text NOT NULL,active boolean NOT NULL,confirmed boolean NOT NULL,created_at timestamptz NOT NULL);
+CREATE TABLE IF NOT EXISTS inputs(id uuid PRIMARY KEY,session_id uuid REFERENCES sessions ON DELETE CASCADE,member_id uuid REFERENCES members ON DELETE CASCADE,kind text NOT NULL,raw_text text,private_storage_key text,input_revision bigint NOT NULL,state text NOT NULL,created_at timestamptz NOT NULL);
+CREATE TABLE IF NOT EXISTS preferences(member_id uuid PRIMARY KEY REFERENCES members ON DELETE CASCADE,session_id uuid REFERENCES sessions ON DELETE CASCADE,revision integer NOT NULL,cuisine_preferences jsonb NOT NULL,flavor_tags jsonb NOT NULL,texture_tags jsonb NOT NULL,dislikes jsonb NOT NULL,budget_max_satang integer CHECK(budget_max_satang>=0),excluded_ingredients jsonb NOT NULL,dietary_requirements jsonb NOT NULL,allergies jsonb NOT NULL,confirmed_at timestamptz NOT NULL,source_input_id uuid);
+CREATE TABLE IF NOT EXISTS restaurants(id text PRIMARY KEY,name text NOT NULL,area_id text NOT NULL,channels jsonb NOT NULL,available boolean NOT NULL,distance_m integer,fee_quote jsonb,catalog_version text NOT NULL,data_origin text NOT NULL CHECK(data_origin='synthetic'));
+CREATE TABLE IF NOT EXISTS menus(id text PRIMARY KEY,restaurant_id text REFERENCES restaurants ON DELETE CASCADE,name text NOT NULL,channel_prices_satang jsonb NOT NULL,ingredients jsonb NOT NULL,ingredients_complete boolean NOT NULL,dietary_evidence jsonb NOT NULL,cross_contact_evidence jsonb NOT NULL,cuisine_tags jsonb NOT NULL,flavor_tags jsonb NOT NULL,texture_tags jsonb NOT NULL,available boolean NOT NULL,price_includes_fees boolean NOT NULL);
+CREATE TABLE IF NOT EXISTS rankings(id uuid PRIMARY KEY,session_id uuid REFERENCES sessions ON DELETE CASCADE,preference_version integer NOT NULL,roster_version integer NOT NULL,catalog_version text NOT NULL,status text NOT NULL,options jsonb NOT NULL,rejections jsonb NOT NULL,created_at timestamptz NOT NULL);
+CREATE TABLE IF NOT EXISTS acceptances(session_id uuid REFERENCES sessions ON DELETE CASCADE,member_id uuid REFERENCES members ON DELETE CASCADE,ranking_id uuid REFERENCES rankings ON DELETE CASCADE,restaurant_id text REFERENCES restaurants,accepted_at timestamptz NOT NULL,PRIMARY KEY(session_id,member_id,ranking_id));
+CREATE TABLE IF NOT EXISTS events(id uuid PRIMARY KEY,session_id uuid REFERENCES sessions ON DELETE CASCADE,event_type text NOT NULL,version integer NOT NULL,payload jsonb NOT NULL,created_at timestamptz NOT NULL);
+CREATE TABLE IF NOT EXISTS tool_runs(id uuid PRIMARY KEY,session_id uuid REFERENCES sessions ON DELETE CASCADE,name text NOT NULL,snapshot_version integer NOT NULL,status text NOT NULL,duration_ms double precision NOT NULL,evidence_ids jsonb NOT NULL,error_code text,created_at timestamptz NOT NULL);
+CREATE TABLE IF NOT EXISTS idempotency_keys(session_id uuid REFERENCES sessions ON DELETE CASCADE,actor_id text NOT NULL,key text NOT NULL,request_hash text NOT NULL,response_json jsonb NOT NULL,expires_at timestamptz NOT NULL,PRIMARY KEY(session_id,actor_id,key));
+CREATE INDEX IF NOT EXISTS sessions_expiry ON sessions(expires_at);
+DO $$ DECLARE t text; BEGIN FOREACH t IN ARRAY ARRAY['sessions','members','inputs','preferences','restaurants','menus','rankings','acceptances','events','tool_runs','idempotency_keys'] LOOP EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', t); END LOOP; END $$;

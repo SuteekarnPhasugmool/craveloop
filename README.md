@@ -1,0 +1,91 @@
+# CraveLoop — Group Order prototype
+
+> CraveLoop helps groups turn different cravings, budgets and dietary needs into a restaurant and meal selection everyone can accept, then hands it off to the existing group-order cart.
+
+CraveLoop is an independent mobile delivery prototype exploring a **ShopeeFood integration concept**: a group shares its needs, receives a workable catalog meal for every participant, agrees on one restaurant, then reviews a persistent **simulated cart and checkout summary**. It does not connect to ShopeeFood, LINE or a delivery platform, submit an order, take payment or issue an order number.
+
+**All 12 restaurants, 60 menus, prices, distances, fees and dietary evidence are synthetic fixtures.** Deterministic TypeScript enforces confirmed constraints, computes integer-satang costs and ranks choices. The primary Group Order form is manual. Optional AI remains available through the preserved private form/API workflow and proposes editable drafts only; it is not a primary chat/router integration.
+
+## Primary flow
+
+The home screen follows the supplied mobile-app reference: orange delivery/search header, a two-row shortcut rail, horizontal catalog/menu cards, concept banners and fixed bottom navigation. Search supports catalog names and Thai tag labels; category filters, menu details, the single demo-zone sheet and group-link recovery are functional. Prices are source fixture **food prices before fee allocation**, with no invented discount, review or sales claims. Group Order is the first shortcut; CraveLoop also has a direct entry below the shortcuts.
+
+Open `/`, create a delivery group and share `/group/:sessionId` into independent browsers. Each person joins the group, **personally joins the meal**, reviews their own inclusive budget, cravings, hard exclusions, dietary requirements and allergies, then confirms. Being selected by the host is not consent.
+
+The host ranks after every selected active participant has joined and confirmed. Cards show one catalog menu per person, exact item/fee/total costs and preference fit. A confirmed edit clears old acceptances and produces a fresh result when the closed meal remains ready. The result can truthfully remain unchanged.
+
+Everyone accepts the same current restaurant. Host finalization records the group's decision; a separate host action creates a persistent simulated cart, and another action records its checkout summary. Both revalidate the current decision. Any preference/roster/mode invalidation makes the old cart unusable. **A checkout summary is not an order or payment.**
+
+Host meal configuration is one atomic `/meal` operation: reopen, select actual active group members and confirm the shared `bangkok_demo` delivery zone. Opening/cancelling setup does not write. Retained people keep confirmed values and consent; newly selected people must opt in and confirm. Never silently remove a nonresponder.
+
+The Group Order API hides private constraint-evidence fields from public result projections and reports generic no-match reason families. Peer preference forms, uploaded images and extraction drafts remain private. The group can see names, consent/readiness, assigned menus, costs, fit, acceptances and simulated cart items; menu choices can still imply preferences.
+
+The new Group Order contracts are in [GROUP_ORDER_CONTRACTS.md](docs/GROUP_ORDER_CONTRACTS.md); current comprehensive behavior is in [CRAVELOOP_MASTER_SPEC.md](CRAVELOOP_MASTER_SPEC.md), version 3. The new flow is implemented and verified locally: typecheck, unit/integration suites, production build and all eight production browser cases passed. Consult [VERIFICATION.md](docs/VERIFICATION.md) for actual completed checks rather than treating this description as a test result.
+
+## Run locally
+
+Use Node.js 22.12+ and npm. Preserve an existing configured `.env`.
+
+```sh
+npm install
+cp .env.example .env
+# Set a private APP_SECRET for production; generate with: openssl rand -hex 32
+npm run db:migrate
+npm run seed
+npm run dev
+```
+
+Open `http://localhost:3000`. For other devices set `NEXT_PUBLIC_APP_URL` to a reachable origin; use HTTPS outside localhost for secure cookies/clipboard and browser media features. Five active group members is the cap; `expectedSize:4` is a demo hint. Each browser's HttpOnly cookie identifies its seat. Clearing cookies loses that identity; no account recovery exists.
+
+SQLite is a durable file at `.local/craveloop.sqlite`, with WAL and transactional writes. It survives reload/restart on one installation with persistent disk. It is not suitable for Vercel's ephemeral filesystem or shared multi-instance persistence. Run migrations again on existing installations: migration 004 adds the cart-handoff projection alongside the existing initial/chat/meal migrations.
+
+If `OPENAI_API_KEY` or `OPENAI_MODEL` is absent, AI extraction is unavailable and manual fields remain usable. Saved images are not interpreted in manual mode. Configuration presence is not proof of valid credentials/model access.
+
+## Test and evaluate
+
+```sh
+npm run typecheck
+npm test
+npm run test:integration
+npx playwright install chromium
+npm run test:e2e
+npm run eval
+# Stop dev/browser QA before building; do not run both against .next concurrently.
+npm run build
+npm start
+```
+
+Use disposable demo data for E2E. Integration tests use temporary SQLite. Playwright can bootstrap a local server or reuse one on port 3000 outside CI; `CI=1` rejects reuse. Browser contexts test separate identities, not actual venue devices. Ignored `test-results` and `playwright-report` can contain test conversation data.
+
+`npm run eval` is offline: 34 authored fixtures, exact deterministic outcomes and assignment checks. It does not measure live extraction accuracy. `npm run ai:smoke` requires a supported vision/structured-output `OPENAI_MODEL` and server key. `npm run eval -- --live` explicitly invokes that configured provider on labeled samples. Fixture images are [self-authored illustrations](tests/fixtures/README.md), not a photo benchmark. No model is selected silently.
+
+Current 20 November checks: **98 unit tests, 61 integration tests, eight production E2E cases, typecheck, production build, local SQLite migration and seed passed**. The latest production browser suite passed 8/8 in 1.8 minutes, including screenshot-reference home search/filter/recovery and the three-independent-context Group Order flow; the legacy scenarios include four contexts. See [VERIFICATION.md](docs/VERIFICATION.md) for actual commands and scope. The older six-browser-case count predates Group Order. PostgreSQL, hosted devices and real AI remain unverified.
+
+## PostgreSQL/Supabase and deployment
+
+1. Provision trusted PostgreSQL, optionally Supabase. Set `PERSISTENCE_DRIVER=postgres` and its server `DATABASE_URL`, with provider-required TLS/pooler settings. `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY` are unused placeholders; current persistence uses `pg`, not Supabase Storage/browser SDK.
+2. Set a stable shared random `APP_SECRET` ≥32 characters and the real HTTPS `NEXT_PUBLIC_APP_URL`. Keep `CATALOG_MODE=synthetic`, `DEMO_MODE=true`. Never expose credentials through `NEXT_PUBLIC_`.
+3. Run `npm run db:migrate` and `npm run seed` against the actual connection. To regenerate catalog JSON run `npx tsx scripts/generate-catalog.ts`; runtime rankings read that checked-in versioned seed, not SQL catalog edits.
+4. Deploy the Node Next.js app. Vercel configuration rejects SQLite. A prepared adapter/migration is not a successful PostgreSQL deployment.
+5. Schedule trusted `npm run cleanup`, for example every five minutes, using the same database configuration. The repo does not provision a scheduler or expose public cleanup.
+6. Exercise the actual HTTPS three-person Group Order → replan → consensus → cart → checkout-summary path, stale-cart rejection, refresh, expiry and privacy. Smoke-test live AI separately if desired; record actual URL/revision/results without secrets.
+
+## Correctness, privacy and limits
+
+- Every mutation requires actor authorization and `Idempotency-Key`; conflicting key reuse is 409. Versioned actions require expected preference/roster versions; own preference edits also require member revision. Current ranking UUID matters even if versions/choices are identical.
+- Hard constraints run before soft scores. Unknown prices/quotes fail finite budgets. Unsupported restrictions fail closed. Allergy eligibility requires explicit absence and cross-contact evidence; fictional fixture evidence is not medical safety certification.
+- Delivery fees split in exact integer satang, floor plus remainder by ascending participating member ID. Group bystanders never subsidize fees or enter fairness/consensus. Rank is `0.6×mean+0.4×minimum`; it is a preference-fit heuristic, not measured happiness.
+- Handoff/checkout require the current finalized unanimous delivery decision and known reconciled costs. One immutable quantity-one item/member; no editing quantities, discounts, shared dishes or payment split. Invalidation preserves stale cart history as unusable.
+- Host/member tokens are server-HMAC-derived and stored as hashes. Invite URLs contain no member/host token. Cookies are HttpOnly/SameSite=Lax; Secure depends on configured HTTPS. No full identity/account recovery exists.
+- Private uploads: JPEG/PNG/WebP, server-decoded single frame ≤1600 px and ≤5 MiB; text ≤2000 characters; mutation envelope ≤6 MiB. Images are server-only database data, not public attachments or Supabase Storage objects.
+- Cleanup removes expired image bytes/input drafts and expired rooms. Cached extraction responses can retain derived draft/evidence until room deletion. Backups/provider logs have separate retention; OpenAI `store:false` is not universal erasure. Data is not application-encrypted.
+- Rate limiting is process-local: 80 general mutations/minute or 8 extraction checks against the same room+cookie/IP counter. Reads are not rate-limited; public multi-instance hosting needs an ingress/distributed policy.
+- Real platform SDKs, live discovery, merchant/order status, payments, video/reels scraping, accounts, multi-meal history and production abuse controls are outside this prototype. “Other options” means the current top-three set, not live discovery.
+
+## Preserved experiences and evidence
+
+`/legacy-line` retains the earlier simulated-chat landing; `/line/:id` remains its room UI. `/web` and `/s/:id` retain the original web experience. No real LINE bot/channel is involved. Legacy rooms without explicit meal metadata retain all-active-member compatibility. Legacy result views can expose relevant constraint evidence; the newer Group Order public projection has stricter disclosure.
+
+[Demo script](docs/DEMO_GROUP_ORDER.md), [verification](docs/VERIFICATION.md), [Codex log](docs/CODEX_LOG.md), [current master](CRAVELOOP_MASTER_SPEC.md), [version 2 archive](docs/archive/CRAVELOOP_MASTER_SPEC.v2.0-2026-11-19.md).
+
+`AI_PIPELINE_PLAN.md` is a separately authored future plan, unchanged by this implementation. Its proposed router, video/KG/fairness-mode/embedding/mediator work is not silently included. Development on 18–20 November predates the recorded 21 November event; do not claim it was written during the competition or that a submission/deployment/partnership succeeded.

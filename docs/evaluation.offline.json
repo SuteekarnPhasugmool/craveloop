@@ -1,0 +1,51 @@
+{
+  "suite": "evaluation-v1",
+  "mode": "offline deterministic fixtures and fixture-schema validation ONLY",
+  "fixtureCases": 34,
+  "rankingCasesPassed": 17,
+  "scoreFixturesPassed": 1,
+  "determinismChecksPassed": 17,
+  "feasibleAssignmentCoverage": {
+    "valid": 52,
+    "total": 52
+  },
+  "hardViolationCount": 0,
+  "rankingLatencyMs": {
+    "samples": 17,
+    "maximum": 2.2131669999999986,
+    "mean": 0.40451482352940904
+  },
+  "extractionFixtureSchemasChecked": 14,
+  "imageFixtureReferencesChecked": 5,
+  "uniqueImageFixtureFiles": 4,
+  "liveExtraction": {
+    "attempted": 0,
+    "completed": 0,
+    "failed": 0,
+    "hardFieldExactMatch": {
+      "matches": 0,
+      "total": 0
+    },
+    "softTagPrecision": null,
+    "softTagRecall": null,
+    "softCounts": {
+      "truePositive": 0,
+      "falsePositive": 0,
+      "falseNegative": 0
+    },
+    "clarificationCorrect": {
+      "matches": 0,
+      "total": 0
+    }
+  },
+  "notExecutedHere": [
+    "stale-acceptance API integration (npm run test:integration)",
+    "upstream-timeout mocked adapter recovery (npm test)",
+    "live image inference and extraction accuracy when --live is absent"
+  ],
+  "limitations": [
+    "Allowed soft tag labels are broad authored illustration/text expectations, not a photo benchmark.",
+    "Numerical fairness fixture is an algorithm test, not a user study.",
+    "Confirmed constraints still require human review, regardless of extraction scores."
+  ]
+}

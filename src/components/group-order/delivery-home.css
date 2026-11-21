@@ -1,0 +1,1106 @@
+.dh-page {
+  background: #e9e9e9;
+  --dh-orange: #ee5b35;
+  --dh-red: #d54f2f;
+}
+.dh-app {
+  width: 100%;
+  max-width: 520px;
+  min-height: 100dvh;
+  background: #f3f3f3;
+  padding-bottom: 78px;
+  overflow-x: clip;
+}
+.dh-header {
+  background: linear-gradient(118deg, #f56a35 0%, #ee5835 75%, #e94e35 100%);
+  color: #fff;
+  padding: 12px 13px 15px;
+}
+.dh-platform-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 11px;
+  font-size: 10px;
+  letter-spacing: 0.1px;
+}
+.dh-platform-label b {
+  font-size: 8px;
+  font-weight: 400;
+  opacity: 0.8;
+  margin-left: 3px;
+}
+.dh-platform-label small {
+  font-size: 7px;
+  color: #ffe4d8;
+}
+.dh-location-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+.dh-icon-button {
+  width: 25px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  background: none;
+  color: #fff;
+  flex-shrink: 0;
+  padding: 0;
+}
+.dh-icon-button svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 1.7;
+}
+.dh-address {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #fff;
+  background: none;
+  padding: 0;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+.dh-address > svg:first-child {
+  width: 20px;
+  height: 22px;
+  flex-shrink: 0;
+  fill: #fff;
+  stroke: #fff;
+}
+.dh-address > svg:first-child circle {
+  fill: #f46c39;
+  stroke: #f46c39;
+}
+.dh-address > span {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.dh-address > svg:last-child {
+  height: 16px;
+  width: 16px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.dh-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border-radius: 7px;
+  padding: 0 11px;
+  height: 40px;
+  box-shadow: 0 2px 2px #b94b2307;
+}
+.dh-search > svg {
+  height: 24px;
+  width: 24px;
+  flex-shrink: 0;
+  stroke: #bd6248;
+  stroke-width: 1.7;
+}
+.dh-app .dh-search input {
+  border: 0;
+  outline: none !important;
+  background: transparent;
+  min-height: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: 12px;
+  color: #b75a40;
+  flex: 1;
+  width: auto;
+  min-width: 0;
+  border-radius: 0;
+  height: 35px;
+}
+.dh-app .dh-search input::placeholder {
+  color: #bd6b56;
+}
+.dh-search > button {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 25px;
+  padding: 0;
+  background: none;
+  color: #c49a8d;
+}
+.dh-search > button > svg {
+  height: 16px;
+  width: 16px;
+}
+.dh-concept-note {
+  font-size: 8px;
+  color: #926c58;
+  line-height: 1.7;
+  margin: 0;
+  background: #fff5e8;
+  padding: 7px 14px;
+  text-align: center;
+  border-bottom: 1px solid #f0e2d2;
+}
+.dh-app main {
+  padding: 8px 8px 0;
+}
+.dh-shortcuts {
+  background: #fff;
+  border: 1px solid #eeeeec;
+  border-radius: 13px;
+  box-shadow: 0 2px 5px #393b3502;
+  margin-bottom: 8px;
+  overflow: hidden;
+  padding: 12px 0 8px;
+}
+.dh-shortcut-scroll {
+  display: grid;
+  grid-template-rows: repeat(2, 72px);
+  grid-auto-flow: column;
+  grid-auto-columns: 23.3%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 5px;
+  gap: 4px 0;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+}
+.dh-shortcut-scroll::-webkit-scrollbar {
+  display: none;
+}
+.dh-shortcut-scroll > button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  background: none;
+  color: #333;
+  padding: 2px 0 0;
+  min-width: 0;
+  scroll-snap-align: start;
+}
+.dh-shortcut-icon {
+  display: grid;
+  place-items: center;
+  position: relative;
+  width: 34px;
+  height: 34px;
+  background: #fff1e8;
+  border-radius: 10px;
+  color: #ec6c48;
+  filter: drop-shadow(0 2px 1px #d46f4109);
+}
+.dh-shortcut-icon svg {
+  height: 27px;
+  width: 27px;
+  stroke-width: 1.9;
+}
+.dh-shortcut-icon.green {
+  background: #eef6eb;
+  color: #67a594;
+}
+.dh-shortcut-icon.gold {
+  background: #fff6da;
+  color: #d8ad46;
+}
+.dh-shortcut-icon.blue {
+  background: #eaf1fc;
+  color: #4f7eb4;
+}
+.dh-shortcut-icon.red {
+  background: #fff0e7;
+  color: #e87859;
+}
+.dh-shortcut-icon.orange {
+  background: #fff0e4;
+  color: #e96843;
+}
+.dh-shortcut-icon > i {
+  font-style: normal;
+  position: absolute;
+  right: -10px;
+  top: -7px;
+  font-size: 6px;
+  line-height: 1.5;
+  color: #fff;
+  background: #f06645;
+  border: 1px solid #fff;
+  padding: 0 4px;
+  border-radius: 4px;
+}
+.dh-shortcut-scroll strong {
+  font-size: 10px;
+  color: #353331;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+  max-width: 83px;
+}
+.dh-carousel-indicator {
+  height: 3px;
+  background: #f3d0c3;
+  width: 42px;
+  margin: 6px auto 0;
+  border-radius: 5px;
+}
+.dh-carousel-indicator > span {
+  display: block;
+  background: #dd7759;
+  height: 100%;
+  width: 18px;
+  border-radius: 5px;
+}
+.dh-crave-entry {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: #fff9ed;
+  border: 1px solid #efdfc7;
+  padding: 11px 12px;
+  border-radius: 11px;
+  margin-bottom: 9px;
+}
+.dh-crave-entry .go-crave-mark {
+  height: 30px;
+  width: 30px;
+  font-size: 25px;
+  background: #e75a35;
+  color: #fff3de;
+  border-radius: 9px;
+}
+.dh-crave-entry .go-crave-mark > span {
+  font-size: 8px;
+}
+.dh-crave-entry > div {
+  min-width: 0;
+  flex: 1;
+}
+.dh-crave-entry strong {
+  font-size: 10px;
+  font-weight: 700;
+  color: #8e583b;
+  display: block;
+  line-height: 1.5;
+}
+.dh-crave-entry p {
+  font-size: 7px;
+  color: #a78d73;
+  line-height: 1.7;
+  margin-top: 2px;
+}
+.dh-crave-entry > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  font-size: 8px;
+  line-height: 1.6;
+  background: #ed673e;
+  color: white;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.dh-crave-entry > button > span {
+  font-size: 13px;
+  line-height: 1;
+}
+.dh-catalog-rail {
+  border: 1px solid #f1d8ba;
+  background: linear-gradient(
+    #f77b30 0,
+    #f8a154 24%,
+    #fff0d9 60%,
+    #fffdf9 100%
+  );
+  border-radius: 12px;
+  padding: 12px 0 11px;
+  overflow: hidden;
+  margin-bottom: 9px;
+}
+.dh-rail-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  padding: 0 11px;
+  color: white;
+}
+.dh-rail-heading > div > span {
+  font-size: 7px;
+  letter-spacing: 0.3px;
+  color: #fff0d9;
+  display: block;
+  line-height: 1;
+}
+.dh-rail-heading h1 {
+  font-family: "Noto Sans Thai", "DM Sans", sans-serif;
+  font-size: 20px;
+  letter-spacing: -0.4px;
+  line-height: 1.6;
+  color: white;
+  text-shadow: 0 1px 0 #dc7537;
+  margin: 2px 0 0;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.dh-rail-heading h1 > b {
+  background: #ffe6a5;
+  border: 1px solid #e4aa4f;
+  border-radius: 3px;
+  color: #b16a24;
+  font-size: 10px;
+  padding: 2px 5px;
+  margin-left: 5px;
+  vertical-align: middle;
+  letter-spacing: 0;
+  text-shadow: none;
+  transform: skew(-8deg);
+  display: inline-block;
+}
+.dh-rail-heading > button {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 8px;
+  color: #a96930;
+  white-space: nowrap;
+  background: none;
+  padding: 4px 0;
+}
+.dh-rail-heading > button svg {
+  height: 13px;
+  width: 13px;
+}
+.dh-rail-note {
+  font-size: 7px;
+  color: #8c6038;
+  padding: 0 11px;
+  line-height: 1.7;
+  margin: 1px 0 9px;
+}
+.dh-horizontal-cards {
+  display: flex;
+  gap: 9px;
+  padding: 0 9px 1px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+.dh-horizontal-cards::-webkit-scrollbar {
+  display: none;
+}
+.dh-menu-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+  background: none;
+  padding: 0;
+  border-radius: 8px;
+  min-width: 0;
+  scroll-snap-align: start;
+  color: #333;
+}
+.dh-horizontal-cards > .dh-menu-card {
+  width: 123px;
+  flex: 0 0 123px;
+}
+.dh-menu-image {
+  height: 100px;
+  position: relative;
+  border-radius: 9px;
+  overflow: hidden;
+  background: #efdcc0;
+  border: 1px solid #f4ddbd;
+  flex-shrink: 0;
+}
+.dh-food-art {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+.dh-menu-image > span {
+  font-size: 6px;
+  color: #fff8e8;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  text-align: right;
+  padding: 8px 6px 4px;
+  background: linear-gradient(transparent, #56462750);
+  line-height: 1.5;
+}
+.dh-menu-image > i {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #ffedab;
+  color: #a66d27;
+  font-size: 6px;
+  line-height: 1.5;
+  padding: 2px 4px;
+  font-style: normal;
+  font-weight: 700;
+  border-radius: 0 0 0 5px;
+}
+.dh-menu-meta {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0 0;
+  min-width: 0;
+}
+.dh-menu-meta > small {
+  font-size: 8px;
+  color: #a39079;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  line-height: 1.6;
+}
+.dh-menu-meta > strong {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -0.1px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 33px;
+  color: #3a3530;
+  margin-top: 1px;
+}
+.dh-menu-meta > b {
+  font-size: 16px;
+  font-family: "DM Sans", sans-serif;
+  line-height: 1.6;
+  color: #d95e36;
+  font-weight: 700;
+}
+.dh-menu-meta > span {
+  font-size: 6px;
+  color: #ab9e8c;
+  line-height: 1.7;
+}
+.dh-promo-panel {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 12px 0 13px;
+  margin-bottom: 9px;
+  overflow: hidden;
+}
+.dh-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 11px;
+  margin-bottom: 11px;
+}
+.dh-section-heading h2 {
+  font-family: "Noto Sans Thai", "DM Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #d16c43;
+  line-height: 1.5;
+  letter-spacing: -0.2px;
+}
+.dh-section-heading > button {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #a29b94;
+  font-size: 8px;
+  background: none;
+  padding: 2px 0;
+  white-space: nowrap;
+}
+.dh-section-heading > button svg {
+  height: 13px;
+  width: 13px;
+}
+.dh-promo-rail {
+  display: flex;
+  gap: 9px;
+  padding: 0 9px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+}
+.dh-promo-rail::-webkit-scrollbar {
+  display: none;
+}
+.dh-promo-banner {
+  position: relative;
+  display: flex;
+  text-align: left;
+  overflow: hidden;
+  flex-shrink: 0;
+  width: 252px;
+  min-height: 153px;
+  scroll-snap-align: start;
+  border-radius: 8px;
+  padding: 14px 13px;
+  background:
+    radial-gradient(circle at 105% 0%, #ffd97b 0, transparent 68%),
+    linear-gradient(125deg, #f9b84a, #ffea9f);
+  color: #974b2b;
+  border: 1px solid #efca7a;
+}
+.dh-promo-banner > div {
+  z-index: 1;
+  position: relative;
+}
+.dh-promo-banner small {
+  display: inline-block;
+  color: #fff8e9;
+  background: #dc5c34;
+  font-size: 6px;
+  letter-spacing: 0.6px;
+  padding: 3px 5px;
+  border-radius: 3px;
+}
+.dh-promo-banner h3 {
+  font-family: "Noto Sans Thai", "DM Sans", sans-serif;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  line-height: 1.5;
+  margin: 7px 0 2px;
+  color: #a34d29;
+}
+.dh-promo-banner div > span {
+  font-size: 7px;
+  color: #b37c42;
+  display: block;
+  line-height: 1.6;
+}
+.dh-promo-banner b {
+  font-size: 8px;
+  background: #fff9db;
+  color: #c18742;
+  border: 1px solid #eac27a;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 8px;
+  margin-top: 8px;
+}
+.dh-promo-banner b > svg {
+  height: 10px;
+  width: 10px;
+}
+.dh-promo-banner > svg {
+  position: absolute;
+  right: -16px;
+  bottom: 6px;
+  height: 108px;
+  width: 108px;
+  color: #cc7d2860;
+  stroke-width: 1.1;
+  transform: rotate(-12deg);
+}
+.dh-promo-banner > i {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  font-size: 5px;
+  letter-spacing: 0.6px;
+  color: #b1894c;
+  font-style: normal;
+}
+.dh-fairness-banner {
+  background:
+    radial-gradient(circle at 105% 0%, #cbe5be 0, transparent 68%),
+    linear-gradient(125deg, #acd3a1, #e4f1c9);
+  color: #68894a;
+  border-color: #cbddaf;
+}
+.dh-fairness-banner small {
+  background: #779b62;
+}
+.dh-fairness-banner h3 {
+  font-family: "Manrope", sans-serif;
+  font-size: 40px;
+  color: #6c8b4e;
+  line-height: 1.4;
+  letter-spacing: -2px;
+}
+.dh-fairness-banner div > span {
+  color: #88a16b;
+}
+.dh-fairness-banner b {
+  background: #f5fae4;
+  border-color: #c4d8a8;
+  color: #90a675;
+}
+.dh-fairness-banner > svg {
+  color: #759e5b70;
+}
+.dh-fairness-banner > i {
+  color: #89a36b;
+}
+.dh-bottom-disclosure {
+  font-size: 7px;
+  color: #a6a09a;
+  text-align: center;
+  line-height: 1.9;
+  padding: 10px 14px 14px;
+}
+.dh-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 5px;
+  z-index: 20;
+  background: #fffffff5;
+  border-top: 1px solid #e8e7e4;
+  box-shadow: 0 -3px 12px #5f5b4d04;
+  padding: 10px 8px calc(8px + env(safe-area-inset-bottom));
+  backdrop-filter: blur(12px);
+}
+.dh-bottom-nav > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  color: #7a7976;
+  background: none;
+  flex: 1;
+  padding: 0;
+  min-height: 43px;
+}
+.dh-bottom-nav svg {
+  height: 23px;
+  width: 23px;
+  stroke-width: 1.65;
+}
+.dh-bottom-nav span {
+  font-size: 9px;
+  line-height: 1.4;
+}
+.dh-bottom-nav > .active {
+  color: #df633f;
+}
+.dh-bottom-nav > .active svg {
+  stroke-width: 2;
+}
+.dh-catalog-results {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e9e8e4;
+  padding: 13px 0 14px;
+  scroll-margin-top: 10px;
+  margin-bottom: 10px;
+  min-height: 300px;
+}
+.dh-catalog-results .dh-section-heading {
+  align-items: flex-start;
+}
+.dh-catalog-results h1 {
+  font-size: 17px;
+  letter-spacing: -0.4px;
+  font-family: "Noto Sans Thai", "DM Sans", sans-serif;
+  line-height: 1.6;
+  color: #754e39;
+  font-weight: 700;
+}
+.dh-catalog-results .dh-section-heading p {
+  font-size: 8px;
+  line-height: 1.8;
+  color: #a79788;
+  margin-top: 4px;
+}
+.dh-catalog-results .dh-section-heading > button {
+  font-size: 8px;
+  color: #ba8060;
+  border: 1px solid #ecd5bd;
+  border-radius: 5px;
+  padding: 4px 6px;
+}
+.dh-filter-pills {
+  display: flex;
+  gap: 5px;
+  padding: 0 11px 13px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.dh-filter-pills button {
+  background: #faf7f2;
+  color: #b39d84;
+  border: 1px solid #e9e0d3;
+  padding: 5px 8px;
+  border-radius: 20px;
+  font-size: 8px;
+  white-space: nowrap;
+}
+.dh-filter-pills button[aria-pressed="true"] {
+  background: #fff0de;
+  border-color: #e9b88e;
+  color: #c18352;
+}
+.dh-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px 10px;
+  padding: 0 11px;
+}
+.dh-catalog-grid .dh-menu-image {
+  height: 130px;
+}
+.dh-catalog-grid .dh-menu-meta > strong {
+  font-size: 12px;
+  min-height: 36px;
+}
+.dh-catalog-grid .dh-menu-meta > small {
+  font-size: 9px;
+}
+.dh-catalog-grid .dh-menu-meta > b {
+  font-size: 18px;
+}
+.dh-catalog-grid .dh-menu-meta > span {
+  font-size: 7px;
+}
+.dh-no-results {
+  text-align: center;
+  padding: 29px 23px 35px;
+}
+.dh-no-results > svg {
+  width: 35px;
+  height: 35px;
+  color: #d3bba0;
+  margin-bottom: 16px;
+}
+.dh-no-results h2 {
+  font-size: 17px;
+  color: #a98f74;
+  letter-spacing: -0.3px;
+  line-height: 1.7;
+}
+.dh-no-results p {
+  font-size: 10px;
+  color: #b7a58f;
+  line-height: 1.9;
+  margin-top: 12px;
+}
+.dh-no-results button {
+  background: #fff0de;
+  border: 1px solid #e7c8a6;
+  border-radius: 7px;
+  padding: 9px 15px;
+  color: #b48659;
+  font-size: 10px;
+  margin-top: 18px;
+}
+.dh-info-drawer h2 {
+  padding-right: 34px;
+}
+.dh-info-drawer .dh-legacy-link {
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  color: #b29b7c;
+  margin: 20px 0 0;
+}
+.dh-info-drawer a.go-outline {
+  text-decoration: none;
+}
+.dh-menu-detail .dh-detail-art {
+  height: 185px;
+  border-radius: 13px;
+  overflow: hidden;
+  margin: 0 32px 20px 0;
+  position: relative;
+}
+.dh-detail-art > span {
+  font-size: 8px;
+  position: absolute;
+  bottom: 10px;
+  right: 12px;
+  background: #fff9dfd9;
+  color: #aa875e;
+  border: 1px solid #e9d4af;
+  padding: 3px 7px;
+  border-radius: 4px;
+}
+.dh-menu-detail .go-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0;
+  color: #b48a60;
+  margin-bottom: 0;
+}
+.dh-menu-detail h2 {
+  font-size: 23px;
+  line-height: 1.5;
+}
+.dh-detail-price {
+  color: #dc7143;
+  font-size: 27px;
+  font-family: "Manrope", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+}
+.dh-menu-detail .go-summary-row span {
+  font-size: 9px;
+}
+.dh-menu-detail .go-summary-row b {
+  white-space: nowrap;
+}
+.dh-toast {
+  position: fixed;
+  bottom: 85px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #684e38ed;
+  color: #fff8e8;
+  z-index: 60;
+  padding: 11px 17px;
+  border-radius: 9px;
+  font-size: 11px;
+  max-width: 90%;
+  text-align: center;
+}
+.dh-app .go-modal-backdrop {
+  z-index: 60;
+}
+.dh-app .go-drawer {
+  max-width: 520px;
+}
+.dh-app button:focus-visible,
+.dh-app a:focus-visible {
+  outline: 2px solid #d68d62;
+  outline-offset: 3px;
+}
+.dh-search:focus-within {
+  outline: 2px solid #ffc68b;
+  outline-offset: 2px;
+}
+@media (min-width: 650px) {
+  .dh-page {
+    padding: 18px 0 0;
+    background: linear-gradient(120deg, #e9e7e2, #efeeea);
+  }
+  .dh-app {
+    border: 1px solid #ddd9d1;
+    border-bottom: 0;
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 9px 70px #4b3d2913;
+  }
+  .dh-bottom-nav {
+    border-left: 1px solid #ddd9d1;
+    border-right: 1px solid #ddd9d1;
+  }
+  .dh-header {
+    padding-top: 14px;
+  }
+  .dh-platform-label {
+    font-size: 12px;
+  }
+  .dh-platform-label b {
+    font-size: 9px;
+  }
+  .dh-platform-label small {
+    font-size: 8px;
+  }
+  .dh-address > span {
+    font-size: 16px;
+  }
+  .dh-search {
+    height: 44px;
+  }
+  .dh-app .dh-search input {
+    font-size: 14px;
+  }
+  .dh-concept-note {
+    font-size: 9px;
+  }
+  .dh-shortcut-scroll {
+    grid-auto-columns: 22%;
+    grid-template-rows: repeat(2, 80px);
+  }
+  .dh-shortcut-scroll strong {
+    font-size: 11px;
+  }
+  .dh-shortcut-icon {
+    width: 39px;
+    height: 39px;
+  }
+  .dh-shortcut-icon svg {
+    height: 31px;
+    width: 31px;
+  }
+  .dh-crave-entry {
+    padding: 13px;
+  }
+  .dh-crave-entry strong {
+    font-size: 12px;
+  }
+  .dh-crave-entry p {
+    font-size: 9px;
+  }
+  .dh-crave-entry > button {
+    font-size: 10px;
+    padding: 7px 10px;
+  }
+  .dh-horizontal-cards > .dh-menu-card {
+    width: 147px;
+    flex-basis: 147px;
+  }
+  .dh-menu-image {
+    height: 119px;
+  }
+  .dh-menu-meta > strong {
+    font-size: 13px;
+    min-height: 39px;
+  }
+  .dh-menu-meta > small {
+    font-size: 9px;
+  }
+  .dh-menu-meta > b {
+    font-size: 18px;
+  }
+  .dh-menu-meta > span {
+    font-size: 7px;
+  }
+  .dh-rail-heading h1 {
+    font-size: 23px;
+  }
+  .dh-rail-heading h1 > b {
+    font-size: 11px;
+  }
+  .dh-rail-heading > button {
+    font-size: 10px;
+  }
+  .dh-rail-note {
+    font-size: 9px;
+  }
+  .dh-catalog-grid .dh-menu-image {
+    height: 160px;
+  }
+  .dh-catalog-grid .dh-menu-meta > strong {
+    font-size: 14px;
+    min-height: 42px;
+  }
+  .dh-catalog-grid .dh-menu-meta > small {
+    font-size: 11px;
+  }
+  .dh-section-heading h2 {
+    font-size: 18px;
+  }
+  .dh-section-heading > button {
+    font-size: 10px;
+  }
+  .dh-promo-banner {
+    width: 305px;
+    min-height: 181px;
+    padding: 16px;
+  }
+  .dh-promo-banner small {
+    font-size: 8px;
+  }
+  .dh-promo-banner h3 {
+    font-size: 25px;
+  }
+  .dh-promo-banner div > span {
+    font-size: 9px;
+  }
+  .dh-promo-banner b {
+    font-size: 10px;
+  }
+  .dh-fairness-banner h3 {
+    font-size: 48px;
+  }
+  .dh-promo-banner > svg {
+    height: 125px;
+    width: 125px;
+  }
+  .dh-promo-banner > i {
+    font-size: 7px;
+  }
+  .dh-bottom-nav span {
+    font-size: 10px;
+  }
+  .dh-bottom-nav svg {
+    height: 25px;
+    width: 25px;
+  }
+  .dh-bottom-nav > button {
+    min-height: 48px;
+  }
+}
+@media (max-width: 360px) {
+  .dh-address > span {
+    font-size: 12px;
+  }
+  .dh-app .dh-search input {
+    font-size: 11px;
+  }
+  .dh-concept-note {
+    font-size: 7px;
+  }
+  .dh-shortcut-scroll {
+    grid-auto-columns: 24%;
+  }
+  .dh-shortcut-scroll strong {
+    font-size: 9px;
+  }
+  .dh-crave-entry strong {
+    font-size: 9px;
+  }
+  .dh-crave-entry p {
+    font-size: 6px;
+  }
+  .dh-crave-entry > button {
+    font-size: 7px;
+    padding: 5px 6px;
+  }
+  .dh-rail-heading h1 {
+    font-size: 18px;
+  }
+  .dh-rail-heading h1 > b {
+    font-size: 8px;
+    margin-left: 3px;
+  }
+  .dh-rail-heading > button {
+    font-size: 7px;
+  }
+  .dh-menu-card {
+    width: 112px;
+  }
+  .dh-catalog-grid .dh-menu-image {
+    height: 114px;
+  }
+  .dh-bottom-nav span {
+    font-size: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dh-app * {
+    scroll-behavior: auto !important;
+  }
+}
+.dh-search input::-webkit-search-cancel-button{-webkit-appearance:none}

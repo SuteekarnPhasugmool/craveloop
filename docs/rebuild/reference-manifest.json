@@ -1,0 +1,96 @@
+{
+  "preparedDate": "2026-11-21",
+  "timezone": "Asia/Bangkok",
+  "referenceCommit": "6a93979bfdbeb37fe6824cefdcf10c7f149046be",
+  "referenceCommitDate": "2026-11-20T23:31:00+07:00",
+  "intendedUse": "Personal/reference rebuild; competition use NOT established. Technical/data/assets excerpts pre-exist.",
+  "newImplementationExecuted": false,
+  "baselineVerificationNotInherited": true,
+  "sourceHashes": {
+    "src/contracts/index.ts": "35a567783326501307665df2d18a7c3bfdf8593ccf2209489915e74626ccd708",
+    "src/contracts/group-order.ts": "a2d3292f73c8d4abc50150c32d0dd2cee38dd78dcac1a11ae29820c623071e36",
+    "src/contracts/chat.ts": "a0f15f2d3b5e25b0fcf0e0c4e56a3bf3c4d28873935a9ccf2c1ca5c1a2c5e7f8",
+    "src/server/state.ts": "c426e5df3309b58f331d4917d752d7d58dde82dad4f91d58a6d6bb94e601d8da",
+    "src/domain/feasibility.ts": "9e6d98b9f6ab214db915590b383abf51a560e1c4530c0f34d68c7dac1b7e25cc",
+    "data/catalog.seed.json": "e1012cba80d39e3cf39b126f76c9866e3f242cbebc1414bcd44b9dc575d2c3f3",
+    "supabase/migrations/001_initial.sql": "8954b4761760a17c6a3044dd35d0838c96c73c7381a7b02fa726bdc0508e1401",
+    "supabase/migrations/002_chat_simulation.sql": "d280ac229a8802859258dd3a4c2c26c3823c20bea98607c14d7e4082bf92d1d2",
+    "supabase/migrations/003_meal_participation.sql": "e6fec53b701002f0295fccce560596c85535c4e919c4ecbd79268b83cdab0631",
+    "supabase/migrations/004_group_order_handoff.sql": "f5c9e6aa28525b1eb29259bdb8bce02205a645ab428e362d4fbdb9f31558d846",
+    ".env.example": "ac7b303de97bef3343fbe5b4131c94dfd47598ea1527788316edf0be20910df3",
+    "package.json": "6fc881c1989a8e373291b82719d3a0d277fe29ca92f5ceb240ba9643cc501808",
+    "data/evaluation.json": "5bc315dcc5fc323a57ec3024dadfb7651b83c06da4b870f4ad16ef4728b9c830",
+    "CRAVELOOP_MASTER_SPEC.md": "b67045c09dd6cf55593ad5ca25cded6f33b011359e0514029638a9a08f2d41b5",
+    "README.md": "f21260cfbb2fb575baa0297b361e1df61156fb1769ecba7eb3fee4975811c3cc",
+    "docs/VERIFICATION.md": "476df9d0cc95d020e055f7c1cf6765cf623d7af60669ccb25c87c6b6803b1969",
+    "docs/DEMO_GROUP_ORDER.md": "8c6ae1d0a37872204a82340c46e44932c599cf0bd54ff2ddd779cc9e620d3935",
+    "src/server/group-order-service.ts": "0c85c02946683079f95f31ac3b42d3b07c9af9b7b0ea7f31e3d4b9b54d82ee5b",
+    "src/domain/ranking.ts": "a4690ddbe1aaa04520e51ff4fb60cf0310a00107e777ec590379ea1f96574597",
+    "src/domain/costs.ts": "13029ca042623f2050e6bf884f6791dcca5108caf80bfa3330cfa1b5db72a66e",
+    "src/domain/ranking-feedback.ts": "8ea7a4b8534c7614d6e1dcde91b3bfc550409222c681e553cf5da9ab4d8b7e1c",
+    "src/domain/meal.ts": "8c71fe03f8d8594097019780a92a19172425a20c9c80f358e01e693bf45f5b05",
+    "src/server/auth.ts": "5459ce76146b7f3e0592d61cad2d9a5239bf6765adbf821e286a83126f4b5510",
+    "src/server/env.ts": "dbb6b7490320811486e8eba77823b13481754aac98854bcc29c812b7d7e9be83",
+    "src/components/group-order/DeliveryHome.tsx": "d87ce0713bf0399932c6c28ff495bff5292d698bcfb048b42707748fd25e6d00",
+    "src/components/group-order/delivery-home.css": "6eb5819e61c1f12ad8bb9c8895d865391fe81bfb487f54f46f4973dfeca397b8",
+    "src/components/group-order/group-order.css": "f220ea377d4ad607619a121e123758e7f0c95d704aefb485230b225730d15792",
+    "src/components/group-order/HomeIcons.tsx": "7997ce8515d8701c63d234a9a390eb8a0e3858bd2b1bb7fd7dceb57c49dce725"
+  },
+  "assets": [
+    {
+      "source": ".local/delivery-home-reference-mobile.png",
+      "packetPath": "reference/home-mobile.png",
+      "sha256": "963164b7ae77a09f9b7e84b44d1f36587afc39e134b4db8d98c38b3c67bca827"
+    },
+    {
+      "source": ".local/delivery-home-reference-desktop.png",
+      "packetPath": "reference/home-desktop.png",
+      "sha256": "0edfe6c1aeb670a011a9ed82698944bbab608887eafa0b6db6b0dd389c0a2fcf"
+    },
+    {
+      "source": ".local/group-create-mobile.png",
+      "packetPath": "reference/create-mobile.png",
+      "sha256": "1ccf1a330d6d5ba48e62c4d13c5ce8fc36fe0eee72afbe8283a17c84789527e4"
+    },
+    {
+      "source": ".local/group-preferences-mobile.png",
+      "packetPath": "reference/preferences-mobile.png",
+      "sha256": "0a5050eb017a42bcdacba031ef09dad13ebf20340fda4ff5837c956d027d3386"
+    },
+    {
+      "source": ".local/group-results-mobile.png",
+      "packetPath": "reference/results-mobile.png",
+      "sha256": "e8ccd761965db5e8212f7cf66c1fb5a896946d27054bae855c54d061763e2fca"
+    },
+    {
+      "source": ".local/group-cart-mobile.png",
+      "packetPath": "reference/cart-mobile.png",
+      "sha256": "10613c05e12548edbeb545aa45ef290cd34b355239baa94bcf1ca8de97917905"
+    },
+    {
+      "source": ".local/group-checkout-mobile.png",
+      "packetPath": "reference/checkout-mobile.png",
+      "sha256": "087712c9f23cb6627ea7e9f9290dd8b2d7a29499f0be5c6c1cf07e4ec0bf18b6"
+    },
+    {
+      "source": "tests/fixtures/broth.png",
+      "packetPath": "reference/evaluation/broth.png",
+      "sha256": "d0d7da19e71ec6ac217eeceae3bd416ad06f904f3866a8f7c2df7ffe17930d8f"
+    },
+    {
+      "source": "tests/fixtures/crispy.png",
+      "packetPath": "reference/evaluation/crispy.png",
+      "sha256": "17f0b558939ae4aeebd5fb2cfdd6ebdf1d0199c70363a38d51296bfff71f0556"
+    },
+    {
+      "source": "tests/fixtures/injection.png",
+      "packetPath": "reference/evaluation/injection.png",
+      "sha256": "1cb63543af2d6c39f67d85aabc1b83ac219b2b67c50cfa65e8d8dd6ccd85cc6e"
+    },
+    {
+      "source": "tests/fixtures/irrelevant.png",
+      "packetPath": "reference/evaluation/irrelevant.png",
+      "sha256": "82bf52add07f3f434ab869f8f2e594ed1ae1ea65dec7a4d40935224b7f529154"
+    }
+  ]
+}

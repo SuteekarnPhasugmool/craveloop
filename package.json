@@ -1,0 +1,43 @@
+{
+  "name": "craveloop-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0",
+    "build": "next build",
+    "start": "next start --hostname 0.0.0.0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:e2e": "playwright test",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "seed": "tsx scripts/seed.ts",
+    "eval": "tsx scripts/evaluate.ts",
+    "cleanup": "tsx scripts/cleanup.ts",
+    "ai:smoke": "tsx scripts/ai-smoke.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "13.2.0",
+    "dotenv": "^17.2.3",
+    "next": "16.4.6",
+    "openai": "7.59.0",
+    "pg": "^8.16.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "sharp": "^0.35.5",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.1",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22",
+    "@types/pg": "^8.15.6",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "prettier": "^3.10.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "5.1.1"
+  },
+  "type": "module"
+}

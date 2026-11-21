@@ -1,0 +1,9 @@
+# Frozen integration contract, 18 November 2026
+
+D/root owns src/contracts, server, routes, migrations, scripts (except evaluation), package files and integration/E2E tests. A owns app pages, global CSS, src/components. B owns src/adapters/openai.ts, extraction unit tests, data/evaluation.json and scripts/evaluate.ts + ai-smoke.ts. C owns src/domain except consensus, src/adapters/catalog.ts, data/catalog.seed.json, catalog generator and ranking unit tests.
+
+All routes/envelopes and optimistic versions follow master spec §10. Cookie per room contains member capability; the host is the member whose capability hash matches host_token_hash. GET returns SessionView; preference confirmation returns SessionView. rank/patch/accept/finalize also return SessionView. Create returns {sessionId,joinUrl,memberId,versions}, join returns {memberId,versions}. Input returns {inputId,inputRevision}; extraction returns {draftId,draft,sourceRevision}. All mutations require Idempotency-Key. Token is HttpOnly; invite URL never includes host token. GET invite link exposes only redacted room view.
+
+Ranking export: rankRestaurants(snapshot:RankSnapshot,catalog:Restaurant[]):RankResult. Catalog exports catalog:Restaurant[], CATALOG_VERSION, ALGORITHM_VERSION from src/adapters/catalog.ts (algorithm constant may re-export). Draft extraction export: extractPreferences({text,imageDataUrl?}): Promise<PreferenceDraft>, aiStatus():{available:boolean,model:string|null}; typed ExtractionError with code/status. No confirmed writes by adapter.
+
+Practical documented extension: allergies:string[] in canonical preferences triggers strict absence + cross-contact evidence. Local persistent SQLite fallback for reproducible testing; hosted DATABASE_URL uses transactional PostgreSQL. SQL migrations are schema source. No in-memory hosted store. These are development artifacts created before the event and must not be represented as event-time development.
