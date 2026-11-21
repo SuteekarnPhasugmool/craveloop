@@ -15,7 +15,8 @@
     "eval": "tsx scripts/evaluate.ts",
     "kg:draft": "tsx scripts/draft-ingredients.ts",
     "cleanup": "tsx scripts/cleanup.ts",
-    "ai:smoke": "tsx scripts/ai-smoke.ts"
+    "ai:smoke": "tsx scripts/ai-smoke.ts",
+    "ai:experiments": "tsx scripts/ai-experiments.ts"
   },
   "dependencies": {
     "better-sqlite3": "13.2.0",

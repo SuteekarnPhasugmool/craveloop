@@ -2283,3 +2283,5 @@
     line-height: 1.75;
   }
 }
+
+.go-option-illustration img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }

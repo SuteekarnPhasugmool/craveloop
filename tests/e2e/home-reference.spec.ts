@@ -24,7 +24,7 @@ test("delivery home searches synthetic catalog facts and recovers from an empty 
   const teaDetail = page.getByRole("dialog", { name: "ชานมไข่มุกน้ำตาลทรายแดง" });
   await expect(teaDetail).toContainText("นมและชานมไข่มุก");
   await teaDetail.getByRole("button", { name: "ปิดรายละเอียดเมนู" }).click();
-  await search.fill("Demo Mixed Kitchen");
+  await search.fill("ร้านจำลอง ครัวบ้านสวน");
   const catalog = page.getByTestId("delivery-catalog");
   const cards = catalog.getByTestId(/^home-menu-r\d+-m\d+$/);
   await expect(cards.first()).toBeVisible();

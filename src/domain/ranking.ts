@@ -57,6 +57,10 @@ export function menuFit(
   if (preference.desiredDish) {
     families.push([[preference.desiredDish], [menu.name], 0.5]);
   }
+  if (preference.videoMenuIds?.length) {
+    // A specific clip match outweighs generic rice, cuisine and texture cues.
+    families.push([["video"], preference.videoMenuIds.includes(menu.id) ? ["video"] : [], 2.5]);
+  }
   let weighted = 0,
     weight = 0;
   const matched = new Set<string>();

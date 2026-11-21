@@ -659,7 +659,7 @@ export default function DeliveryHome({
                     4. ทุกคนยอมรับ แล้วจึงสรุปตะกร้าจำลอง
                   </div>
                   <p className="go-fine">
-                    Group Order จัดอันดับจาก 12 ร้าน / 60 เมนูจำลอง ·
+                    Group Order จัดอันดับจาก 18 ร้าน / 74 เมนูจำลอง ·
                     หน้าหลักมีเมนูตัวอย่างเพิ่มเติมตามหมวด ShopeeFood
                   </p>
                   <a className="go-outline" href="/web">

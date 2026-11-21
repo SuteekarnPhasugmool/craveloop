@@ -551,6 +551,26 @@ describe("synthetic Group Order handoff and checkout lifecycle", () => {
       status: 409,
     });
   });
+  it("finalizes and builds a cart when stored ranking display names have changed", async () => {
+    const r = await ready();
+    const c = choice(await ranked(r));
+    await transact(r.id, (s) => {
+      const option = s!.rankings
+        .find((ranking) => ranking.id === c.rankingId)!
+        .options.find((option) => option.restaurantId === c.restaurantId)!;
+      option.restaurantName = "Previous restaurant name";
+      for (const assignment of option.assignments) {
+        assignment.menuName = "Previous dish name";
+      }
+      return { session: s!, result: undefined };
+    });
+    for (const token of r.tokens) {
+      await mutateRoom(r.id, "accept", c, ctx(token));
+    }
+    const result = await mutateRoom(r.id, "finalize", c, ctx(r.tokens[0]));
+    expect(result.status).toBe("finalized");
+    expect((await postHandoff(r.id, c, ctx(r.tokens[0]))).handoff?.status).toBe("cart");
+  });
   it("concurrent personal acceptance yields one finalized immutable menu/cost snapshot per member", async () => {
     const r = await finalized(),
       s = await postHandoff(r.id, r.choice, ctx(r.tokens[0])),

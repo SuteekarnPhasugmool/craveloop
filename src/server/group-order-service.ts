@@ -17,6 +17,7 @@ import {
   view,
   invalidate,
   rankReadyChatMeal,
+  sameRankedChoice,
   event,
   editable,
   type Context,
@@ -151,7 +152,7 @@ function finalizedChoice(s: StoredSession, b: z.infer<typeof HandoffSchema>) {
     (o) => o.restaurantId === b.restaurantId,
   );
   assert(
-    fresh && original && JSON.stringify(fresh) === JSON.stringify(original),
+    fresh && original && sameRankedChoice(fresh, original),
     409,
     "CATALOG_CHANGED",
     "ข้อมูลเมนูเปลี่ยน กรุณาเปิดมื้อและคำนวณใหม่",

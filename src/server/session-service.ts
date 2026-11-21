@@ -12,6 +12,7 @@ import { mealMembers, mealReady, assertMealParticipant } from "@/domain/meal";
 import { availableDishes } from "./group-menu";
 import { appendChatEvent } from "./chat-events";
 import { randomUUID } from "node:crypto";
+import { isDeepStrictEqual } from "node:util";
 import {
   CreateSchema,
   JoinSchema,
@@ -23,6 +24,7 @@ import {
   type SessionView,
   type Versions,
   type Ranking,
+  type Option,
   type Preference,
 } from "@/contracts";
 import {
@@ -108,6 +110,15 @@ export function editable(s: StoredSession) {
     "Host must reopen the room before changes.",
   );
 }
+export function sameRankedChoice(current: Option, stored: Option) {
+  // Display names can change independently of the identifiers and evidence voted on.
+  const decision = ({ restaurantName: _name, assignments, ...option }: Option) => ({
+    ...option,
+    assignments: assignments.map(({ menuName: _menuName, ...assignment }) => assignment),
+  });
+  return isDeepStrictEqual(decision(current), decision(stored));
+}
+
 function snapshot(s: StoredSession, participants = mealMembers(s)) {
   return {
     preferenceVersion: s.preferenceVersion,
@@ -301,7 +312,7 @@ export function view(s: StoredSession, token?: string): SessionView {
     lastChange: stale
       ? "ข้อมูลเมนู กราฟ หรือวิธีคำนวณเปลี่ยนแล้ว ผู้ดูแลต้องคำนวณใหม่ หากปิดมื้อแล้วให้เปิดมื้ออีกครั้ง"
       : s.lastChange,
-    ai: s.chatJourney ? { available: false, model: null } : aiStatus(),
+    ai: aiStatus(),
     expiresAt: s.expiresAt,
     dataOrigin: "synthetic",
     catalogVersion: CATALOG_VERSION,
@@ -867,7 +878,7 @@ export async function mutateRoom(
             (o) => o.restaurantId === p.restaurantId,
           )!;
           assert(
-            option && JSON.stringify(option) === JSON.stringify(original),
+            option && sameRankedChoice(option, original),
             409,
             "CATALOG_CHANGED",
             "Catalog evidence changed. Rank again before finalizing.",

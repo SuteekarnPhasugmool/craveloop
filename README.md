@@ -4,7 +4,7 @@
 
 CraveLoop is an independent mobile delivery prototype exploring a **ShopeeFood integration concept**: a group shares its needs, receives a workable catalog meal for every participant, agrees on one restaurant, then reviews a persistent **simulated cart and checkout summary**. It does not connect to ShopeeFood, LINE or a delivery platform, submit an order, take payment or issue an order number.
 
-**All 12 restaurants, 60 menus, prices, distances, fees and dietary evidence are synthetic fixtures.** Deterministic TypeScript enforces confirmed constraints, computes integer-satang costs and ranks choices. The primary Group Order form is manual. With a configured server model, the private form can route a text turn into an editable draft. The member reviews ambiguous requirements separately and confirms before the ranker uses any changes.
+**All 18 restaurants, 74 menus, prices, distances, fees and dietary evidence are synthetic fixtures.** Deterministic TypeScript enforces confirmed constraints, computes integer-satang costs and ranks choices. The primary Group Order form is manual. With a configured server model, the private form can route a text turn into an editable draft. The member reviews ambiguous requirements separately and confirms before the ranker uses any changes.
 
 ## ลอง CraveLoop AI Chat Journey
 
@@ -71,6 +71,13 @@ SQLite is a durable file at `.local/craveloop.sqlite`, with WAL and transactiona
 
 Set a server-side `OPENAI_MODEL` and API key to enable AI drafts. CraveLoop uses `CRAVELOOP_OPENAI_API_KEY` when set, then falls back to `OPENAI_API_KEY`. Use the project-specific setting when your shell already supplies a key for a different project. Run `npm run ai:smoke` to verify live extraction with the bundled sample.
 
+Set `OPENAI_MODEL=gpt-6.2-sol` in `.env.local`. In the private meal form, **ยืนยันความต้องการ** analyzes the entered text and selected media, then saves the extracted craving tags together with the constraints entered in the form. Recorded voice uses `OPENAI_TRANSCRIPTION_MODEL` (default `gpt-transcribe`). Social links stay as references.
+
+- `npm run ai:experiments -- kg` proposes evidence-checked ingredient triples for human review.
+- `npm run ai:experiments -- rerank snapshot.json` compares the eligible deterministic options using a JSON snapshot with `areaId`, `mode` and `members` (each with `id` and confirmed `preference`).
+- `npm run ai:experiments -- explain r03-m03 recipe-03-03 label-x` lets `OPENAI_EXPLAINER_MODEL` (default `gpt-6-luna`) suggest a presentation order. The approved graph supplies the facts and the fallback.
+- `npm run ai:experiments -- transcribe clip.wav audio/wav 1000 6000` transcribes an already-trimmed audio file and attaches the supplied source range in milliseconds.
+
 ## Test and evaluate
 
 ```sh
@@ -120,3 +127,9 @@ The [verification record](docs/VERIFICATION.md) includes the current test counts
 [Demo script](docs/DEMO_GROUP_ORDER.md), [verification](docs/VERIFICATION.md), [Codex log](docs/CODEX_LOG.md), [current master](CRAVELOOP_MASTER_SPEC.md), [version 2 archive](docs/archive/CRAVELOOP_MASTER_SPEC.v2.0-2026-11-19.md).
 
 `AI_PIPELINE_PLAN.md` is a separately authored future plan, unchanged by this implementation. The guided-choice implementation includes the private router adapter, reviewed ingredient graph and offline graph-drafting worker. The verification record identifies which checks used fixtures. Development on 18–20 November predates the recorded 21 November event; do not claim it was written during the competition or that a submission/deployment/partnership succeeded.
+
+### Video preferences
+
+With AI drafts enabled, the Group Order preference form accepts MP4/WebM clips up to 5 MiB. Members can also opt in to reading a public YouTube watch/Shorts URL, TikTok video URL, or Instagram Reel URL. The server samples up to six frames from the first 30 seconds and sends the image sheet to the preference model. OpenAI transcribes available audio from the same interval. The Next.js server logs on-screen text, transcribed speech and a Thai visual description under `[video-text]`. Temporary clips are removed after decoding. Link availability depends on platform access and a 25 MiB download limit.
+
+Install FFmpeg on the server and yt-dlp for public links. Both executables can be on PATH or configured with `FFMPEG_PATH` and `YT_DLP_PATH`. Frame extraction is adapted from [Codex Video Vision](https://github.com/miketuckman/codex-video-vision/blob/6fe90464c4fa6ea25b8ce4dfe416c4b9ae95855f/mcp-server/src/extractors/frames.ts). See the [MIT license](docs/codex-video-vision-LICENSE.txt).

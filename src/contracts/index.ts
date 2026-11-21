@@ -31,6 +31,7 @@ export const PreferenceSchema = z
     servingStyle: z.enum(["soup", "dry"]).optional(),
     noodle: z.enum(["any", "broth", "stir_fried"]).optional(),
     desiredDish: z.string().trim().min(1).max(120).optional(),
+    videoMenuIds: z.array(z.string().min(1).max(80)).max(74).optional(),
     cuisinePreferences: z.array(z.enum(cuisineTags)).max(7),
     flavorTags: z.array(z.enum(flavorTags)).max(5),
     textureTags: z.array(z.enum(textureTags)).max(6),

@@ -1,7 +1,7 @@
 [
   {
     "id": "r01",
-    "name": "Demo Mixed Kitchen",
+    "name": "ร้านจำลอง ครัวบ้านสวน",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
     "catalogVersion": "seed-v2",
@@ -19,7 +19,7 @@
     },
     "menus": [
       {
-        "name": "Crispy tofu rice",
+        "name": "ข้าวเต้าหู้ทอดกรอบ",
         "prices": {
           "dine_in": 8000,
           "delivery": 9000
@@ -53,7 +53,7 @@
         "id": "r01-m01"
       },
       {
-        "name": "Mild chicken rice",
+        "name": "ข้าวไก่ย่างรสอ่อน",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -81,7 +81,7 @@
         "id": "r01-m02"
       },
       {
-        "name": "Spicy tofu bowl",
+        "name": "ข้าวเต้าหู้ผัดพริก",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -115,7 +115,7 @@
         "id": "r01-m03"
       },
       {
-        "name": "Vegetable broth noodles",
+        "name": "ก๋วยเตี๋ยวน้ำซุปผัก",
         "prices": {
           "dine_in": 7500,
           "delivery": 8500
@@ -150,7 +150,7 @@
         "noodleStyle": "broth"
       },
       {
-        "name": "Grilled chicken salad",
+        "name": "สลัดไก่ย่าง",
         "prices": {
           "dine_in": 9000,
           "delivery": 10000
@@ -182,7 +182,7 @@
   },
   {
     "id": "r02",
-    "name": "Demo Vegetarian Comfort",
+    "name": "ร้านจำลอง ครัวอิ่มผัก",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
     "catalogVersion": "seed-v2",
@@ -200,7 +200,7 @@
     },
     "menus": [
       {
-        "name": "Crispy tofu rice",
+        "name": "ข้าวเต้าหู้ทอดกรอบ",
         "prices": {
           "dine_in": 7500,
           "delivery": 8500
@@ -243,7 +243,7 @@
         "id": "r02-m01"
       },
       {
-        "name": "Mild mushroom rice",
+        "name": "ข้าวเห็ดรสอ่อน",
         "prices": {
           "dine_in": 8000,
           "delivery": 9000
@@ -276,7 +276,7 @@
         "id": "r02-m02"
       },
       {
-        "name": "Spicy tofu bowl",
+        "name": "ข้าวเต้าหู้ผัดพริก",
         "prices": {
           "dine_in": 8000,
           "delivery": 9000
@@ -310,7 +310,7 @@
         "id": "r02-m03"
       },
       {
-        "name": "Vegetable stir-fried noodles",
+        "name": "ก๋วยเตี๋ยวผัดผัก",
         "prices": {
           "dine_in": 7000,
           "delivery": 8000
@@ -344,7 +344,7 @@
         "noodleStyle": "stir_fried"
       },
       {
-        "name": "Grilled mushroom salad",
+        "name": "สลัดเห็ดย่าง",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -381,7 +381,7 @@
   },
   {
     "id": "r03",
-    "name": "Demo Rice & Grill",
+    "name": "ร้านจำลอง ข้าวหอมเตาย่าง",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
     "catalogVersion": "seed-v2",
@@ -399,7 +399,7 @@
     },
     "menus": [
       {
-        "name": "Crispy mushroom rice",
+        "name": "ข้าวเห็ดทอดกรอบ",
         "prices": {
           "dine_in": 8000,
           "delivery": 9000
@@ -433,7 +433,7 @@
         "id": "r03-m01"
       },
       {
-        "name": "Mild chicken rice",
+        "name": "ข้าวไก่ย่างรสอ่อน",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -461,7 +461,7 @@
         "id": "r03-m02"
       },
       {
-        "name": "Spicy grilled chicken",
+        "name": "ข้าวไก่ย่างรสเผ็ด",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -490,7 +490,7 @@
         "id": "r03-m03"
       },
       {
-        "name": "Vegetable broth noodles",
+        "name": "ก๋วยเตี๋ยวน้ำซุปผัก",
         "prices": {
           "dine_in": 7500,
           "delivery": 8500
@@ -524,7 +524,7 @@
         "noodleStyle": "broth"
       },
       {
-        "name": "Grilled tofu salad",
+        "name": "สลัดเต้าหู้ย่าง",
         "prices": {
           "dine_in": 9000,
           "delivery": 10000
@@ -561,7 +561,7 @@
   },
   {
     "id": "r04",
-    "name": "Demo Premium Bowls",
+    "name": "ร้านจำลอง ชามพิเศษ",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
     "catalogVersion": "seed-v2",
@@ -579,7 +579,7 @@
     },
     "menus": [
       {
-        "name": "Crispy tofu with spicy noodle broth",
+        "name": "ก๋วยเตี๋ยวซุปเผ็ดเต้าหู้กรอบ",
         "prices": {
           "dine_in": 13000,
           "delivery": 14000
@@ -618,7 +618,7 @@
         "noodleStyle": "broth"
       },
       {
-        "name": "Mild chicken rice",
+        "name": "ข้าวไก่ย่างรสอ่อน",
         "prices": {
           "dine_in": 13000,
           "delivery": 14000
@@ -646,7 +646,7 @@
         "id": "r04-m02"
       },
       {
-        "name": "Spicy tofu bowl",
+        "name": "ข้าวเต้าหู้ผัดพริก",
         "prices": {
           "dine_in": 13000,
           "delivery": 14000
@@ -680,7 +680,7 @@
         "id": "r04-m03"
       },
       {
-        "name": "Vegetable broth noodles",
+        "name": "ก๋วยเตี๋ยวน้ำซุปผัก",
         "prices": {
           "dine_in": 13000,
           "delivery": 14000
@@ -715,7 +715,7 @@
         "noodleStyle": "broth"
       },
       {
-        "name": "Grilled chicken salad",
+        "name": "สลัดไก่ย่าง",
         "prices": {
           "dine_in": 13000,
           "delivery": 14000
@@ -747,7 +747,7 @@
   },
   {
     "id": "r05",
-    "name": "Demo Spicy Pork",
+    "name": "ร้านจำลอง ครัวหมูรสจัด",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
     "catalogVersion": "seed-v2",
@@ -765,7 +765,7 @@
     },
     "menus": [
       {
-        "name": "Spicy pork rice",
+        "name": "ข้าวหมูผัดเผ็ด",
         "prices": {
           "dine_in": 8000,
           "delivery": 9000
@@ -794,7 +794,7 @@
         "id": "r05-m01"
       },
       {
-        "name": "Mild pork bowl",
+        "name": "ข้าวหน้าหมูรสอ่อน",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -822,7 +822,7 @@
         "id": "r05-m02"
       },
       {
-        "name": "Pork chili bowl",
+        "name": "ข้าวหมูผัดพริก",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -851,7 +851,7 @@
         "id": "r05-m03"
       },
       {
-        "name": "Pork broth noodles",
+        "name": "ก๋วยเตี๋ยวน้ำหมู",
         "prices": {
           "dine_in": 7500,
           "delivery": 8500
@@ -882,7 +882,7 @@
         "noodleStyle": "broth"
       },
       {
-        "name": "Grilled pork salad",
+        "name": "สลัดหมูย่าง",
         "prices": {
           "dine_in": 9000,
           "delivery": 10000
@@ -914,7 +914,7 @@
   },
   {
     "id": "r06",
-    "name": "Demo Delivery Kitchen",
+    "name": "ร้านจำลอง ครัวหอมเครื่องเทศ",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
     "catalogVersion": "seed-v2",
@@ -931,7 +931,7 @@
     },
     "menus": [
       {
-        "name": "Creamy crispy tofu rice",
+        "name": "ข้าวเต้าหู้ทอดกรอบซอสครีม",
         "prices": {
           "dine_in": 8000,
           "delivery": 9000
@@ -964,7 +964,7 @@
         "id": "r06-m01"
       },
       {
-        "name": "Creamy mild chicken rice",
+        "name": "ข้าวไก่ย่างรสอ่อนซอสครีม",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -991,7 +991,7 @@
         "id": "r06-m02"
       },
       {
-        "name": "Creamy spicy tofu bowl",
+        "name": "ข้าวเต้าหู้ผัดพริกซอสครีม",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -1024,7 +1024,7 @@
         "id": "r06-m03"
       },
       {
-        "name": "Creamy vegetable broth noodles",
+        "name": "ก๋วยเตี๋ยวน้ำซุปผักซอสครีม",
         "prices": {
           "dine_in": 7500,
           "delivery": 8500
@@ -1057,7 +1057,7 @@
         "noodleStyle": "broth"
       },
       {
-        "name": "Creamy grilled chicken salad",
+        "name": "สลัดไก่ย่างซอสครีม",
         "prices": {
           "dine_in": 9000,
           "delivery": 10000
@@ -1087,7 +1087,7 @@
   },
   {
     "id": "r07",
-    "name": "Demo Dine-in Plates",
+    "name": "ร้านจำลอง จานย่างริมสวน",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
     "catalogVersion": "seed-v2",
@@ -1104,7 +1104,7 @@
     },
     "menus": [
       {
-        "name": "Grilled crispy tofu rice",
+        "name": "ข้าวเต้าหู้ทอดกรอบสูตรเตาถ่าน",
         "prices": {
           "dine_in": 8000,
           "delivery": 9000
@@ -1138,7 +1138,7 @@
         "id": "r07-m01"
       },
       {
-        "name": "Grilled mild chicken rice",
+        "name": "ข้าวไก่ย่างรสอ่อนสูตรเตาถ่าน",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -1166,7 +1166,7 @@
         "id": "r07-m02"
       },
       {
-        "name": "Grilled spicy tofu bowl",
+        "name": "ข้าวเต้าหู้ผัดพริกสูตรเตาถ่าน",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -1200,7 +1200,7 @@
         "id": "r07-m03"
       },
       {
-        "name": "Grilled vegetable broth noodles",
+        "name": "ก๋วยเตี๋ยวน้ำซุปผักสูตรเตาถ่าน",
         "prices": {
           "dine_in": 7500,
           "delivery": 8500
@@ -1234,7 +1234,7 @@
         "noodleStyle": "broth"
       },
       {
-        "name": "Grilled grilled chicken salad",
+        "name": "สลัดไก่ย่างสูตรเตาถ่าน",
         "prices": {
           "dine_in": 9000,
           "delivery": 10000
@@ -1265,7 +1265,7 @@
   },
   {
     "id": "r08",
-    "name": "Demo Closed Hotpot",
+    "name": "ร้านจำลอง หม้อไฟบ้านอุ่น",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
     "catalogVersion": "seed-v2",
@@ -1283,7 +1283,7 @@
     },
     "menus": [
       {
-        "name": "Crispy tofu rice",
+        "name": "ข้าวเต้าหู้ทอดกรอบ",
         "prices": {
           "dine_in": 8000,
           "delivery": 9000
@@ -1317,7 +1317,7 @@
         "id": "r08-m01"
       },
       {
-        "name": "Mild chicken rice",
+        "name": "ข้าวไก่ย่างรสอ่อน",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -1345,7 +1345,7 @@
         "id": "r08-m02"
       },
       {
-        "name": "Spicy tofu bowl",
+        "name": "ข้าวเต้าหู้ผัดพริก",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -1379,7 +1379,7 @@
         "id": "r08-m03"
       },
       {
-        "name": "Vegetable broth noodles",
+        "name": "ก๋วยเตี๋ยวน้ำซุปผัก",
         "prices": {
           "dine_in": 7500,
           "delivery": 8500
@@ -1414,7 +1414,7 @@
         "noodleStyle": "broth"
       },
       {
-        "name": "Grilled chicken salad",
+        "name": "สลัดไก่ย่าง",
         "prices": {
           "dine_in": 9000,
           "delivery": 10000
@@ -1446,7 +1446,7 @@
   },
   {
     "id": "r09",
-    "name": "Demo Unknown Prices",
+    "name": "ร้านจำลอง ครัวตลาดเช้า",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
     "catalogVersion": "seed-v2",
@@ -1464,7 +1464,7 @@
     },
     "menus": [
       {
-        "name": "Crispy tofu rice",
+        "name": "ข้าวเต้าหู้ทอดกรอบ",
         "prices": {
           "dine_in": null,
           "delivery": null
@@ -1498,7 +1498,7 @@
         "id": "r09-m01"
       },
       {
-        "name": "Mild chicken rice",
+        "name": "ข้าวไก่ย่างรสอ่อน",
         "prices": {
           "dine_in": null,
           "delivery": null
@@ -1526,7 +1526,7 @@
         "id": "r09-m02"
       },
       {
-        "name": "Spicy tofu bowl",
+        "name": "ข้าวเต้าหู้ผัดพริก",
         "prices": {
           "dine_in": null,
           "delivery": null
@@ -1560,7 +1560,7 @@
         "id": "r09-m03"
       },
       {
-        "name": "Vegetable broth noodles",
+        "name": "ก๋วยเตี๋ยวน้ำซุปผัก",
         "prices": {
           "dine_in": null,
           "delivery": null
@@ -1595,7 +1595,7 @@
         "noodleStyle": "broth"
       },
       {
-        "name": "Grilled chicken salad",
+        "name": "สลัดไก่ย่าง",
         "prices": {
           "dine_in": null,
           "delivery": null
@@ -1627,7 +1627,7 @@
   },
   {
     "id": "r10",
-    "name": "Demo Incomplete Ingredients",
+    "name": "ร้านจำลอง กับข้าวบ้านเรา",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
     "catalogVersion": "seed-v2",
@@ -1640,7 +1640,7 @@
     "feeQuote": null,
     "menus": [
       {
-        "name": "Crispy tofu rice",
+        "name": "ข้าวเต้าหู้ทอดกรอบ",
         "prices": {
           "dine_in": 8000,
           "delivery": 9000
@@ -1664,7 +1664,7 @@
         "id": "r10-m01"
       },
       {
-        "name": "Mild chicken rice",
+        "name": "ข้าวไก่ย่างรสอ่อน",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -1688,7 +1688,7 @@
         "id": "r10-m02"
       },
       {
-        "name": "Spicy tofu bowl",
+        "name": "ข้าวเต้าหู้ผัดพริก",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -1712,7 +1712,7 @@
         "id": "r10-m03"
       },
       {
-        "name": "Vegetable broth noodles",
+        "name": "ก๋วยเตี๋ยวน้ำซุปผัก",
         "prices": {
           "dine_in": 7500,
           "delivery": 8500
@@ -1738,7 +1738,7 @@
         "noodleStyle": "broth"
       },
       {
-        "name": "Grilled chicken salad",
+        "name": "สลัดไก่ย่าง",
         "prices": {
           "dine_in": 9000,
           "delivery": 10000
@@ -1766,7 +1766,7 @@
   },
   {
     "id": "r11",
-    "name": "Demo Mild Noodle Bar",
+    "name": "ร้านจำลอง ร้านเส้นน้ำใส",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
     "catalogVersion": "seed-v2",
@@ -1784,7 +1784,7 @@
     },
     "menus": [
       {
-        "name": "Mild noodle bowl 01",
+        "name": "ราเมนเต้าหู้",
         "prices": {
           "dine_in": 8000,
           "delivery": 9000
@@ -1819,7 +1819,7 @@
         "noodleStyle": "broth"
       },
       {
-        "name": "Mild noodle bowl 02",
+        "name": "ราเมนไก่",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -1848,7 +1848,7 @@
         "noodleStyle": "broth"
       },
       {
-        "name": "Mild noodle bowl 03",
+        "name": "ราเมนเต้าหู้รสเผ็ด",
         "prices": {
           "dine_in": 8500,
           "delivery": 9500
@@ -1883,7 +1883,7 @@
         "noodleStyle": "broth"
       },
       {
-        "name": "Mild noodle bowl 04",
+        "name": "ราเมนผัก",
         "prices": {
           "dine_in": 7500,
           "delivery": 8500
@@ -1917,7 +1917,7 @@
         "noodleStyle": "broth"
       },
       {
-        "name": "Mild noodle bowl 05",
+        "name": "ราเมนไก่ย่าง",
         "prices": {
           "dine_in": 9000,
           "delivery": 10000
@@ -1949,7 +1949,7 @@
   },
   {
     "id": "r12",
-    "name": "Demo Mixed Curry",
+    "name": "ร้านจำลอง ครัวแกงหอม",
     "areaId": "bangkok_demo",
     "dataOrigin": "synthetic",
     "catalogVersion": "seed-v2",
@@ -1967,7 +1967,7 @@
     },
     "menus": [
       {
-        "name": "Curry crispy tofu rice",
+        "name": "ข้าวเต้าหู้ทอดกรอบซอสแกงเครื่องเทศ",
         "prices": {
           "dine_in": 9500,
           "delivery": 10500
@@ -2001,7 +2001,7 @@
         "id": "r12-m01"
       },
       {
-        "name": "Curry mild chicken rice",
+        "name": "ข้าวไก่ย่างรสอ่อนซอสแกงเครื่องเทศ",
         "prices": {
           "dine_in": 10000,
           "delivery": 11000
@@ -2029,7 +2029,7 @@
         "id": "r12-m02"
       },
       {
-        "name": "Curry spicy tofu bowl",
+        "name": "ข้าวเต้าหู้ผัดพริกซอสแกงเครื่องเทศ",
         "prices": {
           "dine_in": 10000,
           "delivery": 11000
@@ -2063,7 +2063,7 @@
         "id": "r12-m03"
       },
       {
-        "name": "Curry vegetable broth noodles",
+        "name": "ก๋วยเตี๋ยวน้ำซุปผักซอสแกงเครื่องเทศ",
         "prices": {
           "dine_in": 9000,
           "delivery": 10000
@@ -2097,7 +2097,7 @@
         "noodleStyle": "broth"
       },
       {
-        "name": "Curry grilled chicken salad",
+        "name": "สลัดไก่ย่างซอสแกงเครื่องเทศ",
         "prices": {
           "dine_in": 10500,
           "delivery": 11500
@@ -2123,6 +2123,547 @@
         "available": true,
         "priceIncludesFees": true,
         "id": "r12-m05"
+      }
+    ]
+  },
+  {
+    "id": "r13",
+    "name": "ร้านจำลอง เตาถ่านเนื้อวัว",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v2",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": 1600,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4001,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "ข้าวหน้าเนื้อวัวย่าง",
+        "ingredients": [
+          "beef",
+          "rice",
+          "soy"
+        ],
+        "flavorTags": [
+          "savory"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "prices": {
+          "dine_in": 11500,
+          "delivery": 12500
+        },
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r13-m01"
+      },
+      {
+        "name": "เนื้อวัวผัดพริกไทยดำราดข้าว",
+        "ingredients": [
+          "beef",
+          "black_pepper",
+          "rice",
+          "soy",
+          "oil"
+        ],
+        "flavorTags": [
+          "savory",
+          "spicy"
+        ],
+        "textureTags": [],
+        "prices": {
+          "dine_in": 12000,
+          "delivery": 13000
+        },
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r13-m02"
+      }
+    ]
+  },
+  {
+    "id": "r14",
+    "name": "ร้านจำลอง ครัวผักตามฤดู",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v2",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": 1700,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4001,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "ข้าวผัดผักรวมเต้าหู้",
+        "ingredients": [
+          "rice",
+          "vegetable",
+          "carrot",
+          "tofu",
+          "soy",
+          "oil"
+        ],
+        "flavorTags": [
+          "mild",
+          "savory"
+        ],
+        "textureTags": [],
+        "prices": {
+          "dine_in": 7500,
+          "delivery": 8500
+        },
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r14-m01:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r14-m01"
+      },
+      {
+        "name": "สลัดผักสดน้ำมะนาว",
+        "ingredients": [
+          "lettuce",
+          "carrot",
+          "tomato",
+          "lime"
+        ],
+        "flavorTags": [
+          "sour"
+        ],
+        "textureTags": [
+          "fresh"
+        ],
+        "prices": {
+          "dine_in": 8000,
+          "delivery": 9000
+        },
+        "ingredientsComplete": true,
+        "dietaryEvidence": {
+          "vegetarian": {
+            "verified": true,
+            "evidenceId": "seed:r14-m02:veg"
+          }
+        },
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r14-m02"
+      }
+    ]
+  },
+  {
+    "id": "r15",
+    "name": "ร้านจำลอง ไก่ย่างลานไผ่",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v2",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": 1800,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4001,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "ข้าวเหนียวไก่ย่างตะไคร้",
+        "ingredients": [
+          "chicken",
+          "rice",
+          "lemongrass",
+          "salt"
+        ],
+        "flavorTags": [
+          "savory"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "prices": {
+          "dine_in": 8500,
+          "delivery": 9500
+        },
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r15-m01"
+      },
+      {
+        "name": "ข้าวไก่ทอดกระเทียม",
+        "ingredients": [
+          "chicken",
+          "rice",
+          "garlic",
+          "soy",
+          "oil"
+        ],
+        "flavorTags": [
+          "savory"
+        ],
+        "textureTags": [
+          "crispy"
+        ],
+        "prices": {
+          "dine_in": 8000,
+          "delivery": 9000
+        },
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r15-m02"
+      }
+    ]
+  },
+  {
+    "id": "r16",
+    "name": "ร้านจำลอง ครัวหมูริมคลอง",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v2",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": 1900,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4001,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "ข้าวคอหมูย่าง",
+        "ingredients": [
+          "pork",
+          "rice",
+          "soy"
+        ],
+        "flavorTags": [
+          "savory"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "prices": {
+          "dine_in": 9000,
+          "delivery": 10000
+        },
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r16-m01"
+      },
+      {
+        "name": "ข้าวหมูสับผัดกะเพรา",
+        "ingredients": [
+          "pork",
+          "rice",
+          "basil",
+          "chili",
+          "soy",
+          "oil"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [],
+        "prices": {
+          "dine_in": 7500,
+          "delivery": 8500
+        },
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r16-m02"
+      }
+    ]
+  },
+  {
+    "id": "r17",
+    "name": "ร้านจำลอง ก๋วยเตี๋ยวบ้านเส้นสด",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v2",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": 2000,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4001,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "ก๋วยเตี๋ยวเส้นเล็กเนื้อวัวตุ๋น",
+        "ingredients": [
+          "rice_noodle",
+          "beef",
+          "water",
+          "soy",
+          "garlic"
+        ],
+        "flavorTags": [
+          "savory"
+        ],
+        "textureTags": [
+          "brothy",
+          "chewy"
+        ],
+        "noodleStyle": "broth",
+        "prices": {
+          "dine_in": 9500,
+          "delivery": 10500
+        },
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r17-m01"
+      },
+      {
+        "name": "เส้นใหญ่ผัดซีอิ๊วหมู",
+        "ingredients": [
+          "rice_noodle",
+          "pork",
+          "egg",
+          "kale",
+          "soy",
+          "oil"
+        ],
+        "flavorTags": [
+          "savory"
+        ],
+        "textureTags": [
+          "chewy"
+        ],
+        "noodleStyle": "stir_fried",
+        "prices": {
+          "dine_in": 8000,
+          "delivery": 9000
+        },
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r17-m02"
+      }
+    ]
+  },
+  {
+    "id": "r18",
+    "name": "ร้านจำลอง โรงรมควันขาวัว",
+    "areaId": "bangkok_demo",
+    "dataOrigin": "synthetic",
+    "catalogVersion": "seed-v2",
+    "channels": [
+      "dine_in",
+      "delivery"
+    ],
+    "available": true,
+    "distanceM": 2100,
+    "feeQuote": {
+      "currency": "THB",
+      "deliveryFeeSatang": 4001,
+      "serviceFeeSatang": 0,
+      "source": "synthetic"
+    },
+    "menus": [
+      {
+        "name": "เนื้อค้อนธอร์รมควัน (ขาวัวติดกระดูก)",
+        "ingredients": [
+          "beef",
+          "salt",
+          "black_pepper"
+        ],
+        "flavorTags": [
+          "savory"
+        ],
+        "textureTags": [],
+        "prices": {
+          "dine_in": 24500,
+          "delivery": 25500
+        },
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r18-m01"
+      },
+      {
+        "name": "ข้าวหน้าเสือร้องไห้ย่างจิ้มแจ่ว",
+        "ingredients": [
+          "beef",
+          "rice",
+          "fish",
+          "chili",
+          "lime",
+          "shallot"
+        ],
+        "flavorTags": [
+          "savory",
+          "spicy",
+          "sour"
+        ],
+        "textureTags": [
+          "grilled"
+        ],
+        "prices": {
+          "dine_in": 13500,
+          "delivery": 14500
+        },
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r18-m02"
+      },
+      {
+        "name": "เกาเหลาเนื้อน่องลายตุ๋น",
+        "ingredients": [
+          "beef",
+          "water",
+          "radish",
+          "soy",
+          "garlic",
+          "star_anise"
+        ],
+        "flavorTags": [
+          "mild",
+          "savory"
+        ],
+        "textureTags": [
+          "brothy"
+        ],
+        "prices": {
+          "dine_in": 11000,
+          "delivery": 12000
+        },
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r18-m03"
+      },
+      {
+        "name": "ข้าวกะเพราเนื้อวัวสับ",
+        "ingredients": [
+          "beef",
+          "rice",
+          "basil",
+          "garlic",
+          "chili",
+          "soy",
+          "oil"
+        ],
+        "flavorTags": [
+          "spicy",
+          "savory"
+        ],
+        "textureTags": [],
+        "prices": {
+          "dine_in": 9500,
+          "delivery": 10500
+        },
+        "ingredientsComplete": true,
+        "dietaryEvidence": {},
+        "crossContactEvidence": {},
+        "cuisineTags": [
+          "thai"
+        ],
+        "available": true,
+        "priceIncludesFees": true,
+        "id": "r18-m04"
       }
     ]
   }

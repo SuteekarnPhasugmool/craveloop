@@ -1,4 +1,5 @@
 "use client";
+import FoodPhoto from "../group-order/FoodPhoto";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Option, SessionView } from "@/contracts";
 import { emptyPreference } from "@/contracts";
@@ -443,7 +444,7 @@ export default function LineRoom({ sessionId }: { sessionId: string }) {
               >
                 <div className="line-card-visual">
                   <div className="line-food-icon">
-                    {index === 0 ? "🍱" : index === 1 ? "🥗" : "🍜"}
+                    {o.assignments[0] && <FoodPhoto menuId={o.assignments[0].menuId} menuName={o.assignments[0].menuName} />}
                   </div>
                   <span>ภาพประกอบ · ข้อมูลสมมติ</span>
                   <span className="line-option-number">

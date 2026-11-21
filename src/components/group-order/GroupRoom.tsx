@@ -1,4 +1,5 @@
 "use client";
+import FoodPhoto from "./FoodPhoto";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Option, SessionView } from "@/contracts";
 import ChatShell from "./ChatShell";
@@ -718,6 +719,14 @@ export default function GroupRoom({
                       ownVote.restaurantId === o.restaurantId;
                     return (
                       <article key={o.restaurantId}>
+                        {o.assignments[0] && (
+                          <div className="go-option-illustration">
+                            <FoodPhoto
+                              menuId={o.assignments[0].menuId}
+                              menuName={o.assignments[0].menuName}
+                            />
+                          </div>
+                        )}
                         <h3>{o.restaurantName}</h3>
                         <p>
                           รวมกลุ่ม {baht(o.totalGroupCostSatang)} · ยอมรับ {votes}/
@@ -1145,10 +1154,10 @@ export default function GroupRoom({
                                 className="go-option-illustration"
                                 aria-hidden="true"
                               >
-                                {index === 0 ? "🍱" : index === 1 ? "🥗" : "🍜"}
+                                {o.assignments[0] && <FoodPhoto menuId={o.assignments[0].menuId} menuName={o.assignments[0].menuName} />}
                               </div>
                               <div className="go-option-name">
-                                <small>{o.restaurantId} · ภาพประกอบสมมติ</small>
+                                <small>{o.restaurantId} · ภาพอาหารตัวอย่าง</small>
                                 <h3>{o.restaurantName}</h3>
                                 <p>
                                   เมนูที่ผ่านเงื่อนไขครบ {o.assignments.length} คน

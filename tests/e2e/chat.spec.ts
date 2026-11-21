@@ -210,7 +210,7 @@ test("LINE-style simulated group: four contexts chat, review drafts, replan and 
       .click();
     await expect
       .poll(async () => host.evaluate(() => navigator.clipboard.readText()))
-      .toContain("Demo Mixed Kitchen");
+      .toContain("ร้านจำลอง ครัวบ้านสวน");
     await host
       .getByTestId("chat-final-summary")
       .getByText("ดูข้อความสรุป", { exact: true })
@@ -220,7 +220,7 @@ test("LINE-style simulated group: four contexts chat, review drafts, replan and 
     ).toContainText("ข้อมูลร้านสมมติ");
     await expect(
       host.getByTestId("chat-final-summary").locator("pre"),
-    ).toContainText("Demo Mixed Kitchen");
+    ).toContainText("ร้านจำลอง ครัวบ้านสวน");
     expect(
       new Set(
         await Promise.all(

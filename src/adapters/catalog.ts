@@ -48,7 +48,7 @@ export const CatalogSchema = z
     z
       .object({
         id: z.string().min(1),
-        name: z.string().startsWith("Demo "),
+        name: z.string().startsWith("ร้านจำลอง "),
         areaId: z.literal("bangkok_demo"),
         dataOrigin: z.literal("synthetic"),
         catalogVersion: z.literal(CATALOG_VERSION),

@@ -356,7 +356,7 @@ describe("LINE-style simulation durable chat and private review", () => {
         .filter((m) => m.kind === "bot")
         .map((m) => m.text)
         .join("\n"),
-    ).toContain("Demo Mixed Kitchen");
+    ).toContain("ร้านจำลอง ครัวบ้านสวน");
     const before = JSON.stringify(group.chat);
     await closeDatabase();
     const restored = await getChat(r.id, r.tokens[2]);

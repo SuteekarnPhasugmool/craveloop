@@ -68,18 +68,18 @@ it("routes feedback in one call, grounds a named dish and preserves unmentioned 
       patch: [
         {
           field: "desiredDish",
-          name: "Crispy tofu rice",
-          quote: "Crispy tofu rice",
+          name: "ข้าวเต้าหู้ทอดกรอบ",
+          quote: "ข้าวเต้าหู้ทอดกรอบ",
         },
         { field: "flavorTags", values: ["mild"], quote: "missing evidence" },
       ],
     }),
   );
-  const routed = await routePreference("อยากกิน Crispy tofu rice", base, true);
+  const routed = await routePreference("อยากกิน ข้าวเต้าหู้ทอดกรอบ", base, true);
   expect(parse).toHaveBeenCalledTimes(1);
   expect(routed.preference).toEqual({
     ...base,
-    desiredDish: "Crispy tofu rice",
+    desiredDish: "ข้าวเต้าหู้ทอดกรอบ",
   });
   expect(menuFit(routed.preference, catalog[0].menus[0]).score).toBeGreaterThan(
     menuFit(routed.preference, catalog[0].menus[1]).score,
@@ -103,6 +103,27 @@ it("keeps ambiguous budgets and allergy removal separate from soft choices", asy
   expect(result.questions.length).toBeGreaterThan(0);
 });
 describe("multimodal draft adapter (mocked provider; no live inference claim)", () => {
+  it("uses the clip to resolve follow-ups and returns the matched menu even if the model asks again", async () => {
+    const result = {
+      ...draft, primaryIngredient: "beef", matchedMenuIds: [], foodBaseAnswer: null,
+      visualSummary: "ขาวัวรมควัน", videoText: "เนื้อค้อนธอร์",
+      questions: ["เป็นเมนูอะไร"],
+    };
+    parse.mockResolvedValueOnce(complete(result)).mockResolvedValueOnce(
+      complete({ ...result, matchedMenuIds: ["r18-m01"] }),
+    );
+    const frames = "data:image/jpeg;base64,YQ==";
+    const extracted = await extractPreferences({
+      text: "", videoFrames: frames, videoTranscript: "เนื้อรมควัน",
+      formContext: { constraints: "", transcript: "", pendingQuestions: ["ใช้เนื้ออะไร"] },
+    });
+    expect(parse).toHaveBeenCalledTimes(2);
+    const followUp = JSON.stringify(parse.mock.calls[1][0].input);
+    for (const evidence of [frames, "เนื้อรมควัน", "ใช้เนื้ออะไร", "เป็นเมนูอะไร"]) {
+      expect(followUp).toContain(evidence);
+    }
+    expect(extracted).toMatchObject({ questions: [], needsConfirmation: false, videoMenuIds: ["r18-m01"] });
+  });
   it("uses the CraveLoop key for both adapters when a shell key is also present", async () => {
     vi.stubEnv("CRAVELOOP_OPENAI_API_KEY", "local-test-key");
     parse.mockResolvedValueOnce(complete());

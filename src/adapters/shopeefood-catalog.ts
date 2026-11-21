@@ -9,7 +9,7 @@ export const shopeeFoodListings = fixture.categories.map((category) => {
   const id = `sf-demo-${category.listingId}`;
   const restaurant: Restaurant = {
     id,
-    name: `Demo ${category.restaurantTh}`,
+    name: `ร้านจำลอง ${category.restaurantTh}`,
     dataOrigin: "synthetic",
     catalogVersion: fixture.catalogVersion,
     areaId: "bangkok_demo",

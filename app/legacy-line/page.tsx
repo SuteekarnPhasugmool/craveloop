@@ -106,7 +106,7 @@ export default function Home() {
             <p className="line-subtle">
               ไม่ต้องสมัครสมาชิก · แชร์ลิงก์ให้เพื่อนเปิดคนละเบราว์เซอร์
               <br />
-              Bangkok demo · 12 ร้าน / 60 เมนูสมมติ
+              Bangkok demo · 18 ร้าน / 74 เมนูสมมติ
             </p>
             <a className="line-old-web" href="/web">
               เปิด prototype แบบเว็บเดิม ↗

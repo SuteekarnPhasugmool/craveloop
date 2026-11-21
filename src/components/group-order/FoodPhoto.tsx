@@ -25,6 +25,20 @@ const categories: Record<string, keyof typeof photos> = {
   "30985": "salad",
 };
 
+const dishes: [RegExp, keyof typeof photos][] = [
+  [/กะเพราไก่/, "basil-chicken"],
+  [/ก๋วยเตี๋ยวผัด|บะหมี่แห้ง/, "stir-fried-noodles"],
+  [/ซอสแกง.*ไก่|ไก่.*ซอสแกง|ไก่.*ซอสครีม/, "chicken-curry"],
+  [/ซุปผัก/, "vegetable-broth"],
+  [/สลัด|salad/, "salad"],
+  [/ปลาอบ|ปลานึ่ง/, "thai-fish"],
+  [/ก๋วยเตี๋ยว|ราเมน|เส้นเล็ก|noodle|broth/, "noodles"],
+  [/ไก่ย่าง|สเต๊กไก่/, "grilled-chicken"],
+  [/เต้าหู้|tofu/, "tofu"],
+  [/ชาไทยเย็น/, "tea"],
+  [/หมู|pork/, "pork"],
+];
+
 export default function FoodPhoto({
   menuId,
   menuName,
@@ -34,20 +48,10 @@ export default function FoodPhoto({
 }) {
   const category = menuId.match(/^sf-demo-(\d+)-/)?.[1];
   const name = menuName.toLowerCase();
-  let key = categories[category ?? ""];
-  if (!key) {
-    key = /noodle|broth/.test(name)
-      ? "noodles"
-      : /salad/.test(name)
-        ? "salad"
-        : /pork/.test(name)
-          ? "pork"
-          : /tofu|mushroom/.test(name)
-            ? "tofu"
-            : /curry|creamy/.test(name)
-              ? "rice"
-              : "fried";
-  }
+  const key =
+    dishes.find(([pattern]) => pattern.test(name))?.[1] ??
+    categories[category ?? ""] ??
+    "rice";
   const photo = photos[key];
   return (
     <img

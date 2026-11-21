@@ -1,5 +1,6 @@
 import { getChat, postChat } from "./chat-service";
 import { routePrivateTurn } from "./preference-router";
+import { draftChatPreferences } from "./chat-preference-draft";
 import {
   selectDish,
   postMeal,
@@ -43,7 +44,7 @@ function limit(key: string, max: number) {
   if (buckets.size > 10000)
     for (const [k, v] of buckets) if (v.until < time) buckets.delete(k);
 }
-async function boundedRequest(req: NextRequest) {
+async function boundedRequest(req: NextRequest, maxBytes: number) {
   if (!req.body) return req;
   const reader = req.body.getReader();
   const chunks: Uint8Array[] = [];
@@ -52,12 +53,12 @@ async function boundedRequest(req: NextRequest) {
     const part = await reader.read();
     if (part.done) break;
     total += part.value.length;
-    if (total > 6 * 1024 * 1024) {
+    if (total > maxBytes) {
       await reader.cancel();
       throw new AppError(
         413,
         "INPUT_TOO_LARGE",
-        "Request exceeds the 6 MB envelope limit.",
+        "Attachments exceed the request size limit.",
       );
     }
     chunks.push(part.value);
@@ -100,6 +101,7 @@ export async function handle(req: NextRequest, path: string[] = []) {
     if (id)
       assert(/^[a-f0-9-]{36}$/.test(id), 404, "NOT_FOUND", "Unknown room.");
     const key = req.headers.get("Idempotency-Key") ?? "";
+    const maxBytes = (req.method === "POST" && path.slice(1).join("/") === "preferences/me/draft" ? 12 : 6) * 1024 * 1024;
     if (mutation) {
       assert(
         /^[\w-]{8,128}$/.test(key),
@@ -122,17 +124,17 @@ export async function handle(req: NextRequest, path: string[] = []) {
         "Request origin not allowed.",
       );
       assert(
-        Number(req.headers.get("content-length") ?? 0) <= 6 * 1024 * 1024,
+        Number(req.headers.get("content-length") ?? 0) <= maxBytes,
         413,
         "INPUT_TOO_LARGE",
-        "Maximum upload is 5 MB.",
+        "Attachments exceed the request size limit.",
       );
       limit(
         `${id ?? "create"}:${req.cookies.get(cookieName(id ?? ""))?.value ?? req.headers.get("x-forwarded-for") ?? "local"}`,
-        path[1] === "extractions" || path[3] === "router" ? 8 : 80,
+        path[1] === "extractions" || ["router", "draft"].includes(path[3]) ? 8 : 80,
       );
     }
-    if (mutation) req = await boundedRequest(req);
+    if (mutation) req = await boundedRequest(req, maxBytes);
     const ctx = capability(req, id ?? "", key);
     let data: unknown;
     let code = 200;
@@ -166,6 +168,14 @@ export async function handle(req: NextRequest, path: string[] = []) {
       return new NextResponse(new Uint8Array(Buffer.from(media.data, "base64")), { headers: {
         "Content-Type": media.mime, "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff",
       } });
+    } else if (route === "preferences/me/draft" && req.method === "POST") {
+      let form: FormData;
+      try {
+        form = await req.formData();
+      } catch {
+        throw new AppError(400, "INVALID_FORM", "อ่านคำตอบไม่สำเร็จ กรุณาลองอีกครั้ง");
+      }
+      data = await draftChatPreferences(id, form, ctx);
     } else if (route === "preferences/me/noodles" && req.method === "POST") {
       data = await previewNoodles(id, await json(req), ctx);
     } else if (route === "preferences/me/router" && req.method === "POST") {

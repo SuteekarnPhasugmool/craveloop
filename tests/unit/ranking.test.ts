@@ -64,15 +64,30 @@ const demoPrefs = () => [
   pref({ flavorTags: ["spicy"], budgetMaxSatang: 20000 }),
 ];
 
+it("ranks video-matched beef noodles first only when the member can eat beef", () => {
+  const preference = pref({
+    videoMenuIds: ["r17-m01"],
+    foodBase: "rice",
+    servingStyle: "dry",
+    textureTags: ["crispy"],
+    flavorTags: ["mild"],
+  });
+  const rank = (p: Preference) => rankRestaurants(snapshot([p], "delivery"), catalog).options;
+  expect(rank(preference)[0].assignments[0].menuId).toBe("r17-m01");
+  const withoutBeef = rank({ ...preference, excludedIngredients: ["beef"] });
+  expect(withoutBeef.length).toBeGreaterThan(0);
+  expect(withoutBeef.flatMap(o => o.assignments.map(a => a.menuId))).not.toContain("r17-m01");
+});
+
 describe("catalog provenance and reproducibility", () => {
-  it("has exactly12 fictional venues and60 stable menus, no live links", () => {
+  it("has 18 fictional venues and 74 stable menus, no live links", () => {
     expect(catalog).toEqual(generateCatalog());
-    expect(catalog).toHaveLength(12);
-    expect(catalog.flatMap((r) => r.menus)).toHaveLength(60);
+    expect(catalog).toHaveLength(18);
+    expect(catalog.flatMap((r) => r.menus)).toHaveLength(74);
     expect(
       catalog.every(
         (r) =>
-          r.name.startsWith("Demo ") &&
+          r.name.startsWith("ร้านจำลอง ") &&
           r.dataOrigin === "synthetic" &&
           r.catalogVersion === "seed-v2",
       ),
