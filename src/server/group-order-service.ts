@@ -144,7 +144,8 @@ function finalizedChoice(s: StoredSession, b: z.infer<typeof HandoffSchema>) {
       areaId: s.areaId,
       mode: s.mode,
       catalogVersion: CATALOG_VERSION,
-      members: members.map((m) => ({ id: m.id, preference: m.preference! })),
+      menuVectorIndexes: s.menuVectorIndexes,
+      members: members.map((m) => ({ id: m.id, preference: m.preference!, semanticFit: m.semanticFit })),
     },
     catalog,
   ).options.find((o) => o.restaurantId === b.restaurantId);

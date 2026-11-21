@@ -1,5 +1,6 @@
 import { beforeAll, afterAll, describe, it, expect, vi } from "vitest";
 import * as routerAdapter from "@/adapters/preference-router";
+import * as rankingAdapter from "@/adapters/semantic-ranking";
 import { routePrivateTurn } from "@/server/preference-router";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -205,6 +206,8 @@ describe("synthetic Group Order handoff and checkout lifecycle", () => {
     };
     vi.stubEnv("OPENAI_API_KEY", "mock-only");
     vi.stubEnv("OPENAI_MODEL", "fixture-model");
+    const scores = { member: { catalogVersion: "seed-v2", indexKey: "fixture", vector: [1] }, menus: { "r01-m01": [1] } };
+    const fit = vi.spyOn(rankingAdapter, "semanticFit").mockResolvedValue(scores);
     const adapter = vi
       .spyOn(routerAdapter, "routePreference")
       .mockResolvedValue({
@@ -249,6 +252,8 @@ describe("synthetic Group Order handoff and checkout lifecycle", () => {
         ctx(owner),
       );
       expect(saved.me!.revision).toBe(s.me!.revision + 1);
+      expect(fit).toHaveBeenCalledTimes(1);
+      expect((await readSession(r.id))!.members.find(m => m.id === s.me!.id)?.semanticFit).toEqual(scores.member);
       const failedTurn = {
         ...request,
         ...versions(saved),
@@ -265,6 +270,7 @@ describe("synthetic Group Order handoff and checkout lifecycle", () => {
       expect(adapter).toHaveBeenCalledTimes(3);
     } finally {
       adapter.mockRestore();
+      fit.mockRestore();
       vi.unstubAllEnvs();
     }
   });

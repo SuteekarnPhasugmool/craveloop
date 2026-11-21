@@ -71,6 +71,8 @@ SQLite is a durable file at `.local/craveloop.sqlite`, with WAL and transactiona
 
 Set a server-side `OPENAI_MODEL` and API key to enable AI drafts. CraveLoop uses `CRAVELOOP_OPENAI_API_KEY` when set, then falls back to `OPENAI_API_KEY`. Use the project-specific setting when your shell already supplies a key for a different project. Run `npm run ai:smoke` to verify live extraction with the bundled sample.
 
+With AI configured, confirmation turns each member’s food preferences and craving into a short meal description. The server embeds that description and the catalog menu texts with the same model (`OPENAI_EMBEDDING_MODEL`, default `text-embedding-3-small`). For each restaurant, the ranker chooses the eligible dish with the highest cosine similarity for each member. Area, availability, allocated cost and confirmed dietary rules are checked before cosine similarity is calculated. Voting and checkout use the saved description and menu vectors for reproducible scoring. Offline confirmations and older confirmations without saved semantic scores use the existing tag-based fit.
+
 Set `OPENAI_MODEL=gpt-6.2-sol` in `.env.local`. In the private meal form, **ยืนยันความต้องการ** analyzes the entered text and selected media, then saves the extracted craving tags together with the constraints entered in the form. Recorded voice uses `OPENAI_TRANSCRIPTION_MODEL` (default `gpt-transcribe`). Social links stay as references.
 
 - `npm run ai:experiments -- kg` proposes evidence-checked ingredient triples for human review.

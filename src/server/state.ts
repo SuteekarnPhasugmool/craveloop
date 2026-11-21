@@ -3,6 +3,8 @@ import type { RoutedDraft } from "@/contracts/router";
 import type { CartHandoff } from "@/contracts/group-order";
 import type {
   Preference,
+  SemanticFit,
+  MenuVectorIndexes,
   PrivateAnswers,
   PreferenceDraft,
   Ranking,
@@ -10,6 +12,7 @@ import type {
   Mode,
 } from "@/contracts";
 export type StoredMember = {
+  semanticFit?: SemanticFit;
   answers?: PrivateAnswers;
   media?: Partial<Record<"image" | "voice", StoredMedia>>;
   router?: {
@@ -45,6 +48,7 @@ export type StoredInput = {
   draft?: PreferenceDraft;
 };
 export type StoredSession = {
+  menuVectorIndexes?: MenuVectorIndexes;
   preliminaryRestaurants?: string[];
   chatJourney?: boolean;
   menuChoices?: Record<string, string>;

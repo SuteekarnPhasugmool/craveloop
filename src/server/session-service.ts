@@ -34,6 +34,7 @@ import {
   currentSnapshot,
 } from "@/adapters/catalog";
 import { rankRestaurants } from "@/domain/ranking";
+import { semanticFit } from "@/adapters/semantic-ranking";
 import { aiStatus, extractPreferences } from "@/adapters/openai";
 import { env } from "./env";
 import { AppError, assert } from "./errors";
@@ -126,9 +127,11 @@ function snapshot(s: StoredSession, participants = mealMembers(s)) {
     areaId: s.areaId,
     mode: s.mode,
     catalogVersion: CATALOG_VERSION,
+    menuVectorIndexes: s.menuVectorIndexes,
     members: participants.map((m) => ({
       id: m.id,
       preference: m.preference!,
+      semanticFit: m.semanticFit,
     })),
   };
 }
@@ -581,7 +584,7 @@ export async function previewNoodles(
   const input = snapshot(s);
   input.members = input.members.map((member) =>
     member.id === m.id
-      ? { ...member, preference: b.confirmedPreference }
+      ? { ...member, preference: b.confirmedPreference, semanticFit: undefined }
       : member,
   );
   const result = simulateNoodleChoice(input, catalog, m.id);
@@ -601,6 +604,80 @@ export async function getPreferenceMedia(id: string, kind: "image" | "voice", c:
   assert(media && Date.parse(media.expiresAt) > Date.now(), 404, "MEDIA_NOT_FOUND", "ไม่พบไฟล์แนบ");
   return media;
 }
+function validateConfirmation(s: StoredSession, m: StoredMember, p: ReturnType<typeof ConfirmSchema.parse>) {
+  editable(s);
+  assertMealParticipant(s, m.id);
+  assert(
+    m.revision === p.expectedMemberRevision,
+    409,
+    "STALE_MEMBER_REVISION",
+    "Your preferences changed. Refresh first.",
+  );
+  const noodle = p.confirmedPreference.noodle;
+  if (p.routerDraftId) {
+    const draft = m.router;
+    assert(
+      draft?.result &&
+        draft.id === p.routerDraftId &&
+        draft.revision === m.revision &&
+        draft.preferenceVersion === s.preferenceVersion &&
+        draft.rosterVersion === s.rosterVersion,
+      409,
+      "STALE_DRAFT",
+      "Review your current private draft.",
+    );
+    assert(
+      !draft.result.questions.length || p.reviewedQuestions,
+      422,
+      "REVIEW_QUESTIONS",
+      "ตรวจคำถามเรื่องข้อจำกัดก่อนยืนยัน",
+    );
+  }
+  if (p.confirmedPreference.desiredDish) {
+    assert(
+      catalog.some((r) =>
+        r.menus.some(
+          (menu) => menu.name === p.confirmedPreference.desiredDish,
+        ),
+      ),
+      422,
+      "UNKNOWN_DISH",
+      "เลือกชื่อเมนูจาก catalog ปัจจุบัน",
+    );
+  }
+  if (
+    p.noodleDraft ||
+    (s.experience === "group_order" &&
+      noodle &&
+      noodle !== "any" &&
+      noodle !== m.preference?.noodle)
+  ) {
+    assert(
+      p.noodleDraft === noodleDraft(s, m, p.confirmedPreference),
+      409,
+      "STALE_NOODLE_DRAFT",
+      "Review the current choices in your own preference form.",
+    );
+  }
+  if (p.draftId) {
+    const input = s.inputs.find(
+      (i) => i.memberId === m.id && i.draftId === p.draftId,
+    );
+    assert(
+      input &&
+        input.inputRevision ===
+          Math.max(
+            ...s.inputs
+              .filter((i) => i.memberId === m.id)
+              .map((i) => i.inputRevision),
+          ),
+      409,
+      "STALE_DRAFT",
+      "This draft belongs to an older input.",
+    );
+  }
+}
+
 export async function mutateRoom(
   id: string,
   action: "confirm" | "patch" | "rank" | "accept" | "withdraw" | "finalize",
@@ -608,6 +685,18 @@ export async function mutateRoom(
   c: Context,
   mediaChanges?: MediaChanges,
 ) {
+  let preparedFit: Awaited<ReturnType<typeof semanticFit>>;
+  if (action === "confirm" && aiStatus().available) {
+    const current = await readSession(id);
+    requireSession(current);
+    const member = actor(current, c);
+    if (!current.requests[`${member.id}:${c.key}`]) {
+      const confirmation = ConfirmSchema.parse(body);
+      versions(current, confirmation);
+      validateConfirmation(current, member, confirmation);
+      preparedFit = await semanticFit(confirmation.confirmedPreference, confirmation.answers?.craving);
+    }
+  }
   return transact(id, (s) => {
     requireSession(s);
     const m = actor(s, c, ["patch", "rank", "finalize"].includes(action));
@@ -625,81 +714,16 @@ export async function mutateRoom(
       versions(s, b);
       if (action === "confirm") {
         const p = ConfirmSchema.parse(body);
-        editable(s);
-        assertMealParticipant(s, m.id);
-        assert(
-          m.revision === p.expectedMemberRevision,
-          409,
-          "STALE_MEMBER_REVISION",
-          "Your preferences changed. Refresh first.",
-        );
-        const noodle = p.confirmedPreference.noodle;
-        if (p.routerDraftId) {
-          const draft = m.router;
-          assert(
-            draft?.result &&
-              draft.id === p.routerDraftId &&
-              draft.revision === m.revision &&
-              draft.preferenceVersion === s.preferenceVersion &&
-              draft.rosterVersion === s.rosterVersion,
-            409,
-            "STALE_DRAFT",
-            "Review your current private draft.",
-          );
-          assert(
-            !draft.result.questions.length || p.reviewedQuestions,
-            422,
-            "REVIEW_QUESTIONS",
-            "ตรวจคำถามเรื่องข้อจำกัดก่อนยืนยัน",
-          );
-        }
-        if (p.confirmedPreference.desiredDish) {
-          assert(
-            catalog.some((r) =>
-              r.menus.some(
-                (menu) => menu.name === p.confirmedPreference.desiredDish,
-              ),
-            ),
-            422,
-            "UNKNOWN_DISH",
-            "เลือกชื่อเมนูจาก catalog ปัจจุบัน",
-          );
-        }
-        if (
-          p.noodleDraft ||
-          (s.experience === "group_order" &&
-            noodle &&
-            noodle !== "any" &&
-            noodle !== m.preference?.noodle)
-        ) {
-          assert(
-            p.noodleDraft === noodleDraft(s, m, p.confirmedPreference),
-            409,
-            "STALE_NOODLE_DRAFT",
-            "Review the current choices in your own preference form.",
-          );
-        }
-        if (p.draftId) {
-          const input = s.inputs.find(
-            (i) => i.memberId === m.id && i.draftId === p.draftId,
-          );
-          assert(
-            input &&
-              input.inputRevision ===
-                Math.max(
-                  ...s.inputs
-                    .filter((i) => i.memberId === m.id)
-                    .map((i) => i.inputRevision),
-                ),
-            409,
-            "STALE_DRAFT",
-            "This draft belongs to an older input.",
-          );
-        }
+        validateConfirmation(s, m, p);
         const previousRankingId = s.currentRankingId;
         const replan = s.rankings.length > 0 && !s.membershipOpen;
         const previewStarted = s.preliminaryRestaurants !== undefined;
         m.preference = p.confirmedPreference;
+        m.semanticFit = preparedFit?.member;
+        if (preparedFit) {
+          s.menuVectorIndexes ??= {};
+          s.menuVectorIndexes[preparedFit.member.indexKey] = preparedFit.menus;
+        }
         if (p.answers || mediaChanges) {
           assert(s.chatJourney, 422, "CHAT_REQUIRED", "ใช้ไฟล์แนบและคำตอบในห้องแชต");
           if (p.answers) m.answers = p.answers;

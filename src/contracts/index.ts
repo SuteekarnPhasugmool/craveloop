@@ -152,8 +152,13 @@ export type Restaurant = {
   } | null;
   menus: Menu[];
 };
-export type RankMember = { id: string; preference: Preference };
+export type SemanticFit =
+  | { catalogVersion: string; scores: Record<string, number> } // Previously confirmed members
+  | { catalogVersion: string; indexKey: string; vector: number[] };
+export type MenuVectorIndexes = Record<string, Record<string, number[]>>;
+export type RankMember = { id: string; preference: Preference; semanticFit?: SemanticFit };
 export type RankSnapshot = Versions & {
+  menuVectorIndexes?: MenuVectorIndexes;
   areaId: string;
   mode: Mode;
   members: RankMember[];

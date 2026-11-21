@@ -6,12 +6,13 @@ import {
   type Preference,
   type RankResult,
   type RankSnapshot,
+  type RankMember,
   type Restaurant,
 } from "../contracts";
 import { allocateFee, deliveryFee } from "./costs";
 import { checkMenu, normalizeIngredientId } from "./feasibility";
 
-export const ALGORITHM_VERSION = "fit-60-40-v4";
+export const ALGORITHM_VERSION = "semantic-fit-60-40-v6";
 export function groupScores(scores: number[]) {
   if (
     scores.length === 0 ||
@@ -101,6 +102,16 @@ export function compareOptions(a: Option, b: Option) {
   );
 }
 
+function semanticScore(member: RankMember, snapshot: RankSnapshot, menuId: string) {
+  const fit = member.semanticFit;
+  if (!fit || fit.catalogVersion !== snapshot.catalogVersion) return undefined;
+  if ("scores" in fit) return fit.scores[menuId];
+  const vector = snapshot.menuVectorIndexes?.[fit.indexKey]?.[menuId];
+  if (!vector || vector.length !== fit.vector.length) return undefined;
+  const cosine = vector.reduce((sum, v, i) => sum + v * fit.vector[i], 0);
+  return 50 * (1 + Math.max(-1, Math.min(1, cosine)));
+}
+
 export function rankRestaurants(
   snapshot: RankSnapshot,
   catalog: Restaurant[],
@@ -177,7 +188,7 @@ export function rankRestaurants(
           memberId: member.id,
           menuId: menu.id,
           menuName: menu.name,
-          fitScore: fit.score,
+          fitScore: semanticScore(member, snapshot, menu.id) ?? fit.score,
           ...checked.cost,
           matchedTags: fit.matchedTags,
           constraintEvidence: checked.evidence,
@@ -186,7 +197,7 @@ export function rankRestaurants(
       feasible.sort(
         (a, b) =>
           b.fitScore - a.fitScore ||
-          knownFirst(a.totalCostSatang, b.totalCostSatang) ||
+          (member.semanticFit ? 0 : knownFirst(a.totalCostSatang, b.totalCostSatang)) ||
           textOrder(a.menuId, b.menuId),
       );
       if (feasible[0]) assignments.push(feasible[0]);
@@ -219,7 +230,11 @@ export function rankRestaurants(
       explanation: `Every active member has one feasible catalog meal. Fit = 60% group mean + 40% lowest member fit; confirmed hard constraints were checked before scoring.`,
     });
   }
-  options.sort(compareOptions);
+  if (members.some(member => member.semanticFit)) {
+    options.sort((a, b) => b.groupScore - a.groupScore || b.minimumScore - a.minimumScore || textOrder(a.restaurantId, b.restaurantId));
+  } else {
+    options.sort(compareOptions);
+  }
   return {
     status: options.length ? "ok" : "no_match",
     options: options.slice(0, 3),
